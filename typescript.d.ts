@@ -3247,6 +3247,7 @@ declare namespace ts {
         BarDelimited = 4,
         AmpersandDelimited = 8,
         CommaDelimited = 16,
+        AsteriskDelimited = 32,
         DelimitersMask = 28,
         AllowTrailingComma = 32,
         Indented = 64,

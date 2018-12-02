@@ -22,12 +22,14 @@ import * as os from 'os';
 import {noop} from './core';
 import {options as globalOptions, errors} from './globals';
 import {tokenToString} from './scanner';
+import {getStartsOnNewLine} from './factory';
 
+let currentSourceFile: SourceFile;
 
 
 export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     const brackets = createBracketsMap();
-
+    currentSourceFile = sourceFile;
 
     const writer = createTextWriter(os.EOL);
     writer.writeLine();
@@ -2469,28 +2471,28 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         emitNodeList(emitExpression as (node: Node) => void, parentNode, children, format, start, count);
     }
 
-    // function writeDelimiter(format: ListFormat) {
-    //     switch (format & ListFormat.DelimitersMask) {
-    //         case ListFormat.None:
-    //             break;
-    //         case ListFormat.CommaDelimited:
-    //             writePunctuation(",");
-    //             break;
-    //         case ListFormat.BarDelimited:
-    //             writeSpace();
-    //             writePunctuation("|");
-    //             break;
-    //         case ListFormat.AsteriskDelimited:
-    //             writeSpace();
-    //             writePunctuation("*");
-    //             writeSpace();
-    //             break;
-    //         case ListFormat.AmpersandDelimited:
-    //             writeSpace();
-    //             writePunctuation("&");
-    //             break;
-    //     }
-    // }
+    function writeDelimiter(format: ts.ListFormat) {
+        switch (format & ts.ListFormat.DelimitersMask) {
+            case ts.ListFormat.None:
+                break;
+            case ts.ListFormat.CommaDelimited:
+                writePunctuation(",");
+                break;
+            case ts.ListFormat.BarDelimited:
+                writeSpace();
+                writePunctuation("|");
+                break;
+            case ts.ListFormat.AsteriskDelimited:
+                writeSpace();
+                writePunctuation("*");
+                writeSpace();
+                break;
+            case ts.ListFormat.AmpersandDelimited:
+                writeSpace();
+                writePunctuation("&");
+                break;
+        }
+    }
 
     function emitNodeList(emit: (node: ts.Node) => void, parentNode: ts.TextRange, children: ts.NodeArray<ts.Node> | undefined, format: ts.ListFormat, start = 0, count = children ? children.length - start : 0) {
         const isUndefined = children === undefined;
@@ -2520,21 +2522,16 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             // Write the opening line terminator or leading whitespace.
             const mayEmitInterveningComments = (format & ts.ListFormat.NoInterveningComments) === 0;
             let shouldEmitInterveningComments = mayEmitInterveningComments;
-            if (shouldWriteLeadingLineTerminator(parentNode, children!, format)) { // TODO: GH#18217
-                writeLine();
-                shouldEmitInterveningComments = false;
-            }
-            else if (format & ListFormat.SpaceBetweenBraces) {
-                writeSpace();
-            }
-
-            // Increase the indent, if requested.
-            if (format & ts.ListFormat.Indented) {
-                increaseIndent();
-            }
+            // if (shouldWriteLeadingLineTerminator(parentNode, children!, format)) { // TODO: GH#18217
+            //     writeLine();
+            //     shouldEmitInterveningComments = false;
+            // }
+            // else if (format & ts.ListFormat.SpaceBetweenBraces) {
+            //     writeSpace();
+            // }
 
             // Emit each child.
-            let previousSibling: Node | undefined;
+            let previousSibling: ts.Node | undefined;
             let shouldDecreaseIndentAfterEmit = false;
             for (let i = 0; i < count; i++) {
                 const child = children![start + i];
@@ -2552,52 +2549,45 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                     //          a
                     //          /* End of parameter a */ -> this comment isn't considered to be trailing comment of parameter "a" due to newline
                     //          ,
-                    if (format & ListFormat.DelimitersMask && previousSibling.end !== parentNode.end) {
-                        emitLeadingCommentsOfPosition(previousSibling.end);
-                    }
+                    // if (format & ts.ListFormat.DelimitersMask && previousSibling.end !== parentNode.end) {
+                    //     emitLeadingCommentsOfPosition(previousSibling.end);
+                    // }
                     writeDelimiter(format);
 
                     // Write either a line terminator or whitespace to separate the elements.
                     if (shouldWriteSeparatingLineTerminator(previousSibling, child, format)) {
-                        // If a synthesized node in a single-line list starts on a new
-                        // line, we should increase the indent.
-                        if ((format & (ListFormat.LinesMask | ListFormat.Indented)) === ListFormat.SingleLine) {
-                            increaseIndent();
-                            shouldDecreaseIndentAfterEmit = true;
-                        }
-
                         writeLine();
                         shouldEmitInterveningComments = false;
                     }
-                    else if (previousSibling && format & ListFormat.SpaceBetweenSiblings) {
+                    else if (previousSibling && format & ts.ListFormat.SpaceBetweenSiblings) {
                         writeSpace();
                     }
                 }
 
                 // Emit this child.
-                if (shouldEmitInterveningComments) {
-                    if (emitTrailingCommentsOfPosition) {
-                        const commentRange = getCommentRange(child);
-                        emitTrailingCommentsOfPosition(commentRange.pos);
-                    }
-                }
-                else {
-                    shouldEmitInterveningComments = mayEmitInterveningComments;
-                }
+                // if (shouldEmitInterveningComments) {
+                //     if (emitTrailingCommentsOfPosition) {
+                //         const commentRange = getCommentRange(child);
+                //         emitTrailingCommentsOfPosition(commentRange.pos);
+                //     }
+                // }
+                // else {
+                //     shouldEmitInterveningComments = mayEmitInterveningComments;
+                // }
 
                 emit(child);
 
-                if (shouldDecreaseIndentAfterEmit) {
-                    decreaseIndent();
-                    shouldDecreaseIndentAfterEmit = false;
-                }
+                // if (shouldDecreaseIndentAfterEmit) {
+                //     decreaseIndent();
+                //     shouldDecreaseIndentAfterEmit = false;
+                // }
 
                 previousSibling = child;
             }
 
             // Write a trailing comma, if requested.
-            const hasTrailingComma = (format & ListFormat.AllowTrailingComma) && children!.hasTrailingComma;
-            if (format & ListFormat.CommaDelimited && hasTrailingComma) {
+            const hasTrailingComma = (format & ts.ListFormat.AllowTrailingComma) && children!.hasTrailingComma;
+            if (format & ts.ListFormat.CommaDelimited && hasTrailingComma) {
                 writePunctuation(",");
             }
 
@@ -2608,22 +2598,17 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             //          2
             //          /* end of element 2 */
             //       ];
-            if (previousSibling && format & ListFormat.DelimitersMask && previousSibling.end !== parentNode.end && !(getEmitFlags(previousSibling) & EmitFlags.NoTrailingComments)) {
-                emitLeadingCommentsOfPosition(previousSibling.end);
-            }
-
-            // Decrease the indent, if requested.
-            if (format & ListFormat.Indented) {
-                decreaseIndent();
-            }
+            // if (previousSibling && format & ListFormat.DelimitersMask && previousSibling.end !== parentNode.end && !(getEmitFlags(previousSibling) & EmitFlags.NoTrailingComments)) {
+            //     emitLeadingCommentsOfPosition(previousSibling.end);
+            // }
 
             // Write the closing line terminator or closing whitespace.
-            if (shouldWriteClosingLineTerminator(parentNode, children!, format)) {
-                writeLine();
-            }
-            else if (format & ts.ListFormat.SpaceBetweenBraces) {
-                writeSpace();
-            }
+            // if (shouldWriteClosingLineTerminator(parentNode, children!, format)) {
+            //     writeLine();
+            // }
+            // else if (format & ts.ListFormat.SpaceBetweenBraces) {
+            //     writeSpace();
+            // }
         }
 
         if (format & ts.ListFormat.BracketsMask) {
@@ -2781,51 +2766,52 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function shouldWriteLeadingLineTerminator(parentNode: TextRange, children: NodeArray<Node>, format: ListFormat) {
-    //     if (format & ListFormat.MultiLine) {
-    //         return true;
-    //     }
+    function shouldWriteLeadingLineTerminator(parentNode: ts.TextRange, children: ts.NodeArray<Node>, format: ts.ListFormat) {
+        if (format & ts.ListFormat.MultiLine) {
+            return true;
+        }
 
-    //     if (format & ListFormat.PreserveLines) {
-    //         if (format & ListFormat.PreferNewLine) {
-    //             return true;
-    //         }
+        if (format & ts.ListFormat.PreserveLines) {
+            if (format & ts.ListFormat.PreferNewLine) {
+                return true;
+            }
 
-    //         const firstChild = children[0];
-    //         if (firstChild === undefined) {
-    //             return !rangeIsOnSingleLine(parentNode, currentSourceFile);
-    //         }
-    //         else if (positionIsSynthesized(parentNode.pos) || nodeIsSynthesized(firstChild)) {
-    //             return synthesizedNodeStartsOnNewLine(firstChild, format);
-    //         }
-    //         else {
-    //             return !rangeStartPositionsAreOnSameLine(parentNode, firstChild, currentSourceFile);
-    //         }
-    //     }
-    //     else {
-    //         return false;
-    //     }
-    // }
+            const firstChild = children[0];
+            // if (firstChild === undefined) {
+            //     return !rangeIsOnSingleLine(parentNode, currentSourceFile);
+            // }
+            // else if (positionIsSynthesized(parentNode.pos) || nodeIsSynthesized(firstChild)) {
+            //     return synthesizedNodeStartsOnNewLine(firstChild, format);
+            // }
+            // else {
+            //     return !rangeStartPositionsAreOnSameLine(parentNode, firstChild, currentSourceFile);
+            // }
+        }
+        else {
+            return false;
+        }
+    }
 
-    // function shouldWriteSeparatingLineTerminator(previousNode: Node | undefined, nextNode: Node, format: ListFormat) {
-    //     if (format & ListFormat.MultiLine) {
-    //         return true;
-    //     }
-    //     else if (format & ListFormat.PreserveLines) {
-    //         if (previousNode === undefined || nextNode === undefined) {
-    //             return false;
-    //         }
-    //         else if (nodeIsSynthesized(previousNode) || nodeIsSynthesized(nextNode)) {
-    //             return synthesizedNodeStartsOnNewLine(previousNode, format) || synthesizedNodeStartsOnNewLine(nextNode, format);
-    //         }
-    //         else {
-    //             return !rangeEndIsOnSameLineAsRangeStart(previousNode, nextNode, currentSourceFile);
-    //         }
-    //     }
-    //     else {
-    //         return getStartsOnNewLine(nextNode);
-    //     }
-    // }
+    function shouldWriteSeparatingLineTerminator(previousNode: Node | undefined, nextNode: Node, format: ts.ListFormat) {
+        if (format & ts.ListFormat.MultiLine) {
+            return true;
+        }
+        else if (format & ts.ListFormat.PreserveLines) {
+            if (previousNode === undefined || nextNode === undefined) {
+                return false;
+            }
+            else if (nodeIsSynthesized(previousNode) || nodeIsSynthesized(nextNode)) {
+                return synthesizedNodeStartsOnNewLine(previousNode, format) || synthesizedNodeStartsOnNewLine(nextNode, format);
+            }
+            else {
+                return false;
+                // return !rangeEndIsOnSameLineAsRangeStart(previousNode, nextNode, currentSourceFile);
+            }
+        }
+        else {
+            return getStartsOnNewLine(nextNode);
+        }
+    }
 
     // function shouldWriteClosingLineTerminator(parentNode: TextRange, children: NodeArray<Node>, format: ListFormat) {
     //     if (format & ListFormat.MultiLine) {
@@ -2852,18 +2838,18 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function synthesizedNodeStartsOnNewLine(node: Node, format: ListFormat) {
-    //     if (nodeIsSynthesized(node)) {
-    //         const startsOnNewLine = getStartsOnNewLine(node);
-    //         if (startsOnNewLine === undefined) {
-    //             return (format & ListFormat.PreferNewLine) !== 0;
-    //         }
+    function synthesizedNodeStartsOnNewLine(node: Node, format: ts.ListFormat) {
+        if (nodeIsSynthesized(node)) {
+            const startsOnNewLine = getStartsOnNewLine(node);
+            if (startsOnNewLine === undefined) {
+                return (format & ts.ListFormat.PreferNewLine) !== 0;
+            }
 
-    //         return startsOnNewLine;
-    //     }
+            return startsOnNewLine;
+        }
 
-    //     return (format & ListFormat.PreferNewLine) !== 0;
-    // }
+        return (format & ts.ListFormat.PreferNewLine) !== 0;
+    }
 
     // function needsIndentation(parent: ts.Node, node1: ts.Node, node2: ts.Node): boolean {
     //     parent = skipSynthesizedParentheses(parent);
