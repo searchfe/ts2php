@@ -4,9 +4,6 @@
  */
 
 import {
-    EmitTextWriter
-} from './types'
-import {
     computeLineStarts
 } from './scanner';
 import {
@@ -15,6 +12,7 @@ import {
     map
 } from './core'
 import {Node} from 'typescript';
+import * as types from './types';
 import * as ts from 'typescript';
 
 const indentStrings: string[] = ["", "    "];
@@ -29,7 +27,7 @@ export function getIndentSize() {
     return indentStrings[1].length;
 }
 
-export function createTextWriter(newLine: string): EmitTextWriter {
+export function createTextWriter(newLine: string): ts.EmitTextWriter {
     let output: string;
     let indent: number;
     let lineStart: boolean;
@@ -89,7 +87,7 @@ export function createTextWriter(newLine: string): EmitTextWriter {
         }
     }
 
-    function writeTextOfNode(text: string, node: Node) {
+    function writeTextOfNode(text: string, node: ts.Node) {
 
     }
 
@@ -145,4 +143,75 @@ function showFlags(flags: number, flagsEnum: { [flag: number]: string }): string
 export function showSyntaxKind(node: Node): string {
     const syntaxKind = ts.SyntaxKind;
     return syntaxKind ? syntaxKind[node.kind] : node.kind.toString();
+}
+
+// export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFile, neverAsciiEscape: boolean | undefined) {
+//     // If we don't need to downlevel and we can reach the original source text using
+//     // the node's parent reference, then simply get the text as it was originally written.
+//     if (!nodeIsSynthesized(node) && node.parent && !(isNumericLiteral(node) && node.numericLiteralFlags & TokenFlags.ContainsSeparator)) {
+//         return getSourceTextOfNodeFromSourceFile(sourceFile, node);
+//     }
+
+//     const escapeText = neverAsciiEscape || (getEmitFlags(node) & EmitFlags.NoAsciiEscaping) ? escapeString : escapeNonAsciiString;
+
+//     // If we can't reach the original source text, use the canonical form if it's a number,
+//     // or a (possibly escaped) quoted form of the original text if it's string-like.
+//     switch (node.kind) {
+//         case SyntaxKind.StringLiteral:
+//             if ((<StringLiteral>node).singleQuote) {
+//                 return "'" + escapeText(node.text, CharacterCodes.singleQuote) + "'";
+//             }
+//             else {
+//                 return '"' + escapeText(node.text, CharacterCodes.doubleQuote) + '"';
+//             }
+//         case SyntaxKind.NoSubstitutionTemplateLiteral:
+//             return "`" + escapeText(node.text, CharacterCodes.backtick) + "`";
+//         case SyntaxKind.TemplateHead:
+//             // tslint:disable-next-line no-invalid-template-strings
+//             return "`" + escapeText(node.text, CharacterCodes.backtick) + "${";
+//         case SyntaxKind.TemplateMiddle:
+//             // tslint:disable-next-line no-invalid-template-strings
+//             return "}" + escapeText(node.text, CharacterCodes.backtick) + "${";
+//         case SyntaxKind.TemplateTail:
+//             return "}" + escapeText(node.text, CharacterCodes.backtick) + "`";
+//         case SyntaxKind.NumericLiteral:
+//         case SyntaxKind.RegularExpressionLiteral:
+//             return node.text;
+//     }
+
+//     return Debug.fail(`Literal kind '${node.kind}' not accounted for.`);
+// }
+
+export function nodeIsSynthesized(range: ts.TextRange): boolean {
+    return positionIsSynthesized(range.pos)
+        || positionIsSynthesized(range.end);
+}
+
+export function positionIsSynthesized(pos: number): boolean {
+    // This is a fast way of testing the following conditions:
+    //  pos === undefined || pos === null || isNaN(pos) || pos < 0;
+    return !(pos >= 0);
+}
+
+export function idText(identifier: ts.Identifier): string {
+    return unescapeLeadingUnderscores(identifier.escapedText);
+}
+
+/**
+ * Remove extra underscore from escaped identifier text content.
+ *
+ * @param identifier The escaped identifier text.
+ * @returns The unescaped identifier text.
+ */
+export function unescapeLeadingUnderscores(identifier: ts.__String): string {
+    const id = identifier as string;
+    return id.length >= 3 && id.charCodeAt(0) === ts.CharacterCodes._ && id.charCodeAt(1) === ts.CharacterCodes._ && id.charCodeAt(2) === ts.CharacterCodes._ ? id.substr(1) : id;
+}
+
+export function isGeneratedIdentifier(node: ts.Node) {
+    return isIdentifier(node) && ((<ts.Identifier>node).autoGenerateFlags! & ts.GeneratedIdentifierFlags.KindMask) > ts.GeneratedIdentifierFlags.None;
+}
+
+export function isIdentifier(node: ts.Node) {
+    return node.kind === ts.SyntaxKind.Identifier;
 }

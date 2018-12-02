@@ -4,21 +4,37 @@
  */
 
 import * as ts from 'typescript';
-import path from 'path';
+import * as path from 'path';
 import * as emitter from './emitter';
+import {Ts2phpOptions} from './types';
+import {options as globalOptions} from './globals';
+import {assign} from 'lodash';
 
-const program = ts.createProgram([path.resolve(__dirname, '../sample/index.ts')], {
-    target: ts.ScriptTarget.ES5,
-    module: ts.ModuleKind.CommonJS
-});
+function ts2php(filePath: string, options?: Ts2phpOptions) {
+    assign(globalOptions, options);
 
-const typeChecker = program.getTypeChecker();
-
-for (const sourceFile of program.getSourceFiles()) {
-    if (!sourceFile.isDeclarationFile) {
-        ts.forEachChild(sourceFile, (node: ts.Node) => {
-            emitter.emitFile(node as ts.SourceFile, typeChecker);
-        });
+    const program = ts.createProgram([filePath], {
+        target: ts.ScriptTarget.ES5,
+        module: ts.ModuleKind.CommonJS
+    });
+    
+    const typeChecker = program.getTypeChecker();
+    
+    for (const sourceFile of program.getSourceFiles()) {
+        if (!sourceFile.isDeclarationFile) {
+            const a = emitter.emitFile(sourceFile, typeChecker);
+            console.log(a);
+        }
     }
 }
+
+ts2php(path.resolve(__dirname, '../sample/index.ts'), {
+    modules: {
+        './atomWiseUtils': {
+            path: './path/to/utils.php',
+            className: 'Atom_Wise_Utils'
+        }
+    }
+});
+
 
