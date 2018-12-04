@@ -1,6 +1,6 @@
-import {Ts2phpOptionsInner, ErrorInfo} from './types';
+import {Ts2phpOptions, ErrorInfo} from './types';
 
-export const options: Ts2phpOptionsInner = {
+export const options: Ts2phpOptions = {
     modules: {
     }
 }

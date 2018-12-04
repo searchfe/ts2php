@@ -9,11 +9,15 @@ import {
 import {
     last,
     noop,
-    map
+    map,
+    createMapFromTemplate
 } from './core'
 import {Node} from 'typescript';
-import * as types from './types';
+import {
+    isNumericLiteral
+} from './utilities/nodeTest';
 import * as ts from 'typescript';
+import {errors} from './globals';
 
 const indentStrings: string[] = ["", "    "];
 export function getIndentString(level: number) {
@@ -145,42 +149,55 @@ export function showSyntaxKind(node: Node): string {
     return syntaxKind ? syntaxKind[node.kind] : node.kind.toString();
 }
 
-// export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFile, neverAsciiEscape: boolean | undefined) {
-//     // If we don't need to downlevel and we can reach the original source text using
-//     // the node's parent reference, then simply get the text as it was originally written.
-//     if (!nodeIsSynthesized(node) && node.parent && !(isNumericLiteral(node) && node.numericLiteralFlags & TokenFlags.ContainsSeparator)) {
-//         return getSourceTextOfNodeFromSourceFile(sourceFile, node);
-//     }
+/**
+ * Gets flags that control emit behavior of a node.
+ */
+export function getEmitFlags(node: Node): ts.EmitFlags {
+    const emitNode = node.emitNode;
+    return emitNode && emitNode.flags || 0;
+}
 
-//     const escapeText = neverAsciiEscape || (getEmitFlags(node) & EmitFlags.NoAsciiEscaping) ? escapeString : escapeNonAsciiString;
+export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFile, neverAsciiEscape: boolean | undefined) {
+    // If we don't need to downlevel and we can reach the original source text using
+    // the node's parent reference, then simply get the text as it was originally written.
+    // if (!nodeIsSynthesized(node) && node.parent && !(isNumericLiteral(node) && node.numericLiteralFlags & ts.TokenFlags.ContainsSeparator)) {
+    //     return getSourceTextOfNodeFromSourceFile(sourceFile, node);
+    // }
 
-//     // If we can't reach the original source text, use the canonical form if it's a number,
-//     // or a (possibly escaped) quoted form of the original text if it's string-like.
-//     switch (node.kind) {
-//         case SyntaxKind.StringLiteral:
-//             if ((<StringLiteral>node).singleQuote) {
-//                 return "'" + escapeText(node.text, CharacterCodes.singleQuote) + "'";
-//             }
-//             else {
-//                 return '"' + escapeText(node.text, CharacterCodes.doubleQuote) + '"';
-//             }
-//         case SyntaxKind.NoSubstitutionTemplateLiteral:
-//             return "`" + escapeText(node.text, CharacterCodes.backtick) + "`";
-//         case SyntaxKind.TemplateHead:
-//             // tslint:disable-next-line no-invalid-template-strings
-//             return "`" + escapeText(node.text, CharacterCodes.backtick) + "${";
-//         case SyntaxKind.TemplateMiddle:
-//             // tslint:disable-next-line no-invalid-template-strings
-//             return "}" + escapeText(node.text, CharacterCodes.backtick) + "${";
-//         case SyntaxKind.TemplateTail:
-//             return "}" + escapeText(node.text, CharacterCodes.backtick) + "`";
-//         case SyntaxKind.NumericLiteral:
-//         case SyntaxKind.RegularExpressionLiteral:
-//             return node.text;
-//     }
+    const escapeText = neverAsciiEscape || (getEmitFlags(node) & ts.EmitFlags.NoAsciiEscaping) ? escapeString : escapeNonAsciiString;
 
-//     return Debug.fail(`Literal kind '${node.kind}' not accounted for.`);
-// }
+    // If we can't reach the original source text, use the canonical form if it's a number,
+    // or a (possibly escaped) quoted form of the original text if it's string-like.
+    switch (node.kind) {
+        case ts.SyntaxKind.StringLiteral:
+            if ((<ts.StringLiteral>node).singleQuote) {
+                return "'" + escapeText(node.text, ts.CharacterCodes.singleQuote) + "'";
+            }
+            else {
+                return '"' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '"';
+            }
+        case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            return "`" + escapeText(node.text, ts.CharacterCodes.backtick) + "`";
+        case ts.SyntaxKind.TemplateHead:
+            // tslint:disable-next-line no-invalid-template-strings
+            return '"' + escapeText(node.text, ts.CharacterCodes.backtick) + '" ' + ".";
+        case ts.SyntaxKind.TemplateMiddle:
+            // tslint:disable-next-line no-invalid-template-strings
+            return '"' + escapeText(node.text, ts.CharacterCodes.backtick) + '" .';
+        case ts.SyntaxKind.TemplateTail:
+            return '"' + escapeText(node.text, ts.CharacterCodes.backtick) + '"';
+        case ts.SyntaxKind.NumericLiteral:
+        case ts.SyntaxKind.RegularExpressionLiteral:
+            return node.text;
+    }
+
+    errors.push({
+        code: 1,
+        msg: `Literal kind '${node.kind}' not accounted for.`
+    });
+
+    return '';
+}
 
 export function nodeIsSynthesized(range: ts.TextRange): boolean {
     return positionIsSynthesized(range.pos)
@@ -227,4 +244,109 @@ export function isGeneratedIdentifier(node: ts.Node) {
 
 export function isIdentifier(node: ts.Node) {
     return node.kind === ts.SyntaxKind.Identifier;
+}
+
+// export function getSourceTextOfNodeFromSourceFile(sourceFile: ts.SourceFile, node: Node, includeTrivia = false): string {
+//     return getTextOfNodeFromSourceText(sourceFile.text, node, includeTrivia);
+// }
+
+// export function getTextOfNodeFromSourceText(sourceText: string, node: Node, includeTrivia = false): string {
+//     if (nodeIsMissing(node)) {
+//         return "";
+//     }
+
+//     let text = sourceText.substring(includeTrivia ? node.pos : skipTrivia(sourceText, node.pos), node.end);
+
+//     if (isJSDocTypeExpressionOrChild(node)) {
+//         // strip space + asterisk at line start
+//         text = text.replace(/(^|\r?\n|\r)\s*\*\s*/g, "$1");
+//     }
+
+//     return text;
+// }
+
+// Returns true if this node is missing from the actual source code. A 'missing' node is different
+// from 'undefined/defined'. When a node is undefined (which can happen for optional nodes
+// in the tree), it is definitely missing. However, a node may be defined, but still be
+// missing.  This happens whenever the parser knows it needs to parse something, but can't
+// get anything in the source code that it expects at that location. For example:
+//
+//          let a: ;
+//
+// Here, the Type in the Type-Annotation is not-optional (as there is a colon in the source
+// code). So the parser will attempt to parse out a type, and will create an actual node.
+// However, this node will be 'missing' in the sense that no actual source-code/tokens are
+// contained within it.
+export function nodeIsMissing(node: Node | undefined): boolean {
+    if (node === undefined) {
+        return true;
+    }
+
+    return node.pos === node.end && node.pos >= 0 && node.kind !== ts.SyntaxKind.EndOfFileToken;
+}
+
+/**
+ * Based heavily on the abstract 'Quote'/'QuoteJSONString' operation from ECMA-262 (24.3.2.2),
+ * but augmented for a few select characters (e.g. lineSeparator, paragraphSeparator, nextLine)
+ * Note that this doesn't actually wrap the input in double quotes.
+ */
+export function escapeString(s: string, quoteChar?: ts.CharacterCodes.doubleQuote | ts.CharacterCodes.singleQuote | ts.CharacterCodes.backtick): string {
+    const escapedCharsRegExp =
+        quoteChar === ts.CharacterCodes.backtick ? backtickQuoteEscapedCharsRegExp :
+            quoteChar === ts.CharacterCodes.singleQuote ? singleQuoteEscapedCharsRegExp :
+                doubleQuoteEscapedCharsRegExp;
+    return s.replace(escapedCharsRegExp, getReplacement);
+}
+
+function getReplacement(c: string, offset: number, input: string) {
+    if (c.charCodeAt(0) === ts.CharacterCodes.nullCharacter) {
+        const lookAhead = input.charCodeAt(offset + c.length);
+        if (lookAhead >= ts.CharacterCodes._0 && lookAhead <= ts.CharacterCodes._9) {
+            // If the null character is followed by digits, print as a hex escape to prevent the result from parsing as an octal (which is forbidden in strict mode)
+            return "\\x00";
+        }
+        // Otherwise, keep printing a literal \0 for the null character
+        return "\\0";
+    }
+    return escapedCharsMap.get(c) || get16BitUnicodeEscapeSequence(c.charCodeAt(0));
+}
+
+function get16BitUnicodeEscapeSequence(charCode: number): string {
+    const hexCharCode = charCode.toString(16).toUpperCase();
+    const paddedHexCode = ("0000" + hexCharCode).slice(-4);
+    return "\\u" + paddedHexCode;
+}
+
+// This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,
+// paragraphSeparator, and nextLine. The latter three are just desirable to suppress new lines in
+// the language service. These characters should be escaped when printing, and if any characters are added,
+// the map below must be updated. Note that this regexp *does not* include the 'delete' character.
+// There is no reason for this other than that JSON.stringify does not handle it either.
+const doubleQuoteEscapedCharsRegExp = /[\\\"\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
+const singleQuoteEscapedCharsRegExp = /[\\\'\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
+const backtickQuoteEscapedCharsRegExp = /[\\\`\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
+const escapedCharsMap = createMapFromTemplate({
+    "\t": "\\t",
+    "\v": "\\v",
+    "\f": "\\f",
+    "\b": "\\b",
+    "\r": "\\r",
+    "\n": "\\n",
+    "\\": "\\\\",
+    "\"": "\\\"",
+    "\'": "\\\'",
+    "\`": "\\\`",
+    "\u2028": "\\u2028", // lineSeparator
+    "\u2029": "\\u2029", // paragraphSeparator
+    "\u0085": "\\u0085"  // nextLine
+});
+
+const nonAsciiCharacters = /[^\u0000-\u007F]/g;
+export function escapeNonAsciiString(s: string, quoteChar?: ts.CharacterCodes.doubleQuote | ts.CharacterCodes.singleQuote | ts.CharacterCodes.backtick): string {
+    s = escapeString(s, quoteChar);
+    // Replace non-ASCII characters with '\uNNNN' escapes if any exist.
+    // Otherwise just return the original string.
+    return nonAsciiCharacters.test(s) ?
+        s.replace(nonAsciiCharacters, c => get16BitUnicodeEscapeSequence(c.charCodeAt(0))) :
+        s;
 }

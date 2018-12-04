@@ -6,3 +6,8 @@ export interface Ts2phpOptions {
         }
     }
 }
+
+export interface ErrorInfo {
+    code: number;
+    msg: string;
+}

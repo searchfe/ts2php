@@ -1,7 +1,3 @@
-import {
-    CharacterCodes,
-    KeywordSyntaxKind
-} from './types';
 import {Map, createMapFromTemplate, MapLike} from './core'
 import * as ts from 'typescript';
 
@@ -15,17 +11,17 @@ export function computeLineStarts(text: string): number[] {
         const ch = text.charCodeAt(pos);
         pos++;
         switch (ch) {
-            case CharacterCodes.carriageReturn:
-                if (text.charCodeAt(pos) === CharacterCodes.lineFeed) {
+            case ts.CharacterCodes.carriageReturn:
+                if (text.charCodeAt(pos) === ts.CharacterCodes.lineFeed) {
                     pos++;
                 }
                 // falls through
-            case CharacterCodes.lineFeed:
+            case ts.CharacterCodes.lineFeed:
                 result.push(lineStart);
                 lineStart = pos;
                 break;
             default:
-                if (ch > CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
+                if (ch > ts.CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
                     result.push(lineStart);
                     lineStart = pos;
                 }
@@ -35,6 +31,87 @@ export function computeLineStarts(text: string): number[] {
     result.push(lineStart);
     return result;
 }
+
+// export function skipTrivia(text: string, pos: number, stopAfterLineBreak?: boolean, stopAtComments = false): number {
+//     if (positionIsSynthesized(pos)) {
+//         return pos;
+//     }
+
+//     // Keep in sync with couldStartTrivia
+//     while (true) {
+//         const ch = text.charCodeAt(pos);
+//         switch (ch) {
+//             case CharacterCodes.carriageReturn:
+//                 if (text.charCodeAt(pos + 1) === CharacterCodes.lineFeed) {
+//                     pos++;
+//                 }
+//                 // falls through
+//             case CharacterCodes.lineFeed:
+//                 pos++;
+//                 if (stopAfterLineBreak) {
+//                     return pos;
+//                 }
+//                 continue;
+//             case CharacterCodes.tab:
+//             case CharacterCodes.verticalTab:
+//             case CharacterCodes.formFeed:
+//             case CharacterCodes.space:
+//                 pos++;
+//                 continue;
+//             case CharacterCodes.slash:
+//                 if (stopAtComments) {
+//                     break;
+//                 }
+//                 if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+//                     pos += 2;
+//                     while (pos < text.length) {
+//                         if (isLineBreak(text.charCodeAt(pos))) {
+//                             break;
+//                         }
+//                         pos++;
+//                     }
+//                     continue;
+//                 }
+//                 if (text.charCodeAt(pos + 1) === CharacterCodes.asterisk) {
+//                     pos += 2;
+//                     while (pos < text.length) {
+//                         if (text.charCodeAt(pos) === CharacterCodes.asterisk && text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+//                             pos += 2;
+//                             break;
+//                         }
+//                         pos++;
+//                     }
+//                     continue;
+//                 }
+//                 break;
+
+//             case CharacterCodes.lessThan:
+//             case CharacterCodes.bar:
+//             case CharacterCodes.equals:
+//             case CharacterCodes.greaterThan:
+//                 if (isConflictMarkerTrivia(text, pos)) {
+//                     pos = scanConflictMarkerTrivia(text, pos);
+//                     continue;
+//                 }
+//                 break;
+
+//             case CharacterCodes.hash:
+//                 if (pos === 0 && isShebangTrivia(text, pos)) {
+//                     pos = scanShebangTrivia(text, pos);
+//                     continue;
+//                 }
+//                 break;
+
+//             default:
+//                 if (ch > CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
+//                     pos++;
+//                     continue;
+//                 }
+//                 break;
+//         }
+//         return pos;
+//     }
+// }
 
 export function isLineBreak(ch: number): boolean {
     // ES5 7.3:
@@ -48,13 +125,13 @@ export function isLineBreak(ch: number): boolean {
     // Only the characters in Table 3 are treated as line terminators. Other new line or line
     // breaking characters are treated as white space but not as line terminators.
 
-    return ch === CharacterCodes.lineFeed ||
-        ch === CharacterCodes.carriageReturn ||
-        ch === CharacterCodes.lineSeparator ||
-        ch === CharacterCodes.paragraphSeparator;
+    return ch === ts.CharacterCodes.lineFeed ||
+        ch === ts.CharacterCodes.carriageReturn ||
+        ch === ts.CharacterCodes.lineSeparator ||
+        ch === ts.CharacterCodes.paragraphSeparator;
 }
 
-const textToKeywordObj: MapLike<KeywordSyntaxKind> = {
+const textToKeywordObj: MapLike<ts.KeywordSyntaxKind> = {
     abstract: SyntaxKind.AbstractKeyword,
     any: SyntaxKind.AnyKeyword,
     as: SyntaxKind.AsKeyword,

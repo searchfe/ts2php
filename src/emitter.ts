@@ -16,7 +16,8 @@ import {
     createTextWriter,
     nodeIsSynthesized,
     isIdentifier,
-    idText
+    idText,
+    getLiteralText
 } from './utilities';
 import * as os from 'os';
 import {noop} from './core';
@@ -30,9 +31,11 @@ let currentSourceFile: SourceFile;
 export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     const brackets = createBracketsMap();
     currentSourceFile = sourceFile;
-
     const writer = createTextWriter(os.EOL);
     writer.writeLine();
+
+    // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
+    let modulesMap = {};
     
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
@@ -75,11 +78,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     function emitWithHint(hint: ts.EmitHint, node: ts.Node) {
         if (hint === ts.EmitHint.Unspecified) {
             switch (node.kind) {
-                // // Pseudo-literals
-                // case SyntaxKind.TemplateHead:
-                // case SyntaxKind.TemplateMiddle:
-                // case SyntaxKind.TemplateTail:
-                //     return emitLiteral(<LiteralExpression>node);
+                // Pseudo-literals
+                case SyntaxKind.TemplateHead:
+                case SyntaxKind.TemplateMiddle:
+                case SyntaxKind.TemplateTail:
+                    return emitLiteral(<ts.LiteralExpression>node);
 
                 // case SyntaxKind.UnparsedSource:
                 //     return emitUnparsedSource(<UnparsedSource>node);
@@ -194,17 +197,17 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // case SyntaxKind.BindingElement:
                 //     return emitBindingElement(<BindingElement>node);
 
-                // // Misc
-                // case SyntaxKind.TemplateSpan:
-                //     return emitTemplateSpan(<TemplateSpan>node);
+                // Misc
+                case SyntaxKind.TemplateSpan:
+                    return emitTemplateSpan(<ts.TemplateSpan>node);
                 // case SyntaxKind.SemicolonClassElement:
                 //     return emitSemicolonClassElement();
 
                 // // Statements
                 // case SyntaxKind.Block:
                 //     return emitBlock(<Block>node);
-                // case SyntaxKind.VariableStatement:
-                //     return emitVariableStatement(<VariableStatement>node);
+                case SyntaxKind.VariableStatement:
+                    return emitVariableStatement(<ts.VariableStatement>node);
                 // case SyntaxKind.EmptyStatement:
                 //     return emitEmptyStatement();
                 case SyntaxKind.ExpressionStatement:
@@ -241,10 +244,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitDebuggerStatement(<DebuggerStatement>node);
 
                 // // Declarations
-                // case SyntaxKind.VariableDeclaration:
-                //     return emitVariableDeclaration(<VariableDeclaration>node);
-                // case SyntaxKind.VariableDeclarationList:
-                //     return emitVariableDeclarationList(<VariableDeclarationList>node);
+                case SyntaxKind.VariableDeclaration:
+                    return emitVariableDeclaration(<ts.VariableDeclaration>node);
+                case SyntaxKind.VariableDeclarationList:
+                    return emitVariableDeclarationList(<ts.VariableDeclarationList>node);
                 // case SyntaxKind.FunctionDeclaration:
                 //     return emitFunctionDeclaration(<FunctionDeclaration>node);
                 // case SyntaxKind.ClassDeclaration:
@@ -366,10 +369,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // case SyntaxKind.NumericLiteral:
                 //     return emitNumericLiteral(<NumericLiteral>node);
 
-                // case SyntaxKind.StringLiteral:
-                // case SyntaxKind.RegularExpressionLiteral:
-                // case SyntaxKind.NoSubstitutionTemplateLiteral:
-                //     return emitLiteral(<LiteralExpression>node);
+                case SyntaxKind.StringLiteral:
+                case SyntaxKind.RegularExpressionLiteral:
+                case SyntaxKind.NoSubstitutionTemplateLiteral:
+                    return emitLiteral(<ts.LiteralExpression>node);
 
                 // // Identifiers
                 case SyntaxKind.Identifier:
@@ -424,8 +427,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                     return emitBinaryExpression(<ts.BinaryExpression>node);
                 // case SyntaxKind.ConditionalExpression:
                 //     return emitConditionalExpression(<ConditionalExpression>node);
-                // case SyntaxKind.TemplateExpression:
-                //     return emitTemplateExpression(<TemplateExpression>node);
+                case SyntaxKind.TemplateExpression:
+                    return emitTemplateExpression(<ts.TemplateExpression>node);
                 // case SyntaxKind.YieldExpression:
                 //     return emitYieldExpression(<YieldExpression>node);
                 // case SyntaxKind.SpreadElement:
@@ -537,17 +540,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // SyntaxKind.TemplateHead
     // SyntaxKind.TemplateMiddle
     // SyntaxKind.TemplateTail
-    // function emitLiteral(node: ts.LiteralLikeNode) {
-    //     const text = getLiteralTextOfNode(node, printerOptions.neverAsciiEscape);
-    //     if ((printerOptions.sourceMap || printerOptions.inlineSourceMap)
-    //         && (node.kind === SyntaxKind.StringLiteral || isTemplateLiteralKind(node.kind))) {
-    //         writeLiteral(text);
-    //     }
-    //     else {
-    //         // Quick info expects all literals to be called with writeStringLiteral, as there's no specific type for numberLiterals
-    //         writeStringLiteral(text);
-    //     }
-    // }
+    function emitLiteral(node: ts.LiteralLikeNode) {
+        const text = getLiteralTextOfNode(node, false);
+        // Quick info expects all literals to be called with writeStringLiteral, as there's no specific type for numberLiterals
+        writeStringLiteral(text);
+    }
 
     // // SyntaxKind.UnparsedSource
     // function emitUnparsedSource(unparsed: UnparsedSource) {
@@ -560,7 +557,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
 
     function emitIdentifier(node: ts.Identifier) {
         const writeText = node.symbol ? writeSymbol : writeBase;
-        writeText(getTextOfNode(node, /*includeTrivia*/ false), node.symbol);
+        const nodeText = getTextOfNode(node, /*includeTrivia*/ false);
+        writeText(nodeText, node.symbol);
         // emitList(node, node.typeArguments, ListFormat.TypeParameters); // Call emitList directly since it could be an array of TypeParameterDeclarations _or_ type arguments
     }
 
@@ -1164,10 +1162,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     decreaseIndentIf(indentBeforeColon, indentAfterColon);
     // }
 
-    // function emitTemplateExpression(node: TemplateExpression) {
-    //     emit(node.head);
-    //     emitList(node, node.templateSpans, ListFormat.TemplateExpressionSpans);
-    // }
+    function emitTemplateExpression(node: ts.TemplateExpression) {
+        emit(node.head);
+        emitList(node, node.templateSpans, ts.ListFormat.TemplateExpressionSpans);
+    }
 
     // function emitYieldExpression(node: YieldExpression) {
     //     emitTokenWithComment(SyntaxKind.YieldKeyword, node.pos, writeKeyword, node);
@@ -1211,14 +1209,14 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emit(node.name);
     // }
 
-    // //
-    // // Misc
-    // //
+    //
+    // Misc
+    //
 
-    // function emitTemplateSpan(node: TemplateSpan) {
-    //     emitExpression(node.expression);
-    //     emit(node.literal);
-    // }
+    function emitTemplateSpan(node: ts.TemplateSpan) {
+        emitExpression(node.expression);
+        emit(node.literal);
+    }
 
     // //
     // // Statements
@@ -1235,11 +1233,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitTokenWithComment(SyntaxKind.CloseBraceToken, node.statements.end, writePunctuation, /*contextNode*/ node, /*indentLeading*/ !!(format & ListFormat.MultiLine));
     // }
 
-    // function emitVariableStatement(node: VariableStatement) {
-    //     emitModifiers(node, node.modifiers);
-    //     emit(node.declarationList);
-    //     writeSemicolon();
-    // }
+    function emitVariableStatement(node: ts.VariableStatement) {
+        // emitModifiers(node, node.modifiers);
+        emit(node.declarationList);
+        writeSemicolon();
+    }
 
     // function emitEmptyStatement() {
     //     writeSemicolon();
@@ -1360,29 +1358,19 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     writeSemicolon();
     // }
 
-    // function emitTokenWithComment(token: SyntaxKind, pos: number, writer: (s: string) => void, contextNode: Node, indentLeading?: boolean) {
-    //     const node = getParseTreeNode(contextNode);
-    //     const isSimilarNode = node && node.kind === contextNode.kind;
-    //     const startPos = pos;
-    //     if (isSimilarNode) {
-    //         pos = skipTrivia(currentSourceFile.text, pos);
-    //     }
-    //     if (emitLeadingCommentsOfPosition && isSimilarNode && contextNode.pos !== startPos) {
-    //         const needsIndent = indentLeading && !positionsAreOnSameLine(startPos, pos, currentSourceFile);
-    //         if (needsIndent) {
-    //             increaseIndent();
-    //         }
-    //         emitLeadingCommentsOfPosition(startPos);
-    //         if (needsIndent) {
-    //             decreaseIndent();
-    //         }
-    //     }
-    //     pos = writeTokenText(token, writer, pos);
-    //     if (emitTrailingCommentsOfPosition && isSimilarNode && contextNode.end !== pos) {
-    //         emitTrailingCommentsOfPosition(pos, /*prefixSpace*/ true);
-    //     }
-    //     return pos;
-    // }
+    function emitTokenWithComment(token: SyntaxKind, pos: number, writer: (s: string) => void, contextNode: Node, indentLeading?: boolean) {
+        // const node = getParseTreeNode(contextNode);
+        // const isSimilarNode = node && node.kind === contextNode.kind;
+        // const startPos = pos;
+        // if (isSimilarNode) {
+        //     pos = skipTrivia(currentSourceFile.text, pos);
+        // }
+        pos = writeTokenText(token, writer, pos);
+        // if (emitTrailingCommentsOfPosition && isSimilarNode && contextNode.end !== pos) {
+        //     emitTrailingCommentsOfPosition(pos, /*prefixSpace*/ true);
+        // }
+        return pos;
+    }
 
     // function emitReturnStatement(node: ReturnStatement) {
     //     emitTokenWithComment(SyntaxKind.ReturnKeyword, node.pos, writeKeyword, /*contextNode*/ node);
@@ -1447,17 +1435,18 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // // Declarations
     // //
 
-    // function emitVariableDeclaration(node: VariableDeclaration) {
-    //     emit(node.name);
-    //     emitTypeAnnotation(node.type);
-    //     emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
-    // }
+    function emitVariableDeclaration(node: ts.VariableDeclaration) {
+        if (node.name.kind === ts.SyntaxKind.Identifier) {
+            node.name.escapedText = <ts.__String>('$' + node.name.escapedText);
+        }
+        emit(node.name);
+        // emitTypeAnnotation(node.type);
+        emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
+    }
 
-    // function emitVariableDeclarationList(node: VariableDeclarationList) {
-    //     writeKeyword(isLet(node) ? "let" : isVarConst(node) ? "const" : "var");
-    //     writeSpace();
-    //     emitList(node, node.declarations, ListFormat.VariableDeclarationList);
-    // }
+    function emitVariableDeclarationList(node: ts.VariableDeclarationList) {
+        emitList(node, node.declarations, ts.ListFormat.VariableDeclarationList);
+    }
 
     // function emitFunctionDeclaration(node: FunctionDeclaration) {
     //     emitFunctionDeclarationOrExpression(node);
@@ -2348,29 +2337,29 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     write = savedWrite;
     // }
 
-    // function emitModifiers(node: Node, modifiers: NodeArray<Modifier> | undefined) {
-    //     if (modifiers && modifiers.length) {
-    //         emitList(node, modifiers, ListFormat.Modifiers);
-    //         writeSpace();
-    //     }
-    // }
+    function emitModifiers(node: Node, modifiers: ts.NodeArray<ts.Modifier> | undefined) {
+        if (modifiers && modifiers.length) {
+            emitList(node, modifiers, ts.ListFormat.Modifiers);
+            writeSpace();
+        }
+    }
 
-    // function emitTypeAnnotation(node: TypeNode | undefined) {
-    //     if (node) {
-    //         writePunctuation(":");
-    //         writeSpace();
-    //         emit(node);
-    //     }
-    // }
+    function emitTypeAnnotation(node: ts.TypeNode | undefined) {
+        if (node) {
+            writePunctuation(":");
+            writeSpace();
+            emit(node);
+        }
+    }
 
-    // function emitInitializer(node: Expression | undefined, equalCommentStartPos: number, container: Node) {
-    //     if (node) {
-    //         writeSpace();
-    //         emitTokenWithComment(SyntaxKind.EqualsToken, equalCommentStartPos, writeOperator, container);
-    //         writeSpace();
-    //         emitExpression(node);
-    //     }
-    // }
+    function emitInitializer(node: ts.Expression | undefined, equalCommentStartPos: number, container: Node) {
+        if (node) {
+            writeSpace();
+            emitTokenWithComment(SyntaxKind.EqualsToken, equalCommentStartPos, writeOperator, container);
+            writeSpace();
+            emitExpression(node);
+        }
+    }
 
     // function emitNodeWithPrefix(prefix: string, prefixWriter: (s: string) => void, node: Node, emit: (node: Node) => void) {
     //     if (node) {
@@ -2628,10 +2617,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     writer.writeLiteral(s);
     // }
 
-    // function writeStringLiteral(s: string) {
-    //     commitPendingSemicolon();
-    //     writer.writeStringLiteral(s);
-    // }
+    function writeStringLiteral(s: string) {
+        // commitPendingSemicolon();
+        writer.writeStringLiteral(s);
+    }
 
     function writeBase(s: string) {
         // commitPendingSemicolon();
@@ -2655,10 +2644,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         writer.writePunctuation(";");
     }
 
-    // function writeKeyword(s: string) {
-    //     commitPendingSemicolon();
-    //     writer.writeKeyword(s);
-    // }
+    function writeKeyword(s: string) {
+        // commitPendingSemicolon();
+        writer.writeKeyword(s);
+    }
 
     function writeOperator(s: string) {
         writer.writeOperator(s);
@@ -2713,13 +2702,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         writer(tokenToString(node.kind)!);
     }
 
-    // function writeTokenText(token: SyntaxKind, writer: (s: string) => void): void;
-    // function writeTokenText(token: SyntaxKind, writer: (s: string) => void, pos: number): number;
-    // function writeTokenText(token: SyntaxKind, writer: (s: string) => void, pos?: number): number {
-    //     const tokenString = tokenToString(token)!;
-    //     writer(tokenString);
-    //     return pos! < 0 ? pos! : pos! + tokenString.length;
-    // }
+    function writeTokenText(token: SyntaxKind, writer: (s: string) => void): void;
+    function writeTokenText(token: SyntaxKind, writer: (s: string) => void, pos: number): number;
+    function writeTokenText(token: SyntaxKind, writer: (s: string) => void, pos?: number): number {
+        const tokenString = tokenToString(token)!;
+        writer(tokenString);
+        return pos! < 0 ? pos! : pos! + tokenString.length;
+    }
 
     // function writeLineOrSpace(node: Node) {
     //     if (getEmitFlags(node) & EmitFlags.SingleLine) {
@@ -2895,21 +2884,21 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         // return getSourceTextOfNodeFromSourceFile(currentSourceFile, node, includeTrivia);
     }
 
-    // function getLiteralTextOfNode(node: ts.LiteralLikeNode, neverAsciiEscape: boolean | undefined): string {
-    //     // if (node.kind === SyntaxKind.StringLiteral && (<StringLiteral>node).textSourceNode) {
-    //     //     const textSourceNode = (<StringLiteral>node).textSourceNode!;
-    //     //     if (isIdentifier(textSourceNode)) {
-    //     //         return neverAsciiEscape || (getEmitFlags(node) & EmitFlags.NoAsciiEscaping) ?
-    //     //             `"${escapeString(getTextOfNode(textSourceNode))}"` :
-    //     //             `"${escapeNonAsciiString(getTextOfNode(textSourceNode))}"`;
-    //     //     }
-    //     //     else {
-    //     //         return getLiteralTextOfNode(textSourceNode, neverAsciiEscape);
-    //     //     }
-    //     // }
+    function getLiteralTextOfNode(node: ts.LiteralLikeNode, neverAsciiEscape: boolean | undefined): string {
+        // if (node.kind === SyntaxKind.StringLiteral && (<ts.StringLiteral>node).textSourceNode) {
+        //     const textSourceNode = (<ts.StringLiteral>node).textSourceNode!;
+        //     if (isIdentifier(textSourceNode)) {
+        //         return neverAsciiEscape || (getEmitFlags(node) & EmitFlags.NoAsciiEscaping) ?
+        //             `"${escapeString(getTextOfNode(textSourceNode))}"` :
+        //             `"${escapeNonAsciiString(getTextOfNode(textSourceNode))}"`;
+        //     }
+        //     else {
+        //         return getLiteralTextOfNode(textSourceNode, neverAsciiEscape);
+        //     }
+        // }
 
-    //     return getLiteralText(node, currentSourceFile, neverAsciiEscape);
-    // }
+        return getLiteralText(node, currentSourceFile, neverAsciiEscape);
+    }
 
     // /**
     //  * Push a new name generation scope.
