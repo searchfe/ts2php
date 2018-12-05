@@ -28,11 +28,12 @@ import {noop} from './core';
 import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {Ts2phpOptions, ErrorInfo} from './types';
+import {options as globalOptions, errors} from './globals';
 
 let currentSourceFile: SourceFile;
 
 
-export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker, globalOptions: Ts2phpOptions, errors: ErrorInfo[]) {
+export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     const brackets = createBracketsMap();
     currentSourceFile = sourceFile;
     const writer = createTextWriter(os.EOL);

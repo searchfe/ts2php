@@ -47,6 +47,7 @@ describe('features', () => {
             });
             fs.writeFileSync(path.resolve(__dirname, '../output/' + featureName + '.php'), res.phpCode);
             assert.equal(res.phpCode, phpContent);
+            assert.equal(res.errors.length, 0);
         });
     }
 });
