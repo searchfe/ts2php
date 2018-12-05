@@ -709,3 +709,27 @@ export function isJSDocCallbackTag(node: Node): node is ts.JSDocCallbackTag {
 export function isJSDocSignature(node: Node): node is ts.JSDocSignature {
     return node.kind === SyntaxKind.JSDocSignature;
 }
+
+
+const shouldAddDollerParentList = new Set([
+    ts.SyntaxKind.VariableDeclaration,
+    ts.SyntaxKind.TemplateSpan
+]);
+/**
+ * 判断输出 identier 时，是否需要加 $ 符号
+ * @param node 节点
+ */
+export function shouldAddDollar(node: Node): boolean {
+    // 可以直接通过父元素判断
+    if (shouldAddDollerParentList.has(node.parent.kind)) {
+        return true;
+    }
+    
+    // PropertyAccessExpression
+    if (node.parent.kind === ts.SyntaxKind.PropertyAccessExpression
+        && (<ts.PropertyAccessExpression>node.parent).expression === node) {
+        return true;
+    }
+
+    return false;
+}

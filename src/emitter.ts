@@ -17,8 +17,12 @@ import {
     nodeIsSynthesized,
     isIdentifier,
     idText,
-    getLiteralText
+    getLiteralText,
 } from './utilities';
+import {
+    shouldAddDollar,
+    isImportSpecifier
+} from './utilities/nodeTest';
 import * as os from 'os';
 import {noop} from './core';
 import {options as globalOptions, errors} from './globals';
@@ -35,14 +39,15 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     writer.writeLine();
 
     // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
-    let modulesMap = {};
+    // 调用函数的时候，需要转换成类方法
+    const varModuleMap = {};
+
     
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
         console.log(writer.getText());
     });
-
     return writer.getText();
     
 
@@ -269,13 +274,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // case SyntaxKind.ImportEqualsDeclaration:
                 //     return emitImportEqualsDeclaration(<ImportEqualsDeclaration>node);
                 case SyntaxKind.ImportDeclaration:
-                    return emitImportDeclaration(<ImportDeclaration>node);
-                // case SyntaxKind.ImportClause:
-                //     return emitImportClause(<ImportClause>node);
+                    return emitImportDeclaration(<ts.ImportDeclaration>node);
+                case SyntaxKind.ImportClause:
+                    return emitImportClause(<ts.ImportClause>node);
                 // case SyntaxKind.NamespaceImport:
                 //     return emitNamespaceImport(<NamespaceImport>node);
-                // case SyntaxKind.NamedImports:
-                //     return emitNamedImports(<NamedImports>node);
+                case SyntaxKind.NamedImports:
+                    return emitNamedImports(<ts.NamedImports>node);
                 // case SyntaxKind.ImportSpecifier:
                 //     return emitImportSpecifier(<ImportSpecifier>node);
                 // case SyntaxKind.ExportAssignment:
@@ -541,7 +546,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // SyntaxKind.TemplateMiddle
     // SyntaxKind.TemplateTail
     function emitLiteral(node: ts.LiteralLikeNode) {
-        const text = getLiteralTextOfNode(node, false);
+        const text = getLiteralTextOfNode(node, true);
         // Quick info expects all literals to be called with writeStringLiteral, as there's no specific type for numberLiterals
         writeStringLiteral(text);
     }
@@ -1138,7 +1143,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
 
     function emitBinaryExpression(node: ts.BinaryExpression) {
         emitWithHint(ts.EmitHint.Expression, node.left);
+        writeSpace();
         writeTokenNode(node.operatorToken, writeOperator, node.left, node.right);
+        writeSpace();
         emitWithHint(ts.EmitHint.Expression, node.right);
     }
 
@@ -1214,6 +1221,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //
 
     function emitTemplateSpan(node: ts.TemplateSpan) {
+        writeSpace();
         emitExpression(node.expression);
         emit(node.literal);
     }
@@ -1436,9 +1444,6 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // //
 
     function emitVariableDeclaration(node: ts.VariableDeclaration) {
-        if (node.name.kind === ts.SyntaxKind.Identifier) {
-            node.name.escapedText = <ts.__String>('$' + node.name.escapedText);
-        }
         emit(node.name);
         // emitTypeAnnotation(node.type);
         emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
@@ -1715,7 +1720,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    function emitImportDeclaration(node: ImportDeclaration) {
+    function emitImportDeclaration(node: ts.ImportDeclaration) {
         // 暂时先不支持模块化，只允许用户引入 atomWiseUtils 库，方便在开发时有代码补全提示
         if (!node.moduleSpecifier || !node.moduleSpecifier.getText) {
             errors.push({
@@ -1723,8 +1728,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 msg: '模块引入出错'
             });
         }
+
         const allowedModules = globalOptions.modules;
-        const importModuleName = node.moduleSpecifier.getText().replace(/'|"/g, '');
+        const importModuleName = getImportModuleName(node);
         if (!allowedModules[importModuleName]) {
             errors.push({
                 code: 100,
@@ -1732,18 +1738,25 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             });
         }
 
-        writer.write(`require_once(${allowedModules[importModuleName].path})`);
-        writeSemicolon();
+        // 不需要 write，但需要将引入的变量跟 module 对应起来
+        if (node.importClause) {
+            emit(node.importClause);
+        }
+
+        if (allowedModules[importModuleName].path) {
+            writer.write(`require_once(${allowedModules[importModuleName].path})`);
+            writeSemicolon();
+        }
     }
 
-    // function emitImportClause(node: ImportClause) {
-    //     emit(node.name);
-    //     if (node.name && node.namedBindings) {
-    //         emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
-    //         writeSpace();
-    //     }
-    //     emit(node.namedBindings);
-    // }
+    function emitImportClause(node: ts.ImportClause) {
+        // emit(node.name);
+        // if (node.name && node.namedBindings) {
+        //     emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
+        //     writeSpace();
+        // }
+        emit(node.namedBindings);
+    }
 
     // function emitNamespaceImport(node: NamespaceImport) {
     //     const asPos = emitTokenWithComment(SyntaxKind.AsteriskToken, node.pos, writePunctuation, node);
@@ -1753,9 +1766,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emit(node.name);
     // }
 
-    // function emitNamedImports(node: NamedImports) {
-    //     emitNamedImportsOrExports(node);
-    // }
+    function emitNamedImports(node: ts.NamedImports) {
+        node.forEachChild(child => {
+            const name = getTextOfNode(child);
+            const moduleName = getImportModuleName(node.parent.parent);
+            varModuleMap[name] = moduleName;
+        });
+    }
 
     // function emitImportSpecifier(node: ImportSpecifier) {
     //     emitImportOrExportSpecifier(node);
@@ -1813,9 +1830,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitImportOrExportSpecifier(node);
     // }
 
-    // function emitNamedImportsOrExports(node: NamedImportsOrExports) {
+    // function emitNamedImportsOrExports(node: ts.NamedImportsOrExports) {
     //     writePunctuation("{");
-    //     emitList(node, node.elements, ListFormat.NamedImportsOrExportsElements);
+    //     emitList(node, node.elements, ts.ListFormat.NamedImportsOrExportsElements);
     //     writePunctuation("}");
     // }
 
@@ -2872,7 +2889,27 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         //     return idText(node);
         // }
         if (isIdentifier(node)) {
+            const name = (<ts.Identifier>node).escapedText as string;
+
+            // 需要加 $
+            if (shouldAddDollar(node)) {
+                (<ts.Identifier>node).escapedText = <ts.__String>('$' + name);
+            }
+            
+            // 是从模块中引入的
+            if (varModuleMap[name]) {
+                const moduleName = varModuleMap[name];
+                const className = globalOptions.modules[moduleName].className;
+                if (className) {
+                    (<ts.Identifier>node).escapedText = <ts.__String>(className + '::' + (<ts.Identifier>node).escapedText);
+                }
+            }
+
             return idText(<ts.Identifier>node);
+        }
+
+        if (isImportSpecifier(node)) {
+            return (node.name.escapedText as string);
         }
         // else if (node.kind === SyntaxKind.StringLiteral && (<ts.StringLiteral>node).textSourceNode) {
         //     return getTextOfNode((<ts.StringLiteral>node).textSourceNode!, includeTrivia);
@@ -2882,6 +2919,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         // }
 
         // return getSourceTextOfNodeFromSourceFile(currentSourceFile, node, includeTrivia);
+        return '';
     }
 
     function getLiteralTextOfNode(node: ts.LiteralLikeNode, neverAsciiEscape: boolean | undefined): string {
@@ -2898,6 +2936,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         // }
 
         return getLiteralText(node, currentSourceFile, neverAsciiEscape);
+    }
+
+    function getImportModuleName(node: ts.ImportDeclaration) {
+        return node.moduleSpecifier.getText().replace(/'|"/g, '');
     }
 
     // /**

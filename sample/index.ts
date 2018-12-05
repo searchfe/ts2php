@@ -1,4 +1,5 @@
-import {makeTcLink, tplData} from './atomWiseUtils';
+import {makeTcLink} from './atomWiseUtils';
+import {tplData} from './tplData';
 
 const b = '123';
 

@@ -33,6 +33,10 @@ ts2php(path.resolve(__dirname, '../sample/index.ts'), {
         './atomWiseUtils': {
             path: './path/to/utils.php',
             className: 'Atom_Wise_Utils'
+        },
+        './tplData': {
+            path: '',
+            className: ''
         }
     }
 });

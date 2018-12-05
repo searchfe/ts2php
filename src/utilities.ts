@@ -177,15 +177,15 @@ export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFi
                 return '"' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '"';
             }
         case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
-            return "`" + escapeText(node.text, ts.CharacterCodes.backtick) + "`";
+            return "`" + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + "`";
         case ts.SyntaxKind.TemplateHead:
             // tslint:disable-next-line no-invalid-template-strings
-            return '"' + escapeText(node.text, ts.CharacterCodes.backtick) + '" ' + ".";
+            return '"' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '" ' + ".";
         case ts.SyntaxKind.TemplateMiddle:
             // tslint:disable-next-line no-invalid-template-strings
-            return '"' + escapeText(node.text, ts.CharacterCodes.backtick) + '" .';
+            return '"' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '"';
         case ts.SyntaxKind.TemplateTail:
-            return '"' + escapeText(node.text, ts.CharacterCodes.backtick) + '"';
+            return ' . "' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '"';
         case ts.SyntaxKind.NumericLiteral:
         case ts.SyntaxKind.RegularExpressionLiteral:
             return node.text;
