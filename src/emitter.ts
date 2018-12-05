@@ -25,24 +25,25 @@ import {
 } from './utilities/nodeTest';
 import * as os from 'os';
 import {noop} from './core';
-import {options as globalOptions, errors} from './globals';
 import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
+import {Ts2phpOptions, ErrorInfo} from './types';
 
 let currentSourceFile: SourceFile;
 
 
-export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
+export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker, globalOptions: Ts2phpOptions, errors: ErrorInfo[]) {
     const brackets = createBracketsMap();
     currentSourceFile = sourceFile;
     const writer = createTextWriter(os.EOL);
     writer.writeLine();
+    
 
     // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
     // 调用函数的时候，需要转换成类方法
     const varModuleMap = {};
 
-    
+    writer.write('<?php\n');
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
@@ -1744,7 +1745,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         }
 
         if (allowedModules[importModuleName].path) {
-            writer.write(`require_once(${allowedModules[importModuleName].path})`);
+            writer.write(`require_once("${allowedModules[importModuleName].path}")`);
             writeSemicolon();
         }
     }
