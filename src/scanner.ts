@@ -1,5 +1,14 @@
-import {Map, createMapFromTemplate, MapLike} from './core'
+import {
+    Map,
+    createMapFromTemplate,
+    MapLike,
+    identity,
+    compareValues,
+    binarySearch
+} from './core'
+import {positionIsSynthesized} from './utilities';
 import * as ts from 'typescript';
+import {errors} from './globals';
 
 import {SyntaxKind} from 'typescript';
 
@@ -32,86 +41,174 @@ export function computeLineStarts(text: string): number[] {
     return result;
 }
 
-// export function skipTrivia(text: string, pos: number, stopAfterLineBreak?: boolean, stopAtComments = false): number {
-//     if (positionIsSynthesized(pos)) {
-//         return pos;
-//     }
+export function skipTrivia(text: string, pos: number, stopAfterLineBreak?: boolean, stopAtComments = false): number {
+    if (positionIsSynthesized(pos)) {
+        return pos;
+    }
 
-//     // Keep in sync with couldStartTrivia
-//     while (true) {
-//         const ch = text.charCodeAt(pos);
-//         switch (ch) {
-//             case CharacterCodes.carriageReturn:
-//                 if (text.charCodeAt(pos + 1) === CharacterCodes.lineFeed) {
-//                     pos++;
-//                 }
-//                 // falls through
-//             case CharacterCodes.lineFeed:
-//                 pos++;
-//                 if (stopAfterLineBreak) {
-//                     return pos;
-//                 }
-//                 continue;
-//             case CharacterCodes.tab:
-//             case CharacterCodes.verticalTab:
-//             case CharacterCodes.formFeed:
-//             case CharacterCodes.space:
-//                 pos++;
-//                 continue;
-//             case CharacterCodes.slash:
-//                 if (stopAtComments) {
-//                     break;
-//                 }
-//                 if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
-//                     pos += 2;
-//                     while (pos < text.length) {
-//                         if (isLineBreak(text.charCodeAt(pos))) {
-//                             break;
-//                         }
-//                         pos++;
-//                     }
-//                     continue;
-//                 }
-//                 if (text.charCodeAt(pos + 1) === CharacterCodes.asterisk) {
-//                     pos += 2;
-//                     while (pos < text.length) {
-//                         if (text.charCodeAt(pos) === CharacterCodes.asterisk && text.charCodeAt(pos + 1) === CharacterCodes.slash) {
-//                             pos += 2;
-//                             break;
-//                         }
-//                         pos++;
-//                     }
-//                     continue;
-//                 }
-//                 break;
+    // Keep in sync with couldStartTrivia
+    while (true) {
+        const ch = text.charCodeAt(pos);
+        switch (ch) {
+            case ts.CharacterCodes.carriageReturn:
+                if (text.charCodeAt(pos + 1) === ts.CharacterCodes.lineFeed) {
+                    pos++;
+                }
+                // falls through
+            case ts.CharacterCodes.lineFeed:
+                pos++;
+                if (stopAfterLineBreak) {
+                    return pos;
+                }
+                continue;
+            case ts.CharacterCodes.tab:
+            case ts.CharacterCodes.verticalTab:
+            case ts.CharacterCodes.formFeed:
+            case ts.CharacterCodes.space:
+                pos++;
+                continue;
+            case ts.CharacterCodes.slash:
+                if (stopAtComments) {
+                    break;
+                }
+                if (text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
+                    pos += 2;
+                    while (pos < text.length) {
+                        if (isLineBreak(text.charCodeAt(pos))) {
+                            break;
+                        }
+                        pos++;
+                    }
+                    continue;
+                }
+                if (text.charCodeAt(pos + 1) === ts.CharacterCodes.asterisk) {
+                    pos += 2;
+                    while (pos < text.length) {
+                        if (text.charCodeAt(pos) === ts.CharacterCodes.asterisk && text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
+                            pos += 2;
+                            break;
+                        }
+                        pos++;
+                    }
+                    continue;
+                }
+                break;
 
-//             case CharacterCodes.lessThan:
-//             case CharacterCodes.bar:
-//             case CharacterCodes.equals:
-//             case CharacterCodes.greaterThan:
-//                 if (isConflictMarkerTrivia(text, pos)) {
-//                     pos = scanConflictMarkerTrivia(text, pos);
-//                     continue;
-//                 }
-//                 break;
+            case ts.CharacterCodes.lessThan:
+            case ts.CharacterCodes.bar:
+            case ts.CharacterCodes.equals:
+            case ts.CharacterCodes.greaterThan:
+                if (isConflictMarkerTrivia(text, pos)) {
+                    pos = scanConflictMarkerTrivia(text, pos);
+                    continue;
+                }
+                break;
 
-//             case CharacterCodes.hash:
-//                 if (pos === 0 && isShebangTrivia(text, pos)) {
-//                     pos = scanShebangTrivia(text, pos);
-//                     continue;
-//                 }
-//                 break;
+            case ts.CharacterCodes.hash:
+                if (pos === 0 && isShebangTrivia(text, pos)) {
+                    pos = scanShebangTrivia(text, pos);
+                    continue;
+                }
+                break;
 
-//             default:
-//                 if (ch > CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
-//                     pos++;
-//                     continue;
-//                 }
-//                 break;
-//         }
-//         return pos;
-//     }
-// }
+            default:
+                if (ch > ts.CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
+                    pos++;
+                    continue;
+                }
+                break;
+        }
+        return pos;
+    }
+}
+
+/** Does not include line breaks. For that, see isWhiteSpaceLike. */
+export function isWhiteSpaceSingleLine(ch: number): boolean {
+    // Note: nextLine is in the Zs space, and should be considered to be a whitespace.
+    // It is explicitly not a line-break as it isn't in the exact set specified by EcmaScript.
+    return ch === ts.CharacterCodes.space ||
+        ch === ts.CharacterCodes.tab ||
+        ch === ts.CharacterCodes.verticalTab ||
+        ch === ts.CharacterCodes.formFeed ||
+        ch === ts.CharacterCodes.nonBreakingSpace ||
+        ch === ts.CharacterCodes.nextLine ||
+        ch === ts.CharacterCodes.ogham ||
+        ch >= ts.CharacterCodes.enQuad && ch <= ts.CharacterCodes.zeroWidthSpace ||
+        ch === ts.CharacterCodes.narrowNoBreakSpace ||
+        ch === ts.CharacterCodes.mathematicalSpace ||
+        ch === ts.CharacterCodes.ideographicSpace ||
+        ch === ts.CharacterCodes.byteOrderMark;
+}
+
+export function isWhiteSpaceLike(ch: number): boolean {
+    return isWhiteSpaceSingleLine(ch) || isLineBreak(ch);
+}
+
+const shebangTriviaRegex = /^#!.*/;
+function isShebangTrivia(text: string, pos: number) {
+    // Shebangs check must only be done at the start of the file
+    return shebangTriviaRegex.test(text);
+}
+
+function scanShebangTrivia(text: string, pos: number) {
+    const shebang = shebangTriviaRegex.exec(text)![0];
+    pos = pos + shebang.length;
+    return pos;
+}
+
+function scanConflictMarkerTrivia(text: string, pos: number, error?: (diag: ts.DiagnosticMessage, pos?: number, len?: number) => void) {
+    if (error) {
+        errors.push({
+            code: 1,
+            msg: 'Merge_conflict_marker_encountered' + pos + mergeConflictMarkerLength
+        });
+    }
+
+    const ch = text.charCodeAt(pos);
+    const len = text.length;
+
+    if (ch === ts.CharacterCodes.lessThan || ch === ts.CharacterCodes.greaterThan) {
+        while (pos < len && !isLineBreak(text.charCodeAt(pos))) {
+            pos++;
+        }
+    }
+    else {
+        // Consume everything from the start of a ||||||| or ======= marker to the start
+        // of the next ======= or >>>>>>> marker.
+        while (pos < len) {
+            const currentChar = text.charCodeAt(pos);
+            if ((currentChar === ts.CharacterCodes.equals || currentChar === ts.CharacterCodes.greaterThan) && currentChar !== ch && isConflictMarkerTrivia(text, pos)) {
+                break;
+            }
+
+            pos++;
+        }
+    }
+
+    return pos;
+}
+
+const mergeConflictMarkerLength = "<<<<<<<".length;
+function isConflictMarkerTrivia(text: string, pos: number) {
+
+    // Conflict markers must be at the start of a line.
+    if (pos === 0 || isLineBreak(text.charCodeAt(pos - 1))) {
+        const ch = text.charCodeAt(pos);
+
+        if ((pos + mergeConflictMarkerLength) < text.length) {
+            for (let i = 0; i < mergeConflictMarkerLength; i++) {
+                if (text.charCodeAt(pos + i) !== ch) {
+                    return false;
+                }
+            }
+
+            return ch === ts.CharacterCodes.equals ||
+                text.charCodeAt(pos + mergeConflictMarkerLength) === ts.CharacterCodes.space;
+        }
+    }
+
+    return false;
+}
 
 export function isLineBreak(ch: number): boolean {
     // ES5 7.3:
@@ -278,4 +375,36 @@ const tokenStrings = makeReverseMap(textToToken);
 
 export function tokenToString(t: SyntaxKind): string | undefined {
     return tokenStrings[t];
+}
+
+export function computeLineAndCharacterOfPosition(lineStarts: ReadonlyArray<number>, position: number): ts.LineAndCharacter {
+    let lineNumber = binarySearch(lineStarts, position, identity, compareValues);
+    if (lineNumber < 0) {
+        // If the actual position was not found,
+        // the binary search returns the 2's-complement of the next line start
+        // e.g. if the line starts at [5, 10, 23, 80] and the position requested was 20
+        // then the search will return -2.
+        //
+        // We want the index of the previous line start, so we subtract 1.
+        // Review 2's-complement if this is confusing.
+        lineNumber = ~lineNumber - 1;
+        if (lineNumber === -1) {
+            errors.push({
+                code: 1,
+                msg: "position cannot precede the beginning of the file"
+            });
+        }
+    }
+    return {
+        line: lineNumber,
+        character: position - lineStarts[lineNumber]
+    };
+}
+
+export function getLineAndCharacterOfPosition(sourceFile: ts.SourceFileLike, position: number): ts.LineAndCharacter {
+    return computeLineAndCharacterOfPosition(getLineStarts(sourceFile), position);
+}
+
+export function getLineStarts(sourceFile: ts.SourceFileLike): ReadonlyArray<number> {
+    return sourceFile.lineMap || (sourceFile.lineMap = computeLineStarts(sourceFile.text));
 }

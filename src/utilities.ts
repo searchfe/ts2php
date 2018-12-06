@@ -4,7 +4,9 @@
  */
 
 import {
-    computeLineStarts
+    computeLineStarts,
+    skipTrivia,
+    getLineAndCharacterOfPosition
 } from './scanner';
 import {
     last,
@@ -233,10 +235,19 @@ export function unescapeLeadingUnderscores(identifier: ts.__String): string {
 //     return positionIsSynthesized(range.pos) ? -1 : skipTrivia(sourceFile.text, range.pos);
 // }
 
-// export function positionsAreOnSameLine(pos1: number, pos2: number, sourceFile: SourceFile) {
-//     return pos1 === pos2 ||
-//         getLineOfLocalPosition(sourceFile, pos1) === getLineOfLocalPosition(sourceFile, pos2);
-// }
+export function positionsAreOnSameLine(pos1: number, pos2: number, sourceFile: ts.SourceFile) {
+    return pos1 === pos2 ||
+        getLineOfLocalPosition(sourceFile, pos1) === getLineOfLocalPosition(sourceFile, pos2);
+}
+export function rangeEndIsOnSameLineAsRangeStart(range1: ts.TextRange, range2: ts.TextRange, sourceFile: ts.SourceFile) {
+    return positionsAreOnSameLine(range1.end, getStartPositionOfRange(range2, sourceFile), sourceFile);
+}
+export function getLineOfLocalPosition(currentSourceFile: ts.SourceFile, pos: number) {
+    return getLineAndCharacterOfPosition(currentSourceFile, pos).line;
+}
+export function getStartPositionOfRange(range: ts.TextRange, sourceFile: ts.SourceFile) {
+    return positionIsSynthesized(range.pos) ? -1 : skipTrivia(sourceFile.text, range.pos);
+}
 
 export function isGeneratedIdentifier(node: ts.Node) {
     return isIdentifier(node) && ((<ts.Identifier>node).autoGenerateFlags! & ts.GeneratedIdentifierFlags.KindMask) > ts.GeneratedIdentifierFlags.None;
@@ -244,6 +255,34 @@ export function isGeneratedIdentifier(node: ts.Node) {
 
 export function isIdentifier(node: ts.Node) {
     return node.kind === ts.SyntaxKind.Identifier;
+}
+
+// Binding patterns
+
+/* @internal */
+export function isBindingPattern(node: Node | undefined): node is ts.BindingPattern {
+    if (node) {
+        const kind = node.kind;
+        return kind === ts.SyntaxKind.ArrayBindingPattern
+            || kind === ts.SyntaxKind.ObjectBindingPattern;
+    }
+
+    return false;
+}
+
+/* @internal */
+export function isAssignmentPattern(node: Node): node is ts.AssignmentPattern {
+    const kind = node.kind;
+    return kind === ts.SyntaxKind.ArrayLiteralExpression
+        || kind === ts.SyntaxKind.ObjectLiteralExpression;
+}
+
+
+/* @internal */
+export function isArrayBindingElement(node: Node): node is ts.ArrayBindingElement {
+    const kind = node.kind;
+    return kind === ts.SyntaxKind.BindingElement
+        || kind === ts.SyntaxKind.OmittedExpression;
 }
 
 // export function getSourceTextOfNodeFromSourceFile(sourceFile: ts.SourceFile, node: Node, includeTrivia = false): string {

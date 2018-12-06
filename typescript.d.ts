@@ -891,6 +891,9 @@ declare namespace ts {
     interface TransientIdentifier extends Identifier {
         resolvedSymbol: Symbol;
     }
+    interface GeneratedIdentifier extends Identifier {
+        autoGenerateFlags: GeneratedIdentifierFlags;
+    }
     interface QualifiedName extends Node {
         kind: SyntaxKind.QualifiedName;
         left: EntityName;
@@ -1419,6 +1422,7 @@ declare namespace ts {
     }
     interface ObjectLiteralExpression extends ObjectLiteralExpressionBase<ObjectLiteralElementLike> {
         kind: SyntaxKind.ObjectLiteralExpression;
+        multiLine?: boolean;
     }
     type EntityNameExpression = Identifier | PropertyAccessEntityNameExpression;
     type EntityNameOrEntityNameExpression = EntityName | EntityNameExpression;

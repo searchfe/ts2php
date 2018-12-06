@@ -734,3 +734,27 @@ export function shouldAddDollar(node: Node): boolean {
 
     return false;
 }
+
+export function shouldAddDoubleQuote(node: Node): boolean {
+    if (node.parent.kind === ts.SyntaxKind.PropertyAssignment
+        && (<ts.PropertyAssignment>node.parent).name === node) {
+        return true;
+    }
+    
+    return false;
+}
+
+
+const baseArrayBrackets = ["array(", ")"];
+const newLineArrayBrackets = ["array(\n", "\n)"];
+const arrayBracketsMap = {
+    [ts.ListFormat.ObjectLiteralExpressionProperties]: baseArrayBrackets,
+    [ts.ListFormat.ObjectLiteralExpressionProperties | ts.ListFormat.PreferNewLine]: newLineArrayBrackets
+};
+/**
+ * 判断是否需要转换成 array()
+ * @param format list format
+ */
+export function shouldUseArray(format: ts.ListFormat) {
+    return arrayBracketsMap[format] || '';
+}

@@ -6,7 +6,6 @@
 import * as ts from 'typescript';
 import {
     SyntaxKind,
-    ImportDeclaration,
     TypeFlags,
     SourceFile,
     Symbol,
@@ -16,15 +15,21 @@ import {
     createTextWriter,
     nodeIsSynthesized,
     isIdentifier,
+    isGeneratedIdentifier,
+    isBindingPattern,
     idText,
     getLiteralText,
+    getEmitFlags,
+    rangeEndIsOnSameLineAsRangeStart
 } from './utilities';
 import {
     shouldAddDollar,
-    isImportSpecifier
+    isImportSpecifier,
+    shouldUseArray,
+    shouldAddDoubleQuote
 } from './utilities/nodeTest';
 import * as os from 'os';
-import {noop} from './core';
+import {forEach} from './core';
 import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {Ts2phpOptions, ErrorInfo} from './types';
@@ -70,11 +75,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function getOpeningBracket(format: ts.ListFormat) {
-        return brackets[format & ts.ListFormat.BracketsMask][0];
+        return (shouldUseArray(format) && shouldUseArray(format)[0]) || brackets[format & ts.ListFormat.BracketsMask][0];
     }
 
     function getClosingBracket(format: ts.ListFormat) {
-        return brackets[format & ts.ListFormat.BracketsMask][1];
+        return (shouldUseArray(format) && shouldUseArray(format)[1]) || brackets[format & ts.ListFormat.BracketsMask][1];
     }
 
     function emitExpression(node: ts.Expression | undefined) {
@@ -329,8 +334,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitCatchClause(<CatchClause>node);
 
                 // // Property assignments
-                // case SyntaxKind.PropertyAssignment:
-                //     return emitPropertyAssignment(<PropertyAssignment>node);
+                case SyntaxKind.PropertyAssignment:
+                    return emitPropertyAssignment(<ts.PropertyAssignment>node);
                 // case SyntaxKind.ShorthandPropertyAssignment:
                 //     return emitShorthandPropertyAssignment(<ShorthandPropertyAssignment>node);
                 // case SyntaxKind.SpreadAssignment:
@@ -398,8 +403,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // // Expressions
                 // case SyntaxKind.ArrayLiteralExpression:
                 //     return emitArrayLiteralExpression(<ArrayLiteralExpression>node);
-                // case SyntaxKind.ObjectLiteralExpression:
-                //     return emitObjectLiteralExpression(<ObjectLiteralExpression>node);
+                case SyntaxKind.ObjectLiteralExpression:
+                    return emitObjectLiteralExpression(<ts.ObjectLiteralExpression>node);
                 case SyntaxKind.PropertyAccessExpression:
                     return emitPropertyAccessExpression(<ts.PropertyAccessExpression>node);
                 case SyntaxKind.ElementAccessExpression:
@@ -984,22 +989,22 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitExpressionList(node, elements, ListFormat.ArrayLiteralExpressionElements | preferNewLine);
     // }
 
-    // function emitObjectLiteralExpression(node: ObjectLiteralExpression) {
-    //     forEach(node.properties, generateMemberNames);
+    function emitObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
+        // forEach(node.properties, generateMemberNames);
+        // const indentedFlag = getEmitFlags(node) & ts.EmitFlags.Indented;
+        // if (indentedFlag) {
+        //     increaseIndent();
+        // }
 
-    //     const indentedFlag = getEmitFlags(node) & EmitFlags.Indented;
-    //     if (indentedFlag) {
-    //         increaseIndent();
-    //     }
+        const preferNewLine = node.multiLine ? ts.ListFormat.PreferNewLine : ts.ListFormat.None;
+        // const allowTrailingComma = currentSourceFile.languageVersion >= ScriptTarget.ES5 && !isJsonSourceFile(currentSourceFile) ? ListFormat.AllowTrailingComma : ListFormat.None;
+        const allowTrailingComma = ts.ListFormat.None;
+        emitList(node, node.properties, ts.ListFormat.ObjectLiteralExpressionProperties | allowTrailingComma | preferNewLine);
 
-    //     const preferNewLine = node.multiLine ? ListFormat.PreferNewLine : ListFormat.None;
-    //     const allowTrailingComma = currentSourceFile.languageVersion >= ScriptTarget.ES5 && !isJsonSourceFile(currentSourceFile) ? ListFormat.AllowTrailingComma : ListFormat.None;
-    //     emitList(node, node.properties, ListFormat.ObjectLiteralExpressionProperties | allowTrailingComma | preferNewLine);
-
-    //     if (indentedFlag) {
-    //         decreaseIndent();
-    //     }
-    // }
+        // if (indentedFlag) {
+        //     decreaseIndent();
+        // }
+    }
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
         emitWithHint(ts.EmitHint.Expression, node.expression);
@@ -2006,24 +2011,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // // Property assignments
     // //
 
-    // function emitPropertyAssignment(node: PropertyAssignment) {
-    //     emit(node.name);
-    //     writePunctuation(":");
-    //     writeSpace();
-    //     // This is to ensure that we emit comment in the following case:
-    //     //      For example:
-    //     //          obj = {
-    //     //              id: /*comment1*/ ()=>void
-    //     //          }
-    //     // "comment1" is not considered to be leading comment for node.initializer
-    //     // but rather a trailing comment on the previous node.
-    //     const initializer = node.initializer;
-    //     if (emitTrailingCommentsOfPosition && (getEmitFlags(initializer) & EmitFlags.NoLeadingComments) === 0) {
-    //         const commentRange = getCommentRange(initializer);
-    //         emitTrailingCommentsOfPosition(commentRange.pos);
-    //     }
-    //     emitExpression(initializer);
-    // }
+    function emitPropertyAssignment(node: ts.PropertyAssignment) {
+        emit(node.name);
+        writeSpace();
+        writePunctuation("=>");
+        writeSpace();
+        emitExpression(node.initializer);
+    }
 
     // function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment) {
     //     emit(node.name);
@@ -2538,6 +2532,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             //     writeSpace();
             // }
 
+            // Increase the indent, if requested.
+            if (format & ts.ListFormat.Indented) {
+                increaseIndent();
+            }
+
             // Emit each child.
             let previousSibling: ts.Node | undefined;
             let shouldDecreaseIndentAfterEmit = false;
@@ -2609,6 +2608,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             // if (previousSibling && format & ListFormat.DelimitersMask && previousSibling.end !== parentNode.end && !(getEmitFlags(previousSibling) & EmitFlags.NoTrailingComments)) {
             //     emitLeadingCommentsOfPosition(previousSibling.end);
             // }
+
+            // Decrease the indent, if requested.
+            if (format & ts.ListFormat.Indented) {
+                decreaseIndent();
+            }
 
             // Write the closing line terminator or closing whitespace.
             // if (shouldWriteClosingLineTerminator(parentNode, children!, format)) {
@@ -2692,15 +2696,15 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         writer.writeLine();
     }
 
-    // function increaseIndent() {
-    //     commitPendingSemicolon();
-    //     writer.increaseIndent();
-    // }
+    function increaseIndent() {
+        // commitPendingSemicolon();
+        writer.increaseIndent();
+    }
 
-    // function decreaseIndent() {
-    //     commitPendingSemicolon();
-    //     writer.decreaseIndent();
-    // }
+    function decreaseIndent() {
+        // commitPendingSemicolon();
+        writer.decreaseIndent();
+    }
 
     // function writeToken(token: SyntaxKind, pos: number, writer: (s: string) => void, contextNode?: Node) {
     //     return onEmitSourceMapOfToken
@@ -2812,8 +2816,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 return synthesizedNodeStartsOnNewLine(previousNode, format) || synthesizedNodeStartsOnNewLine(nextNode, format);
             }
             else {
-                return false;
-                // return !rangeEndIsOnSameLineAsRangeStart(previousNode, nextNode, currentSourceFile);
+                return !rangeEndIsOnSameLineAsRangeStart(previousNode, nextNode, currentSourceFile);
             }
         }
         else {
@@ -2897,6 +2900,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             if (shouldAddDollar(node)) {
                 (<ts.Identifier>node).escapedText = <ts.__String>('$' + name);
             }
+
+            // 需要加双引号
+            if (shouldAddDoubleQuote(node)) {
+                (<ts.Identifier>node).escapedText = <ts.__String>('"' + name + '"');
+            }
             
             // 是从模块中引入的
             if (varModuleMap[name]) {
@@ -2978,81 +2986,81 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     if (!node) return;
     //     switch (node.kind) {
     //         case SyntaxKind.Block:
-    //             forEach((<Block>node).statements, generateNames);
+    //             forEach((<ts.Block>node).statements, generateNames);
     //             break;
     //         case SyntaxKind.LabeledStatement:
     //         case SyntaxKind.WithStatement:
     //         case SyntaxKind.DoStatement:
     //         case SyntaxKind.WhileStatement:
-    //             generateNames((<LabeledStatement | WithStatement | DoStatement | WhileStatement>node).statement);
+    //             generateNames((<ts.LabeledStatement | ts.WithStatement | ts.DoStatement | ts.WhileStatement>node).statement);
     //             break;
     //         case SyntaxKind.IfStatement:
-    //             generateNames((<IfStatement>node).thenStatement);
-    //             generateNames((<IfStatement>node).elseStatement);
+    //             generateNames((<ts.IfStatement>node).thenStatement);
+    //             generateNames((<ts.IfStatement>node).elseStatement);
     //             break;
     //         case SyntaxKind.ForStatement:
     //         case SyntaxKind.ForOfStatement:
     //         case SyntaxKind.ForInStatement:
-    //             generateNames((<ForStatement | ForInOrOfStatement>node).initializer);
-    //             generateNames((<ForStatement | ForInOrOfStatement>node).statement);
+    //             generateNames((<ts.ForStatement | ts.ForInOrOfStatement>node).initializer);
+    //             generateNames((<ts.ForStatement | ts.ForInOrOfStatement>node).statement);
     //             break;
     //         case SyntaxKind.SwitchStatement:
-    //             generateNames((<SwitchStatement>node).caseBlock);
+    //             generateNames((<ts.SwitchStatement>node).caseBlock);
     //             break;
     //         case SyntaxKind.CaseBlock:
-    //             forEach((<CaseBlock>node).clauses, generateNames);
+    //             forEach((<ts.CaseBlock>node).clauses, generateNames);
     //             break;
     //         case SyntaxKind.CaseClause:
     //         case SyntaxKind.DefaultClause:
-    //             forEach((<CaseOrDefaultClause>node).statements, generateNames);
+    //             forEach((<ts.CaseOrDefaultClause>node).statements, generateNames);
     //             break;
     //         case SyntaxKind.TryStatement:
-    //             generateNames((<TryStatement>node).tryBlock);
-    //             generateNames((<TryStatement>node).catchClause);
-    //             generateNames((<TryStatement>node).finallyBlock);
+    //             generateNames((<ts.TryStatement>node).tryBlock);
+    //             generateNames((<ts.TryStatement>node).catchClause);
+    //             generateNames((<ts.TryStatement>node).finallyBlock);
     //             break;
     //         case SyntaxKind.CatchClause:
-    //             generateNames((<CatchClause>node).variableDeclaration);
-    //             generateNames((<CatchClause>node).block);
+    //             generateNames((<ts.CatchClause>node).variableDeclaration);
+    //             generateNames((<ts.CatchClause>node).block);
     //             break;
     //         case SyntaxKind.VariableStatement:
-    //             generateNames((<VariableStatement>node).declarationList);
+    //             generateNames((<ts.VariableStatement>node).declarationList);
     //             break;
     //         case SyntaxKind.VariableDeclarationList:
-    //             forEach((<VariableDeclarationList>node).declarations, generateNames);
+    //             forEach((<ts.VariableDeclarationList>node).declarations, generateNames);
     //             break;
     //         case SyntaxKind.VariableDeclaration:
     //         case SyntaxKind.Parameter:
     //         case SyntaxKind.BindingElement:
     //         case SyntaxKind.ClassDeclaration:
-    //             generateNameIfNeeded((<NamedDeclaration>node).name);
+    //             generateNameIfNeeded((<ts.NamedDeclaration>node).name);
     //             break;
     //         case SyntaxKind.FunctionDeclaration:
-    //             generateNameIfNeeded((<FunctionDeclaration>node).name);
-    //             if (getEmitFlags(node) & EmitFlags.ReuseTempVariableScope) {
-    //                 forEach((<FunctionDeclaration>node).parameters, generateNames);
-    //                 generateNames((<FunctionDeclaration>node).body);
+    //             generateNameIfNeeded((<ts.FunctionDeclaration>node).name);
+    //             if (getEmitFlags(node) & ts.EmitFlags.ReuseTempVariableScope) {
+    //                 forEach((<ts.FunctionDeclaration>node).parameters, generateNames);
+    //                 generateNames((<ts.FunctionDeclaration>node).body);
     //             }
     //             break;
     //         case SyntaxKind.ObjectBindingPattern:
     //         case SyntaxKind.ArrayBindingPattern:
-    //             forEach((<BindingPattern>node).elements, generateNames);
+    //             forEach((<ts.BindingPattern>node).elements, generateNames);
     //             break;
     //         case SyntaxKind.ImportDeclaration:
-    //             generateNames((<ImportDeclaration>node).importClause);
+    //             generateNames((<ts.ImportDeclaration>node).importClause);
     //             break;
     //         case SyntaxKind.ImportClause:
-    //             generateNameIfNeeded((<ImportClause>node).name);
-    //             generateNames((<ImportClause>node).namedBindings);
+    //             generateNameIfNeeded((<ts.ImportClause>node).name);
+    //             generateNames((<ts.ImportClause>node).namedBindings);
     //             break;
     //         case SyntaxKind.NamespaceImport:
-    //             generateNameIfNeeded((<NamespaceImport>node).name);
+    //             generateNameIfNeeded((<ts.NamespaceImport>node).name);
     //             break;
     //         case SyntaxKind.NamedImports:
-    //             forEach((<NamedImports>node).elements, generateNames);
+    //             forEach((<ts.NamedImports>node).elements, generateNames);
     //             break;
     //         case SyntaxKind.ImportSpecifier:
-    //             generateNameIfNeeded((<ImportSpecifier>node).propertyName || (<ImportSpecifier>node).name);
+    //             generateNameIfNeeded((<ts.ImportSpecifier>node).propertyName || (<ts.ImportSpecifier>node).name);
     //             break;
     //     }
     // }
@@ -3066,15 +3074,15 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //         case SyntaxKind.MethodDeclaration:
     //         case SyntaxKind.GetAccessor:
     //         case SyntaxKind.SetAccessor:
-    //             generateNameIfNeeded((<NamedDeclaration>node).name);
+    //             generateNameIfNeeded((<ts.NamedDeclaration>node).name);
     //             break;
     //     }
     // }
 
-    // function generateNameIfNeeded(name: DeclarationName | undefined) {
+    // function generateNameIfNeeded(name: ts.DeclarationName | undefined) {
     //     if (name) {
     //         if (isGeneratedIdentifier(name)) {
-    //             generateName(name);
+    //             generateName(<ts.GeneratedIdentifier>name);
     //         }
     //         else if (isBindingPattern(name)) {
     //             generateNames(name);
@@ -3082,11 +3090,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // /**
-    //  * Generate the text for a generated identifier.
-    //  */
-    // function generateName(name: GeneratedIdentifier) {
-    //     if ((name.autoGenerateFlags & GeneratedIdentifierFlags.KindMask) === GeneratedIdentifierFlags.Node) {
+    /**
+     * Generate the text for a generated identifier.
+     */
+    // function generateName(name: ts.GeneratedIdentifier) {
+    //     if ((name.autoGenerateFlags & ts.GeneratedIdentifierFlags.KindMask) === ts.GeneratedIdentifierFlags.Node) {
     //         // Node names generate unique names based on their original node
     //         // and are cached based on that node's id.
     //         return generateNameCached(getNodeForGeneratedName(name), name.autoGenerateFlags);
