@@ -372,9 +372,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         }
         if (hint === ts.EmitHint.Expression) {
             switch (node.kind) {
-                // // Literals
-                // case SyntaxKind.NumericLiteral:
-                //     return emitNumericLiteral(<NumericLiteral>node);
+                // Literals
+                case SyntaxKind.NumericLiteral:
+                    return emitNumericLiteral(<ts.NumericLiteral>node);
 
                 case SyntaxKind.StringLiteral:
                 case SyntaxKind.RegularExpressionLiteral:
@@ -402,8 +402,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitObjectLiteralExpression(<ObjectLiteralExpression>node);
                 case SyntaxKind.PropertyAccessExpression:
                     return emitPropertyAccessExpression(<ts.PropertyAccessExpression>node);
-                // case SyntaxKind.ElementAccessExpression:
-                //     return emitElementAccessExpression(<ElementAccessExpression>node);
+                case SyntaxKind.ElementAccessExpression:
+                    return emitElementAccessExpression(<ts.ElementAccessExpression>node);
                 case SyntaxKind.CallExpression:
                     return emitCallExpression(<ts.CallExpression>node);
                 // case SyntaxKind.NewExpression:
@@ -536,10 +536,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // // Literals/Pseudo-literals
     // //
 
-    // // SyntaxKind.NumericLiteral
-    // function emitNumericLiteral(node: NumericLiteral) {
-    //     emitLiteral(node);
-    // }
+    // SyntaxKind.NumericLiteral
+    function emitNumericLiteral(node: ts.NumericLiteral) {
+        emitLiteral(node);
+    }
 
     // SyntaxKind.StringLiteral
     // SyntaxKind.RegularExpressionLiteral
@@ -1027,12 +1027,12 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitElementAccessExpression(node: ElementAccessExpression) {
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.OpenBracketToken, node.expression.end, writePunctuation, node);
-    //     emitExpression(node.argumentExpression);
-    //     emitTokenWithComment(SyntaxKind.CloseBracketToken, node.argumentExpression.end, writePunctuation, node);
-    // }
+    function emitElementAccessExpression(node: ts.ElementAccessExpression) {
+        emitExpression(node.expression);
+        emitTokenWithComment(SyntaxKind.OpenBracketToken, node.expression.end, writePunctuation, node);
+        emitExpression(node.argumentExpression);
+        emitTokenWithComment(SyntaxKind.CloseBracketToken, node.argumentExpression.end, writePunctuation, node);
+    }
 
     function emitCallExpression(node: ts.CallExpression) {
         emitWithHint(ts.EmitHint.Expression, node.expression);

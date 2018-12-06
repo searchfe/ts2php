@@ -713,7 +713,8 @@ export function isJSDocSignature(node: Node): node is ts.JSDocSignature {
 
 const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.VariableDeclaration,
-    ts.SyntaxKind.TemplateSpan
+    ts.SyntaxKind.TemplateSpan,
+    ts.SyntaxKind.ElementAccessExpression
 ]);
 /**
  * 判断输出 identier 时，是否需要加 $ 符号
