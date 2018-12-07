@@ -1595,6 +1595,7 @@ declare namespace ts {
     interface Block extends Statement {
         kind: SyntaxKind.Block;
         statements: NodeArray<Statement>;
+        multiLine?: boolean;
     }
     interface VariableStatement extends Statement, JSDocContainer {
         kind: SyntaxKind.VariableStatement;
@@ -1603,6 +1604,9 @@ declare namespace ts {
     interface ExpressionStatement extends Statement, JSDocContainer {
         kind: SyntaxKind.ExpressionStatement;
         expression: Expression;
+    }
+    interface PrologueDirective extends ExpressionStatement {
+        expression: StringLiteral;
     }
     interface IfStatement extends Statement {
         kind: SyntaxKind.IfStatement;
@@ -2091,6 +2095,7 @@ declare namespace ts {
          */
         hasNoDefaultLib: boolean;
         languageVersion: ScriptTarget;
+        identifiers: Map<string>;
     }
     interface Bundle extends Node {
         kind: SyntaxKind.Bundle;
@@ -2532,6 +2537,14 @@ declare namespace ts {
     }
     /** SymbolTable based on ES6 Map interface. */
     type SymbolTable = UnderscoreEscapedMap<Symbol>;
+    interface PatternAmbientModule {
+        pattern: Pattern;
+        symbol: Symbol;
+    }
+    interface Pattern {
+        prefix: string;
+        suffix: string;
+    }
     enum TypeFlags {
         Any = 1,
         Unknown = 2,

@@ -1,4 +1,1 @@
-const b = {
-    a: 123,
-    b: '456'
-};
+function aaa () {}

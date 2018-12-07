@@ -216,6 +216,18 @@ export function idText(identifier: ts.Identifier): string {
     return unescapeLeadingUnderscores(identifier.escapedText);
 }
 
+export function rangeIsOnSingleLine(range: ts.TextRange, sourceFile: ts.SourceFile) {
+    return rangeStartIsOnSameLineAsRangeEnd(range, range, sourceFile);
+}
+
+export function rangeEndPositionsAreOnSameLine(range1: ts.TextRange, range2: ts.TextRange, sourceFile: ts.SourceFile) {
+    return positionsAreOnSameLine(range1.end, range2.end, sourceFile);
+}
+
+export function rangeStartIsOnSameLineAsRangeEnd(range1: ts.TextRange, range2: ts.TextRange, sourceFile: ts.SourceFile) {
+    return positionsAreOnSameLine(getStartPositionOfRange(range1, sourceFile), range2.end, sourceFile);
+}
+
 /**
  * Remove extra underscore from escaped identifier text content.
  *
@@ -253,7 +265,7 @@ export function isGeneratedIdentifier(node: ts.Node) {
     return isIdentifier(node) && ((<ts.Identifier>node).autoGenerateFlags! & ts.GeneratedIdentifierFlags.KindMask) > ts.GeneratedIdentifierFlags.None;
 }
 
-export function isIdentifier(node: ts.Node) {
+export function isIdentifier(node: ts.Node): node is ts.Identifier {
     return node.kind === ts.SyntaxKind.Identifier;
 }
 
@@ -283,6 +295,11 @@ export function isArrayBindingElement(node: Node): node is ts.ArrayBindingElemen
     const kind = node.kind;
     return kind === ts.SyntaxKind.BindingElement
         || kind === ts.SyntaxKind.OmittedExpression;
+}
+
+export function isPrologueDirective(node: Node): node is ts.PrologueDirective {
+    return node.kind === ts.SyntaxKind.ExpressionStatement
+        && (<ts.ExpressionStatement>node).expression.kind === ts.SyntaxKind.StringLiteral;
 }
 
 // export function getSourceTextOfNodeFromSourceFile(sourceFile: ts.SourceFile, node: Node, includeTrivia = false): string {
@@ -388,4 +405,12 @@ export function escapeNonAsciiString(s: string, quoteChar?: ts.CharacterCodes.do
     return nonAsciiCharacters.test(s) ?
         s.replace(nonAsciiCharacters, c => get16BitUnicodeEscapeSequence(c.charCodeAt(0))) :
         s;
+}
+
+/**
+ * Returns a value indicating whether a name is unique globally or within the current file.
+ * Note: This does not consider whether a name appears as a free identifier or not, so at the expression `x.y` this includes both `x` and `y`.
+ */
+export function isFileLevelUniqueName(sourceFile: ts.SourceFile, name: string, hasGlobalName?: ts.PrintHandlers["hasGlobalName"]): boolean {
+    return !(hasGlobalName && hasGlobalName(name)) && !sourceFile.identifiers.has(name);
 }
