@@ -278,10 +278,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitForInStatement(<ForInStatement>node);
                 // case SyntaxKind.ForOfStatement:
                 //     return emitForOfStatement(<ForOfStatement>node);
-                // case SyntaxKind.ContinueStatement:
-                //     return emitContinueStatement(<ContinueStatement>node);
-                // case SyntaxKind.BreakStatement:
-                //     return emitBreakStatement(<BreakStatement>node);
+                case SyntaxKind.ContinueStatement:
+                    return emitContinueStatement(<ts.ContinueStatement>node);
+                case SyntaxKind.BreakStatement:
+                    return emitBreakStatement(<ts.BreakStatement>node);
                 case SyntaxKind.ReturnStatement:
                     return emitReturnStatement(<ts.ReturnStatement>node);
                 // case SyntaxKind.WithStatement:
@@ -1403,17 +1403,17 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         }
     }
 
-    // function emitContinueStatement(node: ContinueStatement) {
-    //     emitTokenWithComment(SyntaxKind.ContinueKeyword, node.pos, writeKeyword, node);
-    //     emitWithLeadingSpace(node.label);
-    //     writeSemicolon();
-    // }
+    function emitContinueStatement(node: ts.ContinueStatement) {
+        emitTokenWithComment(SyntaxKind.ContinueKeyword, node.pos, writeKeyword, node);
+        emitWithLeadingSpace(node.label);
+        writeSemicolon();
+    }
 
-    // function emitBreakStatement(node: BreakStatement) {
-    //     emitTokenWithComment(SyntaxKind.BreakKeyword, node.pos, writeKeyword, node);
-    //     emitWithLeadingSpace(node.label);
-    //     writeSemicolon();
-    // }
+    function emitBreakStatement(node: ts.BreakStatement) {
+        emitTokenWithComment(SyntaxKind.BreakKeyword, node.pos, writeKeyword, node);
+        emitWithLeadingSpace(node.label);
+        writeSemicolon();
+    }
 
     function emitTokenWithComment(token: SyntaxKind, pos: number, writer: (s: string) => void, contextNode: Node, indentLeading?: boolean) {
         // const node = getParseTreeNode(contextNode);
@@ -2424,12 +2424,12 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitWithLeadingSpace(node: Node | undefined) {
-    //     if (node) {
-    //         writeSpace();
-    //         emit(node);
-    //     }
-    // }
+    function emitWithLeadingSpace(node: Node | undefined) {
+        if (node) {
+            writeSpace();
+            emit(node);
+        }
+    }
 
     function emitExpressionWithLeadingSpace(node: ts.Expression | undefined) {
         if (node) {
