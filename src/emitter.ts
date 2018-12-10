@@ -151,8 +151,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // // Names
                 // case SyntaxKind.QualifiedName:
                 //     return emitQualifiedName(<QualifiedName>node);
-                // case SyntaxKind.ComputedPropertyName:
-                //     return emitComputedPropertyName(<ComputedPropertyName>node);
+                case SyntaxKind.ComputedPropertyName:
+                    return emitComputedPropertyName(<ts.ComputedPropertyName>node);
 
                 // // Signature elements
                 // case SyntaxKind.TypeParameter:
@@ -636,11 +636,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitComputedPropertyName(node: ComputedPropertyName) {
-    //     writePunctuation("[");
-    //     emitExpression(node.expression);
-    //     writePunctuation("]");
-    // }
+    function emitComputedPropertyName(node: ts.ComputedPropertyName) {
+        // writePunctuation("[");
+        emitExpression(node.expression);
+        // writePunctuation("]");
+    }
 
     // //
     // // Signature elements
