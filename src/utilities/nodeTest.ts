@@ -714,7 +714,8 @@ export function isJSDocSignature(node: Node): node is ts.JSDocSignature {
 const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.VariableDeclaration,
     ts.SyntaxKind.TemplateSpan,
-    ts.SyntaxKind.ElementAccessExpression
+    ts.SyntaxKind.ElementAccessExpression,
+    ts.SyntaxKind.Parameter
 ]);
 /**
  * 判断输出 identier 时，是否需要加 $ 符号
@@ -746,7 +747,7 @@ export function shouldAddDoubleQuote(node: Node): boolean {
 
 
 const baseArrayBrackets = ["array(", ")"];
-const newLineArrayBrackets = ["array(\n", "\n)"];
+const newLineArrayBrackets = ["array(", ")"];
 const arrayBracketsMap = {
     [ts.ListFormat.ObjectLiteralExpressionProperties]: baseArrayBrackets,
     [ts.ListFormat.ObjectLiteralExpressionProperties | ts.ListFormat.PreferNewLine]: newLineArrayBrackets

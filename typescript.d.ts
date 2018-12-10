@@ -4987,9 +4987,15 @@ declare namespace ts {
         getPositionOfLineAndCharacter(line: number, character: number): number;
         update(newText: string, textChangeRange: TextChangeRange): SourceFile;
     }
+
+    /**
+     * Subset of properties from SourceFile that are used in multiple utility functions
+     */
     interface SourceFileLike {
-        getLineAndCharacterOfPosition(pos: number): LineAndCharacter;
+        readonly text: string;
+        lineMap?: ReadonlyArray<number>;
     }
+
     interface SourceMapSource {
         getLineAndCharacterOfPosition(pos: number): LineAndCharacter;
     }

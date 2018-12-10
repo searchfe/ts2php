@@ -65,6 +65,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     let tempFlags: TempFlags; // TempFlags for the current name generation scope.
     let reservedNamesStack: ts.Map<true>[]; // Stack of TempFlags reserved in enclosing name generation scopes.
     let reservedNames: ts.Map<true>; // TempFlags to reserve in nested name generation scopes.
+    let write = writeBase;
     reset();
     const writer = createTextWriter(os.EOL);
     writer.writeLine();
@@ -154,8 +155,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // // Signature elements
                 // case SyntaxKind.TypeParameter:
                 //     return emitTypeParameter(<TypeParameterDeclaration>node);
-                // case SyntaxKind.Parameter:
-                //     return emitParameter(<ParameterDeclaration>node);
+                case SyntaxKind.Parameter:
+                    return emitParameter(<ts.ParameterDeclaration>node);
                 // case SyntaxKind.Decorator:
                 //     return emitDecorator(<Decorator>node);
 
@@ -280,8 +281,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitContinueStatement(<ContinueStatement>node);
                 // case SyntaxKind.BreakStatement:
                 //     return emitBreakStatement(<BreakStatement>node);
-                // case SyntaxKind.ReturnStatement:
-                //     return emitReturnStatement(<ReturnStatement>node);
+                case SyntaxKind.ReturnStatement:
+                    return emitReturnStatement(<ts.ReturnStatement>node);
                 // case SyntaxKind.WithStatement:
                 //     return emitWithStatement(<WithStatement>node);
                 // case SyntaxKind.SwitchStatement:
@@ -659,21 +660,21 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitParameter(node: ParameterDeclaration) {
-    //     emitDecorators(node, node.decorators);
-    //     emitModifiers(node, node.modifiers);
-    //     emit(node.dotDotDotToken);
-    //     emitNodeWithWriter(node.name, writeParameter);
-    //     emit(node.questionToken);
-    //     if (node.parent && node.parent.kind === SyntaxKind.JSDocFunctionType && !node.name) {
-    //         emit(node.type);
-    //     }
-    //     else {
-    //         emitTypeAnnotation(node.type);
-    //     }
-    //     // The comment position has to fallback to any present node within the parameterdeclaration because as it turns out, the parser can make parameter declarations with _just_ an initializer.
-    //     emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name ? node.name.end : node.modifiers ? node.modifiers.end : node.decorators ? node.decorators.end : node.pos, node);
-    // }
+    function emitParameter(node: ts.ParameterDeclaration) {
+        // emitDecorators(node, node.decorators);
+        // emitModifiers(node, node.modifiers);
+        // emit(node.dotDotDotToken);
+        emitNodeWithWriter(node.name, writeParameter);
+        // emit(node.questionToken);
+        if (node.parent && node.parent.kind === SyntaxKind.JSDocFunctionType && !node.name) {
+            emit(node.type);
+        }
+        else {
+            emitTypeAnnotation(node.type);
+        }
+        // The comment position has to fallback to any present node within the parameterdeclaration because as it turns out, the parser can make parameter declarations with _just_ an initializer.
+        emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name ? node.name.end : node.modifiers ? node.modifiers.end : node.decorators ? node.decorators.end : node.pos, node);
+    }
 
     // function emitDecorator(decorator: Decorator) {
     //     writePunctuation("@");
@@ -1427,11 +1428,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         return pos;
     }
 
-    // function emitReturnStatement(node: ReturnStatement) {
-    //     emitTokenWithComment(SyntaxKind.ReturnKeyword, node.pos, writeKeyword, /*contextNode*/ node);
-    //     emitExpressionWithLeadingSpace(node.expression);
-    //     writeSemicolon();
-    // }
+    function emitReturnStatement(node: ts.ReturnStatement) {
+        emitTokenWithComment(SyntaxKind.ReturnKeyword, node.pos, writeKeyword, /*contextNode*/ node);
+        emitExpressionWithLeadingSpace(node.expression);
+        writeSemicolon();
+    }
 
     // function emitWithStatement(node: WithStatement) {
     //     const openParenPos = emitTokenWithComment(SyntaxKind.WithKeyword, node.pos, writeKeyword, node);
@@ -1501,7 +1502,18 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function emitFunctionDeclaration(node: ts.FunctionDeclaration) {
+        if (node.name) {
+            const functionName = getTextOfNode(node.name, /*includeTrivia*/ false);
+            writeBase("if (!function_exists('" + functionName + "')) {");
+            writeLine();
+            increaseIndent();
+        }
         emitFunctionDeclarationOrExpression(node);
+        if (node.name) {
+            writeLine();
+            decreaseIndent();
+            writeBase("}");
+        }
     }
 
     function emitFunctionDeclarationOrExpression(node: ts.FunctionDeclaration | ts.FunctionExpression) {
@@ -1619,7 +1631,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         // Emit all the prologue directives (like "use strict").
         const statementOffset = emitPrologueDirectives(body.statements, /*startWithNewLine*/ true);
         const pos = writer.getTextPos();
-        emitHelpers(body);
+        // emitHelpers(body);
         if (statementOffset === 0 && pos === writer.getTextPos() && emitBlockFunctionBodyOnSingleLine) {
             decreaseIndent();
             emitList(body, body.statements, ts.ListFormat.SingleLineFunctionBodyStatements);
@@ -2368,17 +2380,17 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // //
-    // // Helpers
-    // //
+    //
+    // Helpers
+    //
 
-    // function emitNodeWithWriter(node: Node | undefined, writer: typeof write) {
-    //     if (!node) return;
-    //     const savedWrite = write;
-    //     write = writer;
-    //     emit(node);
-    //     write = savedWrite;
-    // }
+    function emitNodeWithWriter(node: Node | undefined, writer: typeof write) {
+        if (!node) return;
+        const savedWrite = write;
+        write = writer;
+        emit(node);
+        write = savedWrite;
+    }
 
     function emitModifiers(node: Node, modifiers: ts.NodeArray<ts.Modifier> | undefined) {
         if (modifiers && modifiers.length) {
@@ -2418,12 +2430,12 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitExpressionWithLeadingSpace(node: Expression | undefined) {
-    //     if (node) {
-    //         writeSpace();
-    //         emitExpression(node);
-    //     }
-    // }
+    function emitExpressionWithLeadingSpace(node: ts.Expression | undefined) {
+        if (node) {
+            writeSpace();
+            emitExpression(node);
+        }
+    }
 
     // function emitWithTrailingSpace(node: Node | undefined) {
     //     if (node) {
@@ -2445,9 +2457,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitDecorators(parentNode: Node, decorators: NodeArray<Decorator> | undefined) {
-    //     emitList(parentNode, decorators, ListFormat.Decorators);
-    // }
+    function emitDecorators(parentNode: Node, decorators: ts.NodeArray<ts.Decorator> | undefined) {
+        emitList(parentNode, decorators, ts.ListFormat.Decorators);
+    }
 
     function emitTypeArguments(parentNode: ts.Node, typeArguments: ts.NodeArray<ts.TypeNode> | undefined) {
         emitList(parentNode, typeArguments, ts.ListFormat.TypeArguments);
@@ -2554,13 +2566,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             // Write the opening line terminator or leading whitespace.
             const mayEmitInterveningComments = (format & ts.ListFormat.NoInterveningComments) === 0;
             let shouldEmitInterveningComments = mayEmitInterveningComments;
-            // if (shouldWriteLeadingLineTerminator(parentNode, children!, format)) { // TODO: GH#18217
-            //     writeLine();
-            //     shouldEmitInterveningComments = false;
-            // }
-            // else if (format & ts.ListFormat.SpaceBetweenBraces) {
-            //     writeSpace();
-            // }
+            if (shouldWriteLeadingLineTerminator(parentNode, children!, format)) { // TODO: GH#18217
+                writeLine();
+                // shouldEmitInterveningComments = false;
+            }
+            else if (format & ts.ListFormat.SpaceBetweenBraces) {
+                writeSpace();
+            }
 
             // Increase the indent, if requested.
             if (format & ts.ListFormat.Indented) {
@@ -2645,12 +2657,12 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             }
 
             // Write the closing line terminator or closing whitespace.
-            // if (shouldWriteClosingLineTerminator(parentNode, children!, format)) {
-            //     writeLine();
-            // }
-            // else if (format & ts.ListFormat.SpaceBetweenBraces) {
-            //     writeSpace();
-            // }
+            if (shouldWriteClosingLineTerminator(parentNode, children!, format)) {
+                writeLine();
+            }
+            else if (format & ts.ListFormat.SpaceBetweenBraces) {
+                writeSpace();
+            }
         }
 
         if (format & ts.ListFormat.BracketsMask) {
@@ -2706,10 +2718,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         writer.writeOperator(s);
     }
 
-    // function writeParameter(s: string) {
-    //     commitPendingSemicolon();
-    //     writer.writeParameter(s);
-    // }
+    function writeParameter(s: string) {
+        // commitPendingSemicolon();
+        writer.writeParameter(s);
+    }
 
     function writeSpace() {
         // commitPendingSemicolon();
