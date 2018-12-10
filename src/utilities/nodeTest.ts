@@ -720,7 +720,8 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.IfStatement,
     ts.SyntaxKind.PrefixUnaryExpression,
     ts.SyntaxKind.PostfixUnaryExpression,
-    ts.SyntaxKind.SwitchStatement
+    ts.SyntaxKind.SwitchStatement,
+    ts.SyntaxKind.ArrayLiteralExpression
 ]);
 /**
  * 判断输出 identier 时，是否需要加 $ 符号
@@ -755,7 +756,8 @@ const baseArrayBrackets = ["array(", ")"];
 const newLineArrayBrackets = ["array(", ")"];
 const arrayBracketsMap = {
     [ts.ListFormat.ObjectLiteralExpressionProperties]: baseArrayBrackets,
-    [ts.ListFormat.ObjectLiteralExpressionProperties | ts.ListFormat.PreferNewLine]: newLineArrayBrackets
+    [ts.ListFormat.ObjectLiteralExpressionProperties | ts.ListFormat.PreferNewLine]: newLineArrayBrackets,
+    [ts.ListFormat.ArrayLiteralExpressionElements]: baseArrayBrackets
 };
 /**
  * 判断是否需要转换成 array()

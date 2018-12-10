@@ -443,9 +443,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                     writeTokenNode(node, writeKeyword);
                     return;
 
-                // // Expressions
-                // case SyntaxKind.ArrayLiteralExpression:
-                //     return emitArrayLiteralExpression(<ArrayLiteralExpression>node);
+                // Expressions
+                case SyntaxKind.ArrayLiteralExpression:
+                    return emitArrayLiteralExpression(<ts.ArrayLiteralExpression>node);
                 case SyntaxKind.ObjectLiteralExpression:
                     return emitObjectLiteralExpression(<ts.ObjectLiteralExpression>node);
                 case SyntaxKind.PropertyAccessExpression:
@@ -1026,11 +1026,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // // Expressions
     // //
 
-    // function emitArrayLiteralExpression(node: ArrayLiteralExpression) {
-    //     const elements = node.elements;
-    //     const preferNewLine = node.multiLine ? ListFormat.PreferNewLine : ListFormat.None;
-    //     emitExpressionList(node, elements, ListFormat.ArrayLiteralExpressionElements | preferNewLine);
-    // }
+    function emitArrayLiteralExpression(node: ts.ArrayLiteralExpression) {
+        const elements = node.elements;
+        const preferNewLine = node.multiLine ? ts.ListFormat.PreferNewLine : ts.ListFormat.None;
+        emitExpressionList(node, elements, ts.ListFormat.ArrayLiteralExpressionElements | preferNewLine);
+    }
 
     function emitObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
         // forEach(node.properties, generateMemberNames);

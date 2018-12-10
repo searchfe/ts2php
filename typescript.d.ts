@@ -1405,6 +1405,7 @@ declare namespace ts {
     interface ArrayLiteralExpression extends PrimaryExpression {
         kind: SyntaxKind.ArrayLiteralExpression;
         elements: NodeArray<Expression>;
+        multiLine?: boolean;
     }
     interface SpreadElement extends Expression {
         kind: SyntaxKind.SpreadElement;
