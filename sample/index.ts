@@ -1,4 +1,3 @@
-const b = {
-    a: 123,
-    b: '456'
-};
+const a = 1;
+const s = `1${a}2${a}3${a}4`;
+// const s = `1${a}2`;

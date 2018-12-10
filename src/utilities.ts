@@ -185,9 +185,13 @@ export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFi
             return '"' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '" ' + ".";
         case ts.SyntaxKind.TemplateMiddle:
             // tslint:disable-next-line no-invalid-template-strings
-            return '"' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '"';
+            return ' . "' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '" .';
         case ts.SyntaxKind.TemplateTail:
-            return ' . "' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '"';
+            const text = escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote);
+            if (text) {
+                return ' . "' + text + '"';
+            }
+            return '';
         case ts.SyntaxKind.NumericLiteral:
         case ts.SyntaxKind.RegularExpressionLiteral:
             return node.text;
