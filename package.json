@@ -2,14 +2,26 @@
   "name": "ts2php",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "echo \"Please implement your build script and modify scripts.build section in package.json\" && exit 1"
+    "build": "tsc",
+    "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
+    "test": "npm run build && mocha",
+    "mocha": "mocha"
   },
   "repository": {
     "type": "git",
     "url": "ssh://meixuguang@icode.baidu.com:8235/baidu/atom/ts2php"
   },
   "author": "meixuguang",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@types/lodash": "^4.14.117",
+    "@types/node": "^10.12.0",
+    "lodash": "^4.17.11",
+    "mocha": "^5.2.0",
+    "sync-files": "^1.0.3",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.3"
+  }
 }
