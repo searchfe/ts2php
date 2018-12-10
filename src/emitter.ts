@@ -379,8 +379,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // // Property assignments
                 case SyntaxKind.PropertyAssignment:
                     return emitPropertyAssignment(<ts.PropertyAssignment>node);
-                // case SyntaxKind.ShorthandPropertyAssignment:
-                //     return emitShorthandPropertyAssignment(<ShorthandPropertyAssignment>node);
+                case SyntaxKind.ShorthandPropertyAssignment:
+                    return emitShorthandPropertyAssignment(<ts.ShorthandPropertyAssignment>node);
                 // case SyntaxKind.SpreadAssignment:
                 //     return emitSpreadAssignment(node as SpreadAssignment);
 
@@ -2063,15 +2063,24 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         emitExpression(node.initializer);
     }
 
-    // function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment) {
-    //     emit(node.name);
-    //     if (node.objectAssignmentInitializer) {
-    //         writeSpace();
-    //         writePunctuation("=");
-    //         writeSpace();
-    //         emitExpression(node.objectAssignmentInitializer);
-    //     }
-    // }
+    function emitShorthandPropertyAssignment(node: ts.ShorthandPropertyAssignment) {
+        writeBase('"');
+        emit(node.name);
+        writeBase('"');
+        if (node.objectAssignmentInitializer) {
+            writeSpace();
+            writePunctuation("=");
+            writeSpace();
+            emitExpression(node.objectAssignmentInitializer);
+        }
+        else {
+            writeSpace();
+            writePunctuation("=>");
+            writeSpace();
+            writeBase("$");
+            emit(node.name);
+        }
+    }
 
     // function emitSpreadAssignment(node: SpreadAssignment) {
     //     if (node.expression) {
