@@ -243,9 +243,9 @@ export function unescapeLeadingUnderscores(identifier: ts.__String): string {
     return id.length >= 3 && id.charCodeAt(0) === ts.CharacterCodes._ && id.charCodeAt(1) === ts.CharacterCodes._ && id.charCodeAt(2) === ts.CharacterCodes._ ? id.substr(1) : id;
 }
 
-// export function rangeStartPositionsAreOnSameLine(range1: ts.TextRange, range2: ts.TextRange, sourceFile: ts.SourceFile) {
-//     return positionsAreOnSameLine(getStartPositionOfRange(range1, sourceFile), getStartPositionOfRange(range2, sourceFile), sourceFile);
-// }
+export function rangeStartPositionsAreOnSameLine(range1: ts.TextRange, range2: ts.TextRange, sourceFile: ts.SourceFile) {
+    return positionsAreOnSameLine(getStartPositionOfRange(range1, sourceFile), getStartPositionOfRange(range2, sourceFile), sourceFile);
+}
 
 // export function getStartPositionOfRange(range: ts.TextRange, sourceFile: ts.SourceFile) {
 //     return positionIsSynthesized(range.pos) ? -1 : skipTrivia(sourceFile.text, range.pos);

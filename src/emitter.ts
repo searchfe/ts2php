@@ -24,7 +24,8 @@ import {
     rangeIsOnSingleLine,
     positionIsSynthesized,
     rangeEndPositionsAreOnSameLine,
-    isPrologueDirective
+    isPrologueDirective,
+    rangeStartPositionsAreOnSameLine
 } from './utilities';
 import * as utilities from './utilities';
 import {
@@ -286,8 +287,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                     return emitReturnStatement(<ts.ReturnStatement>node);
                 // case SyntaxKind.WithStatement:
                 //     return emitWithStatement(<WithStatement>node);
-                // case SyntaxKind.SwitchStatement:
-                //     return emitSwitchStatement(<SwitchStatement>node);
+                case SyntaxKind.SwitchStatement:
+                    return emitSwitchStatement(<ts.SwitchStatement>node);
                 // case SyntaxKind.LabeledStatement:
                 //     return emitLabeledStatement(<LabeledStatement>node);
                 // case SyntaxKind.ThrowStatement:
@@ -316,8 +317,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitModuleDeclaration(<ModuleDeclaration>node);
                 // case SyntaxKind.ModuleBlock:
                 //     return emitModuleBlock(<ModuleBlock>node);
-                // case SyntaxKind.CaseBlock:
-                //     return emitCaseBlock(<CaseBlock>node);
+                case SyntaxKind.CaseBlock:
+                    return emitCaseBlock(<ts.CaseBlock>node);
                 // case SyntaxKind.NamespaceExportDeclaration:
                 //     return emitNamespaceExportDeclaration(<NamespaceExportDeclaration>node);
                 // case SyntaxKind.ImportEqualsDeclaration:
@@ -366,10 +367,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitJsxExpression(<JsxExpression>node);
 
                 // // Clauses
-                // case SyntaxKind.CaseClause:
-                //     return emitCaseClause(<CaseClause>node);
-                // case SyntaxKind.DefaultClause:
-                //     return emitDefaultClause(<DefaultClause>node);
+                case SyntaxKind.CaseClause:
+                    return emitCaseClause(<ts.CaseClause>node);
+                case SyntaxKind.DefaultClause:
+                    return emitDefaultClause(<ts.DefaultClause>node);
                 // case SyntaxKind.HeritageClause:
                 //     return emitHeritageClause(<HeritageClause>node);
                 // case SyntaxKind.CatchClause:
@@ -1444,15 +1445,15 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitEmbeddedStatement(node, node.statement);
     // }
 
-    // function emitSwitchStatement(node: SwitchStatement) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.SwitchKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
-    //     writeSpace();
-    //     emit(node.caseBlock);
-    // }
+    function emitSwitchStatement(node: ts.SwitchStatement) {
+        const openParenPos = emitTokenWithComment(SyntaxKind.SwitchKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
+        emitExpression(node.expression);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
+        writeSpace();
+        emit(node.caseBlock);
+    }
 
     // function emitLabeledStatement(node: LabeledStatement) {
     //     emit(node.label);
@@ -1743,11 +1744,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     popNameGenerationScope(node);
     // }
 
-    // function emitCaseBlock(node: CaseBlock) {
-    //     emitTokenWithComment(SyntaxKind.OpenBraceToken, node.pos, writePunctuation, node);
-    //     emitList(node, node.clauses, ListFormat.CaseBlockClauses);
-    //     emitTokenWithComment(SyntaxKind.CloseBraceToken, node.clauses.end, writePunctuation, node, /*indentLeading*/ true);
-    // }
+    function emitCaseBlock(node: ts.CaseBlock) {
+        emitTokenWithComment(SyntaxKind.OpenBraceToken, node.pos, writePunctuation, node);
+        emitList(node, node.clauses, ts.ListFormat.CaseBlockClauses);
+        emitTokenWithComment(SyntaxKind.CloseBraceToken, node.clauses.end, writePunctuation, node, /*indentLeading*/ true);
+    }
 
     // function emitImportEqualsDeclaration(node: ImportEqualsDeclaration) {
     //     emitModifiers(node, node.modifiers);
@@ -1992,44 +1993,44 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // //
-    // // Clauses
-    // //
+    //
+    // Clauses
+    //
 
-    // function emitCaseClause(node: CaseClause) {
-    //     emitTokenWithComment(SyntaxKind.CaseKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitExpression(node.expression);
+    function emitCaseClause(node: ts.CaseClause) {
+        emitTokenWithComment(SyntaxKind.CaseKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        emitExpression(node.expression);
 
-    //     emitCaseOrDefaultClauseRest(node, node.statements, node.expression.end);
-    // }
+        emitCaseOrDefaultClauseRest(node, node.statements, node.expression.end);
+    }
 
-    // function emitDefaultClause(node: DefaultClause) {
-    //     const pos = emitTokenWithComment(SyntaxKind.DefaultKeyword, node.pos, writeKeyword, node);
-    //     emitCaseOrDefaultClauseRest(node, node.statements, pos);
-    // }
+    function emitDefaultClause(node: ts.DefaultClause) {
+        const pos = emitTokenWithComment(SyntaxKind.DefaultKeyword, node.pos, writeKeyword, node);
+        emitCaseOrDefaultClauseRest(node, node.statements, pos);
+    }
 
-    // function emitCaseOrDefaultClauseRest(parentNode: Node, statements: NodeArray<Statement>, colonPos: number) {
-    //     const emitAsSingleStatement =
-    //         statements.length === 1 &&
-    //         (
-    //             // treat synthesized nodes as located on the same line for emit purposes
-    //             nodeIsSynthesized(parentNode) ||
-    //             nodeIsSynthesized(statements[0]) ||
-    //             rangeStartPositionsAreOnSameLine(parentNode, statements[0], currentSourceFile)
-    //         );
+    function emitCaseOrDefaultClauseRest(parentNode: Node, statements: ts.NodeArray<ts.Statement>, colonPos: number) {
+        const emitAsSingleStatement =
+            statements.length === 1 &&
+            (
+                // treat synthesized nodes as located on the same line for emit purposes
+                nodeIsSynthesized(parentNode) ||
+                nodeIsSynthesized(statements[0]) ||
+                rangeStartPositionsAreOnSameLine(parentNode, statements[0], currentSourceFile)
+            );
 
-    //     let format = ListFormat.CaseOrDefaultClauseStatements;
-    //     if (emitAsSingleStatement) {
-    //         writeToken(SyntaxKind.ColonToken, colonPos, writePunctuation, parentNode);
-    //         writeSpace();
-    //         format &= ~(ListFormat.MultiLine | ListFormat.Indented);
-    //     }
-    //     else {
-    //         emitTokenWithComment(SyntaxKind.ColonToken, colonPos, writePunctuation, parentNode);
-    //     }
-    //     emitList(parentNode, statements, format);
-    // }
+        let format = ts.ListFormat.CaseOrDefaultClauseStatements;
+        if (emitAsSingleStatement) {
+            writeToken(SyntaxKind.ColonToken, colonPos, writePunctuation, parentNode);
+            writeSpace();
+            format &= ~(ts.ListFormat.MultiLine | ts.ListFormat.Indented);
+        }
+        else {
+            emitTokenWithComment(SyntaxKind.ColonToken, colonPos, writePunctuation, parentNode);
+        }
+        emitList(parentNode, statements, format);
+    }
 
     // function emitHeritageClause(node: HeritageClause) {
     //     writeSpace();
