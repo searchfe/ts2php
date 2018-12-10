@@ -81,7 +81,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
-        console.log(writer.getText());
+        // console.log(writer.getText());
     });
     return writer.getText();
     
