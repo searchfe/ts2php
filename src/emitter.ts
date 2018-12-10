@@ -272,8 +272,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitDoStatement(<DoStatement>node);
                 case SyntaxKind.WhileStatement:
                     return emitWhileStatement(<ts.WhileStatement>node);
-                // case SyntaxKind.ForStatement:
-                //     return emitForStatement(<ForStatement>node);
+                case SyntaxKind.ForStatement:
+                    return emitForStatement(<ts.ForStatement>node);
                 // case SyntaxKind.ForInStatement:
                 //     return emitForInStatement(<ForInStatement>node);
                 // case SyntaxKind.ForOfStatement:
@@ -475,8 +475,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitAwaitExpression(<AwaitExpression>node);
                 case SyntaxKind.PrefixUnaryExpression:
                     return emitPrefixUnaryExpression(<ts.PrefixUnaryExpression>node);
-                // case SyntaxKind.PostfixUnaryExpression:
-                //     return emitPostfixUnaryExpression(<PostfixUnaryExpression>node);
+                case SyntaxKind.PostfixUnaryExpression:
+                    return emitPostfixUnaryExpression(<ts.PostfixUnaryExpression>node);
                 case SyntaxKind.BinaryExpression:
                     return emitBinaryExpression(<ts.BinaryExpression>node);
                 // case SyntaxKind.ConditionalExpression:
@@ -1185,10 +1185,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 || (node.operator === SyntaxKind.MinusToken && ((<ts.PrefixUnaryExpression>operand).operator === SyntaxKind.MinusToken || (<ts.PrefixUnaryExpression>operand).operator === SyntaxKind.MinusMinusToken)));
     }
 
-    // function emitPostfixUnaryExpression(node: PostfixUnaryExpression) {
-    //     emitExpression(node.operand);
-    //     writeTokenText(node.operator, writeOperator);
-    // }
+    function emitPostfixUnaryExpression(node: ts.PostfixUnaryExpression) {
+        emitExpression(node.operand);
+        writeTokenText(node.operator, writeOperator);
+    }
 
     function emitBinaryExpression(node: ts.BinaryExpression) {
         emitWithHint(ts.EmitHint.Expression, node.left);
@@ -1352,18 +1352,18 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         emitEmbeddedStatement(node, node.statement);
     }
 
-    // function emitForStatement(node: ForStatement) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.ForKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     let pos = emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, /*contextNode*/ node);
-    //     emitForBinding(node.initializer);
-    //     pos = emitTokenWithComment(SyntaxKind.SemicolonToken, node.initializer ? node.initializer.end : pos, writeSemicolon, node);
-    //     emitExpressionWithLeadingSpace(node.condition);
-    //     pos = emitTokenWithComment(SyntaxKind.SemicolonToken, node.condition ? node.condition.end : pos, writeSemicolon, node);
-    //     emitExpressionWithLeadingSpace(node.incrementor);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.incrementor ? node.incrementor.end : pos, writePunctuation, node);
-    //     emitEmbeddedStatement(node, node.statement);
-    // }
+    function emitForStatement(node: ts.ForStatement) {
+        const openParenPos = emitTokenWithComment(SyntaxKind.ForKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        let pos = emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, /*contextNode*/ node);
+        emitForBinding(node.initializer);
+        pos = emitTokenWithComment(SyntaxKind.SemicolonToken, node.initializer ? node.initializer.end : pos, writeSemicolon, node);
+        emitExpressionWithLeadingSpace(node.condition);
+        pos = emitTokenWithComment(SyntaxKind.SemicolonToken, node.condition ? node.condition.end : pos, writeSemicolon, node);
+        emitExpressionWithLeadingSpace(node.incrementor);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.incrementor ? node.incrementor.end : pos, writePunctuation, node);
+        emitEmbeddedStatement(node, node.statement);
+    }
 
     // function emitForInStatement(node: ForInStatement) {
     //     const openParenPos = emitTokenWithComment(SyntaxKind.ForKeyword, node.pos, writeKeyword, node);
@@ -1392,16 +1392,16 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitEmbeddedStatement(node, node.statement);
     // }
 
-    // function emitForBinding(node: VariableDeclarationList | Expression | undefined) {
-    //     if (node !== undefined) {
-    //         if (node.kind === SyntaxKind.VariableDeclarationList) {
-    //             emit(node);
-    //         }
-    //         else {
-    //             emitExpression(node);
-    //         }
-    //     }
-    // }
+    function emitForBinding(node: ts.VariableDeclarationList | ts.Expression | undefined) {
+        if (node !== undefined) {
+            if (node.kind === SyntaxKind.VariableDeclarationList) {
+                emit(node);
+            }
+            else {
+                emitExpression(node);
+            }
+        }
+    }
 
     // function emitContinueStatement(node: ContinueStatement) {
     //     emitTokenWithComment(SyntaxKind.ContinueKeyword, node.pos, writeKeyword, node);
