@@ -270,8 +270,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                     return emitIfStatement(<ts.IfStatement>node);
                 // case SyntaxKind.DoStatement:
                 //     return emitDoStatement(<DoStatement>node);
-                // case SyntaxKind.WhileStatement:
-                //     return emitWhileStatement(<WhileStatement>node);
+                case SyntaxKind.WhileStatement:
+                    return emitWhileStatement(<ts.WhileStatement>node);
                 // case SyntaxKind.ForStatement:
                 //     return emitForStatement(<ForStatement>node);
                 // case SyntaxKind.ForInStatement:
@@ -473,8 +473,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitVoidExpression(<VoidExpression>node);
                 // case SyntaxKind.AwaitExpression:
                 //     return emitAwaitExpression(<AwaitExpression>node);
-                // case SyntaxKind.PrefixUnaryExpression:
-                //     return emitPrefixUnaryExpression(<PrefixUnaryExpression>node);
+                case SyntaxKind.PrefixUnaryExpression:
+                    return emitPrefixUnaryExpression(<ts.PrefixUnaryExpression>node);
                 // case SyntaxKind.PostfixUnaryExpression:
                 //     return emitPostfixUnaryExpression(<PostfixUnaryExpression>node);
                 case SyntaxKind.BinaryExpression:
@@ -1158,32 +1158,32 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitExpression(node.expression);
     // }
 
-    // function emitPrefixUnaryExpression(node: PrefixUnaryExpression) {
-    //     writeTokenText(node.operator, writeOperator);
-    //     if (shouldEmitWhitespaceBeforeOperand(node)) {
-    //         writeSpace();
-    //     }
-    //     emitExpression(node.operand);
-    // }
+    function emitPrefixUnaryExpression(node: ts.PrefixUnaryExpression) {
+        writeTokenText(node.operator, writeOperator);
+        if (shouldEmitWhitespaceBeforeOperand(node)) {
+            writeSpace();
+        }
+        emitExpression(node.operand);
+    }
 
-    // function shouldEmitWhitespaceBeforeOperand(node: PrefixUnaryExpression) {
-    //     // In some cases, we need to emit a space between the operator and the operand. One obvious case
-    //     // is when the operator is an identifier, like delete or typeof. We also need to do this for plus
-    //     // and minus expressions in certain cases. Specifically, consider the following two cases (parens
-    //     // are just for clarity of exposition, and not part of the source code):
-    //     //
-    //     //  (+(+1))
-    //     //  (+(++1))
-    //     //
-    //     // We need to emit a space in both cases. In the first case, the absence of a space will make
-    //     // the resulting expression a prefix increment operation. And in the second, it will make the resulting
-    //     // expression a prefix increment whose operand is a plus expression - (++(+x))
-    //     // The same is true of minus of course.
-    //     const operand = node.operand;
-    //     return operand.kind === SyntaxKind.PrefixUnaryExpression
-    //         && ((node.operator === SyntaxKind.PlusToken && ((<PrefixUnaryExpression>operand).operator === SyntaxKind.PlusToken || (<PrefixUnaryExpression>operand).operator === SyntaxKind.PlusPlusToken))
-    //             || (node.operator === SyntaxKind.MinusToken && ((<PrefixUnaryExpression>operand).operator === SyntaxKind.MinusToken || (<PrefixUnaryExpression>operand).operator === SyntaxKind.MinusMinusToken)));
-    // }
+    function shouldEmitWhitespaceBeforeOperand(node: ts.PrefixUnaryExpression) {
+        // In some cases, we need to emit a space between the operator and the operand. One obvious case
+        // is when the operator is an identifier, like delete or typeof. We also need to do this for plus
+        // and minus expressions in certain cases. Specifically, consider the following two cases (parens
+        // are just for clarity of exposition, and not part of the source code):
+        //
+        //  (+(+1))
+        //  (+(++1))
+        //
+        // We need to emit a space in both cases. In the first case, the absence of a space will make
+        // the resulting expression a prefix increment operation. And in the second, it will make the resulting
+        // expression a prefix increment whose operand is a plus expression - (++(+x))
+        // The same is true of minus of course.
+        const operand = node.operand;
+        return operand.kind === SyntaxKind.PrefixUnaryExpression
+            && ((node.operator === SyntaxKind.PlusToken && ((<ts.PrefixUnaryExpression>operand).operator === SyntaxKind.PlusToken || (<ts.PrefixUnaryExpression>operand).operator === SyntaxKind.PlusPlusToken))
+                || (node.operator === SyntaxKind.MinusToken && ((<ts.PrefixUnaryExpression>operand).operator === SyntaxKind.MinusToken || (<ts.PrefixUnaryExpression>operand).operator === SyntaxKind.MinusMinusToken)));
+    }
 
     // function emitPostfixUnaryExpression(node: PostfixUnaryExpression) {
     //     emitExpression(node.operand);
@@ -1325,13 +1325,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         }
     }
 
-    // function emitWhileClause(node: WhileStatement | DoStatement, startPos: number) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.WhileKeyword, startPos, writeKeyword, node);
-    //     writeSpace();
-    //     emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
-    // }
+    function emitWhileClause(node: ts.WhileStatement | ts.DoStatement, startPos: number) {
+        const openParenPos = emitTokenWithComment(SyntaxKind.WhileKeyword, startPos, writeKeyword, node);
+        writeSpace();
+        emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
+        emitExpression(node.expression);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
+    }
 
     // function emitDoStatement(node: DoStatement) {
     //     emitTokenWithComment(SyntaxKind.DoKeyword, node.pos, writeKeyword, node);
@@ -1347,10 +1347,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     writePunctuation(";");
     // }
 
-    // function emitWhileStatement(node: WhileStatement) {
-    //     emitWhileClause(node, node.pos);
-    //     emitEmbeddedStatement(node, node.statement);
-    // }
+    function emitWhileStatement(node: ts.WhileStatement) {
+        emitWhileClause(node, node.pos);
+        emitEmbeddedStatement(node, node.statement);
+    }
 
     // function emitForStatement(node: ForStatement) {
     //     const openParenPos = emitTokenWithComment(SyntaxKind.ForKeyword, node.pos, writeKeyword, node);

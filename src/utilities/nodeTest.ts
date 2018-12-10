@@ -717,7 +717,8 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.ElementAccessExpression,
     ts.SyntaxKind.Parameter,
     ts.SyntaxKind.BinaryExpression,
-    ts.SyntaxKind.IfStatement
+    ts.SyntaxKind.IfStatement,
+    ts.SyntaxKind.PrefixUnaryExpression
 ]);
 /**
  * 判断输出 identier 时，是否需要加 $ 符号

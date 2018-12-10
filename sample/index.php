@@ -1,5 +1,7 @@
 <?php
 
-function aaa() {
-    
+$a = false;
+
+if (!$a) {
+    echo 123;
 }
