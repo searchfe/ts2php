@@ -1,0 +1,10 @@
+/output
+/sample
+/scripts
+/test
+.editorconfig
+.gitignore
+.npmrc
+ci.yml
+tsconfig.json
+typescirpt.d.ts
