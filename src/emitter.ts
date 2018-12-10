@@ -32,7 +32,8 @@ import {
     isImportSpecifier,
     shouldUseArray,
     shouldAddDoubleQuote,
-    isBlock
+    isBlock,
+    isStringLike
 } from './utilities/nodeTest';
 import * as os from 'os';
 import {
@@ -2755,9 +2756,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     function writeTokenNode(node: ts.Node, writer: (s: string) => void, left: ts.Expression, right: ts.Expression) {
         // 如果运算符是 + ，且左右两边有一边为字符串，那么要换成 .
         if (node.kind === SyntaxKind.PlusToken) {
-            const leftType = typeChecker.getTypeAtLocation(left);
-            const rightType = typeChecker.getTypeAtLocation(right);
-            if (leftType.getFlags() === TypeFlags.String || rightType.getFlags() === TypeFlags.String) {
+            if (isStringLike(left, typeChecker) || isStringLike(right, typeChecker)) {
                 writer('.');
                 return;
             }

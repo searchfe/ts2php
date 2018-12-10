@@ -715,7 +715,8 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.VariableDeclaration,
     ts.SyntaxKind.TemplateSpan,
     ts.SyntaxKind.ElementAccessExpression,
-    ts.SyntaxKind.Parameter
+    ts.SyntaxKind.Parameter,
+    ts.SyntaxKind.BinaryExpression
 ]);
 /**
  * 判断输出 identier 时，是否需要加 $ 符号
@@ -758,4 +759,17 @@ const arrayBracketsMap = {
  */
 export function shouldUseArray(format: ts.ListFormat) {
     return arrayBracketsMap[format] || '';
+}
+
+const stringLikeType = new Set([
+    ts.TypeFlags.String,
+    ts.TypeFlags.StringLiteral
+]);
+/**
+ * 判断是否是 string，用于将 + 改写成 .
+ * @param node node
+ */
+export function isStringLike(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    return stringLikeType.has(nodeType.getFlags());
 }
