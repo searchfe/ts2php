@@ -257,17 +257,17 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 // case SyntaxKind.SemicolonClassElement:
                 //     return emitSemicolonClassElement();
 
-                // // Statements
-                // case SyntaxKind.Block:
-                //     return emitBlock(<Block>node);
+                // Statements
+                case SyntaxKind.Block:
+                    return emitBlock(<ts.Block>node);
                 case SyntaxKind.VariableStatement:
                     return emitVariableStatement(<ts.VariableStatement>node);
                 // case SyntaxKind.EmptyStatement:
                 //     return emitEmptyStatement();
                 case SyntaxKind.ExpressionStatement:
                     return emitExpressionStatement(<ts.ExpressionStatement>node);
-                // case SyntaxKind.IfStatement:
-                //     return emitIfStatement(<IfStatement>node);
+                case SyntaxKind.IfStatement:
+                    return emitIfStatement(<ts.IfStatement>node);
                 // case SyntaxKind.DoStatement:
                 //     return emitDoStatement(<DoStatement>node);
                 // case SyntaxKind.WhileStatement:
@@ -432,15 +432,15 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 case SyntaxKind.Identifier:
                     return emitIdentifier(<ts.Identifier>node);
 
-                // // Reserved words
-                // case SyntaxKind.FalseKeyword:
-                // case SyntaxKind.NullKeyword:
-                // case SyntaxKind.SuperKeyword:
-                // case SyntaxKind.TrueKeyword:
-                // case SyntaxKind.ThisKeyword:
-                // case SyntaxKind.ImportKeyword:
-                //     writeTokenNode(node, writeKeyword);
-                //     return;
+                // Reserved words
+                case SyntaxKind.FalseKeyword:
+                case SyntaxKind.NullKeyword:
+                case SyntaxKind.SuperKeyword:
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.ThisKeyword:
+                case SyntaxKind.ImportKeyword:
+                    writeTokenNode(node, writeKeyword);
+                    return;
 
                 // // Expressions
                 // case SyntaxKind.ArrayLiteralExpression:
@@ -1275,20 +1275,20 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         emit(node.literal);
     }
 
-    // //
-    // // Statements
-    // //
+    //
+    // Statements
+    //
 
-    // function emitBlock(node: Block) {
-    //     emitBlockStatements(node, /*forceSingleLine*/ !node.multiLine && isEmptyBlock(node));
-    // }
+    function emitBlock(node: ts.Block) {
+        emitBlockStatements(node, /*forceSingleLine*/ !node.multiLine && isEmptyBlock(node));
+    }
 
-    // function emitBlockStatements(node: BlockLike, forceSingleLine: boolean) {
-    //     emitTokenWithComment(SyntaxKind.OpenBraceToken, node.pos, writePunctuation, /*contextNode*/ node);
-    //     const format = forceSingleLine || getEmitFlags(node) & EmitFlags.SingleLine ? ListFormat.SingleLineBlockStatements : ListFormat.MultiLineBlockStatements;
-    //     emitList(node, node.statements, format);
-    //     emitTokenWithComment(SyntaxKind.CloseBraceToken, node.statements.end, writePunctuation, /*contextNode*/ node, /*indentLeading*/ !!(format & ListFormat.MultiLine));
-    // }
+    function emitBlockStatements(node: ts.BlockLike, forceSingleLine: boolean) {
+        emitTokenWithComment(SyntaxKind.OpenBraceToken, node.pos, writePunctuation, /*contextNode*/ node);
+        const format = forceSingleLine || getEmitFlags(node) & ts.EmitFlags.SingleLine ? ts.ListFormat.SingleLineBlockStatements : ts.ListFormat.MultiLineBlockStatements;
+        emitList(node, node.statements, format);
+        emitTokenWithComment(SyntaxKind.CloseBraceToken, node.statements.end, writePunctuation, /*contextNode*/ node, /*indentLeading*/ !!(format & ts.ListFormat.MultiLine));
+    }
 
     function emitVariableStatement(node: ts.VariableStatement) {
         // emitModifiers(node, node.modifiers);
@@ -1305,25 +1305,25 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         writeSemicolon();
     }
 
-    // function emitIfStatement(node: IfStatement) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.IfKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
-    //     emitEmbeddedStatement(node, node.thenStatement);
-    //     if (node.elseStatement) {
-    //         writeLineOrSpace(node);
-    //         emitTokenWithComment(SyntaxKind.ElseKeyword, node.thenStatement.end, writeKeyword, node);
-    //         if (node.elseStatement.kind === SyntaxKind.IfStatement) {
-    //             writeSpace();
-    //             emit(node.elseStatement);
-    //         }
-    //         else {
-    //             emitEmbeddedStatement(node, node.elseStatement);
-    //         }
-    //     }
-    // }
+    function emitIfStatement(node: ts.IfStatement) {
+        const openParenPos = emitTokenWithComment(SyntaxKind.IfKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
+        emitExpression(node.expression);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
+        emitEmbeddedStatement(node, node.thenStatement);
+        if (node.elseStatement) {
+            writeLineOrSpace(node);
+            emitTokenWithComment(SyntaxKind.ElseKeyword, node.thenStatement.end, writeKeyword, node);
+            if (node.elseStatement.kind === SyntaxKind.IfStatement) {
+                writeSpace();
+                emit(node.elseStatement);
+            }
+            else {
+                emitEmbeddedStatement(node, node.elseStatement);
+            }
+        }
+    }
 
     // function emitWhileClause(node: WhileStatement | DoStatement, startPos: number) {
     //     const openParenPos = emitTokenWithComment(SyntaxKind.WhileKeyword, startPos, writeKeyword, node);
@@ -2445,18 +2445,18 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     }
     // }
 
-    // function emitEmbeddedStatement(parent: Node, node: Statement) {
-    //     if (isBlock(node) || getEmitFlags(parent) & EmitFlags.SingleLine) {
-    //         writeSpace();
-    //         emit(node);
-    //     }
-    //     else {
-    //         writeLine();
-    //         increaseIndent();
-    //         emit(node);
-    //         decreaseIndent();
-    //     }
-    // }
+    function emitEmbeddedStatement(parent: Node, node: ts.Statement) {
+        if (isBlock(node) || getEmitFlags(parent) & ts.EmitFlags.SingleLine) {
+            writeSpace();
+            emit(node);
+        }
+        else {
+            writeLine();
+            increaseIndent();
+            emit(node);
+            decreaseIndent();
+        }
+    }
 
     function emitDecorators(parentNode: Node, decorators: ts.NodeArray<ts.Decorator> | undefined) {
         emitList(parentNode, decorators, ts.ListFormat.Decorators);
@@ -2753,7 +2753,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         return writeTokenText(token, writer, pos);
     }
 
-    function writeTokenNode(node: ts.Node, writer: (s: string) => void, left: ts.Expression, right: ts.Expression) {
+    function writeTokenNode(node: ts.Node, writer: (s: string) => void, left?: ts.Expression, right?: ts.Expression) {
         // 如果运算符是 + ，且左右两边有一边为字符串，那么要换成 .
         if (node.kind === SyntaxKind.PlusToken) {
             if (isStringLike(left, typeChecker) || isStringLike(right, typeChecker)) {
@@ -2772,14 +2772,14 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         return pos! < 0 ? pos! : pos! + tokenString.length;
     }
 
-    // function writeLineOrSpace(node: Node) {
-    //     if (getEmitFlags(node) & EmitFlags.SingleLine) {
-    //         writeSpace();
-    //     }
-    //     else {
-    //         writeLine();
-    //     }
-    // }
+    function writeLineOrSpace(node: Node) {
+        if (getEmitFlags(node) & ts.EmitFlags.SingleLine) {
+            writeSpace();
+        }
+        else {
+            writeLine();
+        }
+    }
 
     // function writeLines(text: string): void {
     //     const lines = text.split(/\r\n?|\n/g);
@@ -2912,10 +2912,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //         && !rangeEndIsOnSameLineAsRangeStart(node1, node2, currentSourceFile);
     // }
 
-    // function isEmptyBlock(block: BlockLike) {
-    //     return block.statements.length === 0
-    //         && rangeEndIsOnSameLineAsRangeStart(block, block, currentSourceFile);
-    // }
+    function isEmptyBlock(block: ts.BlockLike) {
+        return block.statements.length === 0
+            && rangeEndIsOnSameLineAsRangeStart(block, block, currentSourceFile);
+    }
 
     function skipSynthesizedParentheses(node: ts.Node) {
         while (node.kind === SyntaxKind.ParenthesizedExpression && nodeIsSynthesized(node)) {

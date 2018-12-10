@@ -716,7 +716,8 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.TemplateSpan,
     ts.SyntaxKind.ElementAccessExpression,
     ts.SyntaxKind.Parameter,
-    ts.SyntaxKind.BinaryExpression
+    ts.SyntaxKind.BinaryExpression,
+    ts.SyntaxKind.IfStatement
 ]);
 /**
  * 判断输出 identier 时，是否需要加 $ 符号
@@ -770,6 +771,9 @@ const stringLikeType = new Set([
  * @param node node
  */
 export function isStringLike(node: ts.Node, typeChecker: ts.TypeChecker) {
+    if (!node) {
+        return false;
+    }
     const nodeType = typeChecker.getTypeAtLocation(node);
     return stringLikeType.has(nodeType.getFlags());
 }
