@@ -36,7 +36,6 @@ import {
     isBlock,
     isStringLike
 } from './utilities/nodeTest';
-import * as os from 'os';
 import {
     forEach,
     cast,
@@ -69,7 +68,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     let reservedNames: ts.Map<true>; // TempFlags to reserve in nested name generation scopes.
     let write = writeBase;
     reset();
-    const writer = createTextWriter(os.EOL);
+    const writer = createTextWriter("\n");
     writer.writeLine();
     
 
