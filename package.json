@@ -1,12 +1,12 @@
 {
-  "name": "ts2php",
-  "version": "0.0.1",
+  "name": "@baidu/ts2php",
+  "version": "0.0.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
-    "test": "npm run build && mocha",
+    "test": "tsc && mocha",
     "mocha": "mocha"
   },
   "repository": {
@@ -23,5 +23,6 @@
     "sync-files": "^1.0.3",
     "ts-node": "^7.0.1",
     "typescript": "^3.1.3"
-  }
+  },
+  "devDependencies": {}
 }

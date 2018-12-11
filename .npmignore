@@ -2,6 +2,7 @@
 /sample
 /scripts
 /test
+/demo
 .editorconfig
 .gitignore
 .npmrc
