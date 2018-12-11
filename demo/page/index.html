@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ts2php demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    .ts2php {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 100px;
+        box-sizing: border-box
+    }
+    .body {
+        display: flex;
+        flex: 1;
+        align-items: center;
+    }
+    .body .left,
+    .body .right {
+        flex: 1;
+        height: 100%;
+    }
+    #source,
+    #target {
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+</head>
+<body>
+    <div class="ts2php">
+        <div class="header">
+            ts2php demo
+        </div>
+        <div class="body">
+            <div class="left">
+                <textarea name="source" id="source"></textarea>
+            </div>
+            <div class="middle">
+                <button type="submit">编译 %3D%3E</button>
+            </div>
+            <div class="right">
+                <textarea name="target" id="target"></textarea>
+            </div>
+        </div>
+        <div class="footer"></div>
+    </div>
+
+    <script>
+    const btn = document.querySelector('.middle button');
+    const source = document.querySelector('#source');
+    const target = document.querySelector('#target');
+    btn.addEventListener('click', () => {
+        const content = source.value;
+        fetch('/ts2php', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify({
+                source: content
+            })
+        })
+        .then(res => res.json())
+        .then(json => {
+            target.value = json.phpCode;
+        });
+    });
+    </script>
+</body>
+</html>
