@@ -2410,11 +2410,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function emitTypeAnnotation(node: ts.TypeNode | undefined) {
-        if (node) {
-            writePunctuation(":");
-            writeSpace();
-            emit(node);
-        }
+        // if (node) {
+        //     writePunctuation(":");
+        //     writeSpace();
+        //     emit(node);
+        // }
     }
 
     function emitInitializer(node: ts.Expression | undefined, equalCommentStartPos: number, container: Node) {
@@ -2943,15 +2943,18 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         // }
         if (isIdentifier(node)) {
             const name = (<ts.Identifier>node).escapedText as string;
+            let head = '';
+            let tail = '';
 
             // 需要加 $
             if (shouldAddDollar(node)) {
-                (<ts.Identifier>node).escapedText = <ts.__String>('$' + name);
+                head = '$' + head;
             }
 
             // 需要加双引号
             if (shouldAddDoubleQuote(node)) {
-                (<ts.Identifier>node).escapedText = <ts.__String>('"' + name + '"');
+                head = '"' + head;
+                tail += '"';
             }
             
             // 是从模块中引入的
@@ -2959,11 +2962,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 const moduleName = varModuleMap[name];
                 const className = globalOptions.modules[moduleName].className;
                 if (className) {
-                    (<ts.Identifier>node).escapedText = <ts.__String>(className + '::' + (<ts.Identifier>node).escapedText);
+                    head = className + '::' + head;
                 }
             }
 
-            return idText(<ts.Identifier>node);
+            return head + idText(<ts.Identifier>node) + tail;
         }
 
         if (isImportSpecifier(node)) {
