@@ -15,3 +15,4 @@ npm run build
 mkdir output
 mv ./dist ./output/dist
 mv ./demo ./output/demo
+mv ./package.json ./output/package.json
