@@ -11,4 +11,7 @@ npm install @types/lodash @types/node
 
 npm run build
 
-mv ./dist ./output
+
+mkdir output
+mv ./dist ./output/dist
+mv ./demo ./output/demo
