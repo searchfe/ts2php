@@ -34,7 +34,9 @@ import {
     shouldUseArray,
     shouldAddDoubleQuote,
     isBlock,
-    isStringLike
+    isStringLike,
+    isCallExpression,
+    isPropertyAccessExpression
 } from './utilities/nodeTest';
 import {
     forEach,
@@ -70,7 +72,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     reset();
     const writer = createTextWriter("\n");
     writer.writeLine();
-    
+
 
     // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
     // 调用函数的时候，需要转换成类方法
@@ -83,7 +85,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         // console.log(writer.getText());
     });
     return writer.getText();
-    
+
 
     // let commitPendingSemicolon: typeof commitPendingSemicolonInternal = noop;
 
@@ -1082,6 +1084,21 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function emitCallExpression(node: ts.CallExpression) {
+
+        const expNode = node.expression;
+
+        // string.prototype.replace
+        if (
+            isPropertyAccessExpression(expNode)
+            && isStringLike(expNode.expression, typeChecker)
+            && expNode.name.escapedText === 'replace'
+        ) {
+            writePunctuation('str_replace');
+            node.arguments = ts.createNodeArray([...node.arguments, expNode.expression]);
+            emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
+            return;
+        }
+
         emitWithHint(ts.EmitHint.Expression, node.expression);
         // emitTypeArguments(node, node.typeArguments);
         emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
@@ -2956,7 +2973,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 head = '"' + head;
                 tail += '"';
             }
-            
+
             // 是从模块中引入的
             if (varModuleMap[name]) {
                 const moduleName = varModuleMap[name];
