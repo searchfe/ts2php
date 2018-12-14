@@ -49,6 +49,8 @@ import {Ts2phpOptions, ErrorInfo} from './types';
 import {options as globalOptions, errors} from './globals';
 import {getNodeId} from './checker';
 
+import * as StringProtoHelpers from './features/string';
+
 let currentSourceFile: SourceFile;
 
 // Flags enum to track count of temp variables and a few dedicated names
@@ -1098,20 +1100,16 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         if (
             isPropertyAccessExpression(expNode)
             && isStringLike(expNode.expression, typeChecker)
-            && expNode.name.escapedText === 'replace'
         ) {
-            let nodeList = [...node.arguments, expNode.expression];
-            let method = 'str_replace';
-            if (isRegularExpressionLiteral(node.arguments[0])) {
-                method = 'preg_replace';
-                const firstArg = node.arguments[0] as ts.RegularExpressionLiteral;
-                if (!/g$/.test(getLiteralTextOfNode(firstArg, true))) {
-                    nodeList.push(ts.createNumericLiteral("1"));
-                }
+            const stringHelper = StringProtoHelpers[getTextOfNode(expNode.name)];
+            if (stringHelper) {
+                stringHelper(node, {
+                    getLiteralTextOfNode,
+                    emitExpressionList,
+                    writePunctuation,
+                    typeChecker
+                });
             }
-            writePunctuation(method);
-            node.arguments = ts.createNodeArray(nodeList);
-            emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
             return;
         }
 
