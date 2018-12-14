@@ -55,7 +55,6 @@ export function split(node: CallExpression, {emitExpressionList, writePunctuatio
     emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
 }
 
-
 const map = {
     trim: 'trim',
     trimRight: 'rtrim',

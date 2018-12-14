@@ -37,6 +37,7 @@ import {
     isStringLike,
     isPropertyAccessExpression,
     isRegularExpressionLiteral,
+    isLiteralTypeNode,
 } from './utilities/nodeTest';
 import {
     forEach,
@@ -49,7 +50,8 @@ import {Ts2phpOptions, ErrorInfo} from './types';
 import {options as globalOptions, errors} from './globals';
 import {getNodeId} from './checker';
 
-import * as StringProtoHelpers from './features/string';
+import * as StringProtoHelper from './features/string';
+import * as MathHelper from './features/math';
 
 let currentSourceFile: SourceFile;
 
@@ -1095,20 +1097,34 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     function emitCallExpression(node: ts.CallExpression) {
 
         const expNode = node.expression;
+        const helpers = {
+            getLiteralTextOfNode,
+            emitExpressionList,
+            writePunctuation,
+            typeChecker
+        };
 
         // string.prototype.replace
         if (
             isPropertyAccessExpression(expNode)
             && isStringLike(expNode.expression, typeChecker)
         ) {
-            const stringHelper = StringProtoHelpers[getTextOfNode(expNode.name)];
+            const stringHelper = StringProtoHelper[getTextOfNode(expNode.name)];
             if (stringHelper) {
-                stringHelper(node, {
-                    getLiteralTextOfNode,
-                    emitExpressionList,
-                    writePunctuation,
-                    typeChecker
-                });
+                stringHelper(node, helpers);
+            }
+            return;
+        }
+
+        // Math.xx
+        if (
+            isPropertyAccessExpression(expNode)
+            && isIdentifier(expNode.expression)
+            && expNode.expression.escapedText === 'Math'
+        ) {
+            const stringHelper = MathHelper[getTextOfNode(expNode.name)];
+            if (stringHelper) {
+                stringHelper(node, helpers);
             }
             return;
         }
