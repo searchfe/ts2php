@@ -35,8 +35,8 @@ import {
     shouldAddDoubleQuote,
     isBlock,
     isStringLike,
-    isCallExpression,
-    isPropertyAccessExpression
+    isPropertyAccessExpression,
+    isRegularExpressionLiteral,
 } from './utilities/nodeTest';
 import {
     forEach,
@@ -425,8 +425,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 case SyntaxKind.NumericLiteral:
                     return emitNumericLiteral(<ts.NumericLiteral>node);
 
-                case SyntaxKind.StringLiteral:
                 case SyntaxKind.RegularExpressionLiteral:
+                    return emitRegularExpressionLiteral(<ts.RegularExpressionLiteral>node);
+
+                case SyntaxKind.StringLiteral:
                 case SyntaxKind.NoSubstitutionTemplateLiteral:
                     return emitLiteral(<ts.LiteralExpression>node);
 
@@ -588,6 +590,11 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // SyntaxKind.NumericLiteral
     function emitNumericLiteral(node: ts.NumericLiteral) {
         emitLiteral(node);
+    }
+
+    function emitRegularExpressionLiteral(node: ts.RegularExpressionLiteral) {
+        const text = JSON.stringify(getLiteralTextOfNode(node, true).replace(/g$/, ''));
+        writeStringLiteral(text);
     }
 
     // SyntaxKind.StringLiteral
@@ -1093,8 +1100,17 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             && isStringLike(expNode.expression, typeChecker)
             && expNode.name.escapedText === 'replace'
         ) {
-            writePunctuation('str_replace');
-            node.arguments = ts.createNodeArray([...node.arguments, expNode.expression]);
+            let nodeList = [...node.arguments, expNode.expression];
+            let method = 'str_replace';
+            if (isRegularExpressionLiteral(node.arguments[0])) {
+                method = 'preg_replace';
+                const firstArg = node.arguments[0] as ts.RegularExpressionLiteral;
+                if (!/g$/.test(getLiteralTextOfNode(firstArg, true))) {
+                    nodeList.push(ts.createNumericLiteral("1"));
+                }
+            }
+            writePunctuation(method);
+            node.arguments = ts.createNodeArray(nodeList);
             emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
             return;
         }
