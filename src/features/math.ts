@@ -3,17 +3,23 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
+
 import {
     CallExpression,
-    ListFormat
+    ListFormat,
+    EmitHint,
+    SyntaxKind
 } from 'typescript';
 
-function method(node: CallExpression, {emitExpressionList, writePunctuation}, method) {
-    writePunctuation(method);
-    emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
-}
+import {
+    isPropertyAccessExpression,
+    isIdentifier
+} from '../utilities/nodeTest';
 
-const map = {
+import method from '../utilities/method';
+
+
+let map = {
     abs: 'abs',
     acos: 'acos',
     acosh: 'acosh',
@@ -52,6 +58,30 @@ const map = {
 
 for (let key in map) {
     if (map.hasOwnProperty(key)) {
-        exports[key] = (...args) => method(args[0], args[1], key);
+        map[key] = method(map[key], false);
     }
 }
+
+export default {
+
+    emit(hint, node, helpers) {
+
+        const expNode = node.expression;
+
+        if (hint === EmitHint.Expression && node.kind === SyntaxKind.CallExpression) {
+            if (
+                isPropertyAccessExpression(expNode)
+                && isIdentifier(expNode.expression)
+                && expNode.expression.escapedText === 'Math'
+            ) {
+                const func = map[helpers.getTextOfNode(expNode.name)];
+                if (func) {
+                    func(node, helpers);
+                }
+                return;
+            }
+        }
+
+        return false;
+    }
+};

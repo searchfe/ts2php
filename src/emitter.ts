@@ -50,8 +50,9 @@ import {Ts2phpOptions, ErrorInfo} from './types';
 import {options as globalOptions, errors} from './globals';
 import {getNodeId} from './checker';
 
-import * as StringProtoHelper from './features/string';
-import * as MathHelper from './features/math';
+import StringPligin from './features/string';
+import MathPlugin from './features/math';
+import ObjectPlugin from './features/object';
 
 let currentSourceFile: SourceFile;
 
@@ -77,6 +78,20 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     const writer = createTextWriter("\n");
     writer.writeLine();
 
+    let buildInPlugins = [
+        StringPligin,
+        MathPlugin,
+        ObjectPlugin
+    ];
+
+    const helpers = {
+        emitExpressionList,
+        emitWithHint,
+        getLiteralTextOfNode,
+        writePunctuation,
+        typeChecker,
+        getTextOfNode
+    };
 
     // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
     // 调用函数的时候，需要转换成类方法
@@ -135,6 +150,14 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function emitWithHint(hint: ts.EmitHint, node: ts.Node) {
+
+        for (let plugin of buildInPlugins) {
+            let output = plugin.emit(hint, node, helpers);
+            if (output !== false) {
+                return;
+            }
+        }
+
         if (hint === ts.EmitHint.IdentifierName) return emitIdentifier(cast(node, isIdentifier));
         if (hint === ts.EmitHint.Unspecified) {
             switch (node.kind) {
@@ -1095,40 +1118,6 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function emitCallExpression(node: ts.CallExpression) {
-
-        const expNode = node.expression;
-        const helpers = {
-            getLiteralTextOfNode,
-            emitExpressionList,
-            writePunctuation,
-            typeChecker
-        };
-
-        // string.prototype.replace
-        if (
-            isPropertyAccessExpression(expNode)
-            && isStringLike(expNode.expression, typeChecker)
-        ) {
-            const stringHelper = StringProtoHelper[getTextOfNode(expNode.name)];
-            if (stringHelper) {
-                stringHelper(node, helpers);
-            }
-            return;
-        }
-
-        // Math.xx
-        if (
-            isPropertyAccessExpression(expNode)
-            && isIdentifier(expNode.expression)
-            && expNode.expression.escapedText === 'Math'
-        ) {
-            const stringHelper = MathHelper[getTextOfNode(expNode.name)];
-            if (stringHelper) {
-                stringHelper(node, helpers);
-            }
-            return;
-        }
-
         emitWithHint(ts.EmitHint.Expression, node.expression);
         // emitTypeArguments(node, node.typeArguments);
         emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);

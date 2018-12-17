@@ -22,4 +22,15 @@ class Ts2Php_Helper {
         return substr_replace($haystack, $replace, $pos, strlen($needle));
     }
 
+    /**
+     * replace once helper for string.prototype.slice
+     * @param $origin {string}
+     * @param $start {string}
+     * @param $end {string}
+     * @return {string}
+     */
+    static public function str_slice($origin, $start, $end) {
+        return substr($origin, $start, $end - $start + 1);
+    }
+
 }

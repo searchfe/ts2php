@@ -728,11 +728,18 @@ const shouldAddDollerParentList = new Set([
  * @param node 节点
  */
 export function shouldAddDollar(node: Node): boolean {
+
     // 可以直接通过父元素判断
     if (shouldAddDollerParentList.has(node.parent.kind)) {
         return true;
     }
-    
+
+    const currentNode = node as ts.Expression;
+
+    if (isCallExpression(node.parent) && node.parent.arguments.indexOf(currentNode) >= 0) {
+        return true;
+    }
+
     // PropertyAccessExpression
     if (node.parent.kind === ts.SyntaxKind.PropertyAccessExpression
         && (<ts.PropertyAccessExpression>node.parent).expression === node) {
@@ -747,7 +754,7 @@ export function shouldAddDoubleQuote(node: Node): boolean {
         && (<ts.PropertyAssignment>node.parent).name === node) {
         return true;
     }
-    
+
     return false;
 }
 

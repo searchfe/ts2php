@@ -9,15 +9,20 @@ import {
     createNumericLiteral,
     RegularExpressionLiteral,
     createNodeArray,
-    PropertyAccessExpression
+    PropertyAccessExpression,
+    EmitHint,
+    SyntaxKind
 } from 'typescript';
 
 import {
     isRegularExpressionLiteral,
-    isStringLike
+    isStringLike,
+    isPropertyAccessExpression
 } from '../utilities/nodeTest';
 
-export function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}) {
+import method from '../utilities/method';
+
+function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}) {
 
     const expNode = node.expression as PropertyAccessExpression;
 
@@ -37,18 +42,10 @@ export function replace(node: CallExpression, {getLiteralTextOfNode, emitExpress
     emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
 }
 
-export function indexOf(node: CallExpression, {emitExpressionList, writePunctuation}) {
-    const expNode = node.expression as PropertyAccessExpression;
-    let nodeList = [expNode.expression, node.arguments[0]];
-    writePunctuation('strpos');
-    node.arguments = createNodeArray(nodeList);
-    emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
-}
-
-export function split(node: CallExpression, {emitExpressionList, writePunctuation, typeChecker}) {
+function split(node: CallExpression, {emitExpressionList, writePunctuation, typeChecker}) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    const method = isStringLike(pattern, typeChecker) ? 'split' : 'preg_split';
+    const method = isStringLike(pattern, typeChecker) ? 'explode' : 'preg_split';
     let nodeList = [node.arguments[0], expNode.expression];
     writePunctuation(method);
     node.arguments = createNodeArray(nodeList);
@@ -56,23 +53,38 @@ export function split(node: CallExpression, {emitExpressionList, writePunctuatio
 }
 
 const map = {
-    trim: 'trim',
-    trimRight: 'rtrim',
-    trimLeft: 'ltrim',
-    toUpperCase: 'strtoupper',
-    toLowerCase: 'strtolower'
+    trim: method('trim'),
+    trimRight: method('rtrim'),
+    trimLeft: method('ltrim'),
+    toUpperCase: method('strtoupper'),
+    toLowerCase: method('strtolower'),
+    slice: method('Ts2Php_Helper::str_slice', true, 2),
+    indexOf: method('strpos', true, 1),
+    substr: method('substr', true, 2),
+    substring: method('substr', true, 2),
+    replace,
+    split
 };
 
-for (let key in map) {
-    if (map.hasOwnProperty(key)) {
-        exports[key] = (node: CallExpression, {emitExpressionList, writePunctuation}) => {
-            const expNode = node.expression as PropertyAccessExpression;
-            let nodeList = [expNode.expression];
-            let method = map[key];
-            writePunctuation(method);
-            node.arguments = createNodeArray(nodeList);
-            emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
-        };
-    }
-}
+export default {
 
+    emit(hint, node, helpers) {
+
+        const expNode = node.expression;
+
+        if (hint === EmitHint.Expression && node.kind === SyntaxKind.CallExpression) {
+            if (
+                isPropertyAccessExpression(expNode)
+                && isStringLike(expNode.expression, helpers.typeChecker)
+            ) {
+                const func = map[helpers.getTextOfNode(expNode.name)];
+                if (func) {
+                    func(node, helpers);
+                }
+                return;
+            }
+        }
+
+        return false;
+    }
+};

@@ -9,3 +9,5 @@ let g = a.trim();
 let h = a.indexOf('a');
 let i = a.split(" ");
 let j = a.split(/\0/);
+let k = 2;
+let l = a.substr(1, k);
