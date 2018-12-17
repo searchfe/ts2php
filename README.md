@@ -6,6 +6,10 @@ ts转php
 ## Features
 
 - Core JavaScript API
+  - Object
+    - Object.assign
+    - Object.keys
+    - Object.freeze
   - String
     - String.prototype.replace
     - String.prototype.trim
