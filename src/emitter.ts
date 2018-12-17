@@ -54,6 +54,8 @@ import StringPligin from './features/string';
 import MathPlugin from './features/math';
 import ObjectPlugin from './features/object';
 import JSONPlugin from './features/json';
+import GlobalPlugin from './features/global';
+
 
 let currentSourceFile: SourceFile;
 
@@ -83,7 +85,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         StringPligin,
         MathPlugin,
         ObjectPlugin,
-        JSONPlugin
+        JSONPlugin,
+        GlobalPlugin
     ];
 
     const helpers = {
