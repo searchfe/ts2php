@@ -53,6 +53,7 @@ import {getNodeId} from './checker';
 import StringPligin from './features/string';
 import MathPlugin from './features/math';
 import ObjectPlugin from './features/object';
+import JSONPlugin from './features/json';
 
 let currentSourceFile: SourceFile;
 
@@ -81,7 +82,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     let buildInPlugins = [
         StringPligin,
         MathPlugin,
-        ObjectPlugin
+        ObjectPlugin,
+        JSONPlugin
     ];
 
     const helpers = {
