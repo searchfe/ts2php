@@ -17,7 +17,8 @@ import {
 import {
     isRegularExpressionLiteral,
     isStringLike,
-    isPropertyAccessExpression
+    isPropertyAccessExpression,
+    isCallExpression
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
@@ -72,16 +73,15 @@ export default {
 
         const expNode = node.expression;
 
-        if (hint === EmitHint.Expression && node.kind === SyntaxKind.CallExpression) {
-            if (
-                isPropertyAccessExpression(expNode)
-                && isStringLike(expNode.expression, helpers.typeChecker)
-            ) {
-                const func = map[helpers.getTextOfNode(expNode.name)];
-                if (func) {
-                    func(node, helpers);
-                }
-                return;
+        if (
+            hint === EmitHint.Expression
+            && isCallExpression(node)
+            && isPropertyAccessExpression(expNode)
+            && isStringLike(expNode.expression, helpers.typeChecker)
+        ) {
+            const func = map[helpers.getTextOfNode(expNode.name)];
+            if (func) {
+                return func(node, helpers);
             }
         }
 

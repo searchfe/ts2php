@@ -5,13 +5,13 @@
 
 
 import {
-    EmitHint,
-    SyntaxKind
+    EmitHint
 } from 'typescript';
 
 import {
     isPropertyAccessExpression,
-    isIdentifier
+    isIdentifier,
+    isCallExpression
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
@@ -65,19 +65,17 @@ export default {
     emit(hint, node, helpers) {
 
         const expNode = node.expression;
+        let func;
 
-        if (hint === EmitHint.Expression && node.kind === SyntaxKind.CallExpression) {
-            if (
-                isPropertyAccessExpression(expNode)
-                && isIdentifier(expNode.expression)
-                && expNode.expression.escapedText === 'Math'
-            ) {
-                const func = map[helpers.getTextOfNode(expNode.name)];
-                if (func) {
-                    func(node, helpers);
-                }
-                return;
-            }
+        if (
+            hint === EmitHint.Expression
+            && isCallExpression(node)
+            && isPropertyAccessExpression(expNode)
+            && isIdentifier(expNode.expression)
+            && expNode.expression.escapedText === 'Math'
+            && (func = map[helpers.getTextOfNode(expNode.name)])
+        ) {
+            return func(node, helpers);
         }
 
         return false;

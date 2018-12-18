@@ -55,7 +55,7 @@ import MathPlugin from './features/math';
 import ObjectPlugin from './features/object';
 import JSONPlugin from './features/json';
 import GlobalPlugin from './features/global';
-
+import NumberPlugin from './features/number';
 
 let currentSourceFile: SourceFile;
 
@@ -86,7 +86,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         MathPlugin,
         ObjectPlugin,
         JSONPlugin,
-        GlobalPlugin
+        GlobalPlugin,
+        NumberPlugin
     ];
 
     const helpers = {

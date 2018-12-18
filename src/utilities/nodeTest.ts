@@ -789,3 +789,18 @@ export function isStringLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     return stringLikeType.has(nodeType.getFlags());
 }
+
+const numberLikeType = new Set([
+    ts.TypeFlags.Number,
+    ts.TypeFlags.NumberLiteral
+]);
+
+/**
+ * 判断是否是 number
+ * @param node node
+ */
+export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    return numberLikeType.has(nodeType.getFlags());
+}
+

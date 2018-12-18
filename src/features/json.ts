@@ -25,7 +25,9 @@ const methods = {
         const expNode = node.expression as PropertyAccessExpression;
         writePunctuation('json_encode');
         node.arguments = createNodeArray([
-            node.arguments[0]
+            node.arguments[0],
+            // JSON_UNESCAPED_UNICODE
+            createLiteral(256)
         ]);
         emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
     },
