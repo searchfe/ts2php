@@ -11,3 +11,4 @@ $i = explode(" ", $a);
 $j = preg_split("/\\0/", $a);
 $k = 2;
 $l = substr($a, 1, $k);
+$m = strlen($a);

@@ -56,6 +56,7 @@ import ObjectPlugin from './features/object';
 import JSONPlugin from './features/json';
 import GlobalPlugin from './features/global';
 import NumberPlugin from './features/number';
+import ArrayPlugin from './features/array';
 
 let currentSourceFile: SourceFile;
 
@@ -87,16 +88,20 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         ObjectPlugin,
         JSONPlugin,
         GlobalPlugin,
-        NumberPlugin
+        NumberPlugin,
+        ArrayPlugin
     ];
 
     const helpers = {
         emitExpressionList,
         emitWithHint,
+        emitArrayLiteralExpression,
+        emitLiteral,
         getLiteralTextOfNode,
         writePunctuation,
         typeChecker,
-        getTextOfNode
+        getTextOfNode,
+        emit
     };
 
     // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的

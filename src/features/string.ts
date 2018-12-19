@@ -10,8 +10,7 @@ import {
     RegularExpressionLiteral,
     createNodeArray,
     PropertyAccessExpression,
-    EmitHint,
-    SyntaxKind
+    EmitHint
 } from 'typescript';
 
 import {
@@ -84,6 +83,19 @@ export default {
                 return func(node, helpers);
             }
         }
+
+        if (
+            hint === EmitHint.Expression
+            && isPropertyAccessExpression(node)
+            && isStringLike(expNode, helpers.typeChecker)
+            && helpers.getTextOfNode(node.name) === 'length'
+        ) {
+            helpers.writePunctuation('strlen(');
+            helpers.emit(expNode);
+            helpers.writePunctuation(')');
+            return;
+        }
+
 
         return false;
     }
