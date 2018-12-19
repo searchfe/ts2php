@@ -18,7 +18,7 @@ export default function (method: string, self: boolean = true, end?: number) {
         }
         let nodeList = self ? [expNode] : [];
         writePunctuation(method);
-        node.arguments = createNodeArray([...nodeList, ...node.arguments.slice(0, end)]);
-        emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+        const args = createNodeArray([...nodeList, ...node.arguments.slice(0, end)]);
+        emitExpressionList(node, args, ListFormat.CallExpressionArguments);
     };
 }

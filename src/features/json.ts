@@ -24,21 +24,21 @@ const methods = {
     stringify(node: CallExpression, {emitExpressionList, writePunctuation}) {
         const expNode = node.expression as PropertyAccessExpression;
         writePunctuation('json_encode');
-        node.arguments = createNodeArray([
+        const args = createNodeArray([
             node.arguments[0],
             // JSON_UNESCAPED_UNICODE
             createLiteral(256)
         ]);
-        emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+        emitExpressionList(node, args, ListFormat.CallExpressionArguments);
     },
     parse(node: CallExpression, {emitExpressionList, writePunctuation}) {
         const expNode = node.expression as PropertyAccessExpression;
         writePunctuation('json_decode');
-        node.arguments = createNodeArray([
+        const args = createNodeArray([
             node.arguments[0],
             createLiteral(true)
         ]);
-        emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+        emitExpressionList(node, args, ListFormat.CallExpressionArguments);
     }
 };
 

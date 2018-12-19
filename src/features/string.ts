@@ -38,8 +38,8 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
     }
 
     writePunctuation(method);
-    node.arguments = createNodeArray(nodeList);
-    emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+    const args = createNodeArray(nodeList);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
 function split(node: CallExpression, {emitExpressionList, writePunctuation, typeChecker}) {
@@ -48,8 +48,8 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation, type
     const method = isStringLike(pattern, typeChecker) ? 'explode' : 'preg_split';
     let nodeList = [node.arguments[0], expNode.expression];
     writePunctuation(method);
-    node.arguments = createNodeArray(nodeList);
-    emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+    const args = createNodeArray(nodeList);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
 const map = {

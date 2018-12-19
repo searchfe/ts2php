@@ -4,18 +4,10 @@
  */
 
 import {
-    EmitHint,
-    CallExpression,
-    createIdentifier,
-    createLiteral,
-    createNodeArray,
-    PropertyAccessExpression,
-    ListFormat
+    EmitHint
 } from 'typescript';
 
 import {
-    isPropertyAccessExpression,
-    isIdentifier,
     isCallExpression
 } from '../utilities/nodeTest';
 

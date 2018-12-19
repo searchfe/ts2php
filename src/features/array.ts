@@ -8,20 +8,16 @@ import {
     ListFormat,
     createNodeArray,
     PropertyAccessExpression,
-    EmitHint,
-    createCall,
-    createLiteral
+    EmitHint
 } from 'typescript';
 
 import {
     isArrayLiteralExpression,
     isPropertyAccessExpression,
-    isCallExpression,
-    isArrayTypeNode
+    isCallExpression
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
-import { emit } from 'cluster';
 
 function join(node: CallExpression, {emitExpressionList, writePunctuation}) {
     let expNode = node.expression as PropertyAccessExpression;
@@ -29,8 +25,8 @@ function join(node: CallExpression, {emitExpressionList, writePunctuation}) {
         expNode = expNode.expression as PropertyAccessExpression;
     }
     writePunctuation('join');
-    node.arguments = createNodeArray([node.arguments[0], expNode]);
-    emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+    const args = createNodeArray([node.arguments[0], expNode]);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
 function indexOf(node: CallExpression, {emitExpressionList, writePunctuation}) {
@@ -39,8 +35,8 @@ function indexOf(node: CallExpression, {emitExpressionList, writePunctuation}) {
         expNode = expNode.expression as PropertyAccessExpression;
     }
     writePunctuation('array_search');
-    node.arguments = createNodeArray([node.arguments[0], expNode]);
-    emitExpressionList(node, node.arguments, ListFormat.CallExpressionArguments);
+    const args = createNodeArray([node.arguments[0], expNode]);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
 const map = {

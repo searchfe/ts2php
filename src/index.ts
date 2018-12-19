@@ -17,7 +17,7 @@ export function ts2php(filePath: string, options?: Ts2phpOptions) {
         target: ts.ScriptTarget.ES5,
         module: ts.ModuleKind.CommonJS
     });
-    
+
     const typeChecker = program.getTypeChecker();
 
     for (const sourceFile of program.getSourceFiles()) {
