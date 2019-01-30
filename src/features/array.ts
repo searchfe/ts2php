@@ -8,7 +8,8 @@ import {
     ListFormat,
     createNodeArray,
     PropertyAccessExpression,
-    EmitHint
+    EmitHint,
+    createIdentifier
 } from 'typescript';
 
 import {
@@ -19,26 +20,6 @@ import {
 
 import method from '../utilities/method';
 
-function join(node: CallExpression, {emitExpressionList, writePunctuation}) {
-    let expNode = node.expression as PropertyAccessExpression;
-    while (expNode.expression) {
-        expNode = expNode.expression as PropertyAccessExpression;
-    }
-    writePunctuation('join');
-    const args = createNodeArray([node.arguments[0], expNode]);
-    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
-}
-
-function indexOf(node: CallExpression, {emitExpressionList, writePunctuation}) {
-    let expNode = node.expression as PropertyAccessExpression;
-    while (expNode.expression) {
-        expNode = expNode.expression as PropertyAccessExpression;
-    }
-    writePunctuation('array_search');
-    const args = createNodeArray([node.arguments[0], expNode]);
-    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
-}
-
 const map = {
     push: method('array_push', true, 1),
     pop: method('array_pop', true, 0),
@@ -47,13 +28,16 @@ const map = {
     concat: method('array_merge', true),
     reverse: method('array_reverse', true),
     splice: method('array_splice', true),
-    indexOf,
-    join
+    map: method('array_map', false, 1, true),
+    forEach: method('array_walk', true, 1),
+    indexOf: method('array_search', false, 1, true),
+    join: method('join', false, 1, true),
+    filter: method('array_filter', true, 1),
 };
 
 export default {
 
-    emit(hint, node, helpers) {
+    emit(hint, node, {helpers, typeChecker}) {
 
         const expNode = node.expression;
 
@@ -61,7 +45,6 @@ export default {
             getTextOfNode,
             writePunctuation,
             emitArrayLiteralExpression,
-            typeChecker,
             emit
         } = helpers;
 
@@ -77,6 +60,7 @@ export default {
             }
         }
 
+        // Array.prototype.length
         if (
             hint === EmitHint.Expression
             && isPropertyAccessExpression(node)

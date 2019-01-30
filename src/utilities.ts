@@ -8,18 +8,18 @@ import {
     skipTrivia,
     getLineAndCharacterOfPosition
 } from './scanner';
+
 import {
     last,
     noop,
     map,
     createMapFromTemplate
-} from './core'
-import {Node} from 'typescript';
-import {
-    isNumericLiteral
-} from './utilities/nodeTest';
+} from './core';
+
 import * as ts from 'typescript';
-import {errors} from './globals';
+import {Node} from 'typescript';
+import {error} from './state';
+
 
 const indentStrings: string[] = ["", "    "];
 export function getIndentString(level: number) {
@@ -197,7 +197,7 @@ export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFi
             return node.text;
     }
 
-    errors.push({
+    error({
         code: 1,
         msg: `Literal kind '${node.kind}' not accounted for.`
     });

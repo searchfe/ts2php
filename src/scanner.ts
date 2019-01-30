@@ -7,8 +7,8 @@ import {
     binarySearch
 } from './core'
 import {positionIsSynthesized} from './utilities';
+import {error as pushError} from './state';
 import * as ts from 'typescript';
-import {errors} from './globals';
 
 import {SyntaxKind} from 'typescript';
 
@@ -157,8 +157,9 @@ function scanShebangTrivia(text: string, pos: number) {
 }
 
 function scanConflictMarkerTrivia(text: string, pos: number, error?: (diag: ts.DiagnosticMessage, pos?: number, len?: number) => void) {
+
     if (error) {
-        errors.push({
+        pushError({
             code: 1,
             msg: 'Merge_conflict_marker_encountered' + pos + mergeConflictMarkerLength
         });
@@ -389,7 +390,7 @@ export function computeLineAndCharacterOfPosition(lineStarts: ReadonlyArray<numb
         // Review 2's-complement if this is confusing.
         lineNumber = ~lineNumber - 1;
         if (lineNumber === -1) {
-            errors.push({
+            pushError({
                 code: 1,
                 msg: "position cannot precede the beginning of the file"
             });

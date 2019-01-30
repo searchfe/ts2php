@@ -1,4 +1,5 @@
 <?php
+use test\NumberApi;
 $a = 12.44;
 $b = round($a, 1);
 $c = round($a + 1, 1);

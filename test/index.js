@@ -35,17 +35,15 @@ describe('features', () => {
             const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);
             const res = ts2php(tsPath, {
                 modules: {
-                    './atomWiseUtils': {
-                        path: './path/to/utils.php',
-                        className: 'Atom_Wise_Utils'
-                    },
-                    './tplData': {
-                        path: '',
-                        className: ''
+                    '@baidu/atom-wise-utils': {
+                        path: '/home/work/search/view-ui/atom/plugins/aladdin/Atom_Wise_Utils.php',
+                        className: '\\Atom_Wise_Utils'
                     }
+                },
+                getNamespace() {
+                    return `test\\${featureName}`;
                 }
             });
-            fs.writeFileSync(path.resolve(__dirname, '../output/' + featureName + '.php'), res.phpCode);
             assert.equal(res.phpCode, phpContent);
             assert.equal(res.errors.length, 0);
         });

@@ -5,6 +5,7 @@ import {
     SyntaxKind
 } from 'typescript';
 import * as ts from 'typescript';
+import {CompilerState} from '../types';
 
 
 // Literals
@@ -721,13 +722,15 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.PrefixUnaryExpression,
     ts.SyntaxKind.PostfixUnaryExpression,
     ts.SyntaxKind.SwitchStatement,
-    ts.SyntaxKind.ArrayLiteralExpression
+    ts.SyntaxKind.ArrayLiteralExpression,
+    ts.SyntaxKind.ReturnStatement
 ]);
+
 /**
- * 判断输出 identier 时，是否需要加 $ 符号
+ * 判断输出 Identier 时，是否需要加 $ 符号
  * @param node 节点
  */
-export function shouldAddDollar(node: Node): boolean {
+export function shouldAddDollar(node: Node, state: CompilerState): boolean {
 
     // 可以直接通过父元素判断
     if (shouldAddDollerParentList.has(node.parent.kind)) {
@@ -736,13 +739,16 @@ export function shouldAddDollar(node: Node): boolean {
 
     const currentNode = node as ts.Expression;
 
+    // 函数参数
     if (isCallExpression(node.parent) && node.parent.arguments.indexOf(currentNode) >= 0) {
         return true;
     }
 
     // PropertyAccessExpression
-    if (node.parent.kind === ts.SyntaxKind.PropertyAccessExpression
-        && (<ts.PropertyAccessExpression>node.parent).expression === node) {
+    if (
+        isPropertyAccessExpression(node.parent)
+        && node.parent.expression === node
+    ) {
         return true;
     }
 

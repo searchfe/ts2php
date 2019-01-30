@@ -1,3 +1,6 @@
 <?php
-require_once("./path/to/utils.php");
-$tplData->src = Atom_Wise_Utils::makeTcLink($tplData->src);
+use test\import;
+require_once("/home/work/search/view-ui/atom/plugins/aladdin/Atom_Wise_Utils.php");
+$tplData = array();
+$tplData["src"] = \Atom_Wise_Utils::makeTcLink("url");
+$tplData["title"] = \Atom_Wise_Utils::highlight("title");

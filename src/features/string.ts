@@ -21,6 +21,7 @@ import {
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
+import {CompilerState} from '../types';
 
 function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}) {
 
@@ -42,10 +43,10 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
-function split(node: CallExpression, {emitExpressionList, writePunctuation, typeChecker}) {
+function split(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    const method = isStringLike(pattern, typeChecker) ? 'explode' : 'preg_split';
+    const method = isStringLike(pattern, state.typeChecker) ? 'explode' : 'preg_split';
     let nodeList = [node.arguments[0], expNode.expression];
     writePunctuation(method);
     const args = createNodeArray(nodeList);
@@ -68,26 +69,28 @@ const map = {
 
 export default {
 
-    emit(hint, node, helpers) {
+    emit(hint, node, state) {
 
         const expNode = node.expression;
+        const helpers = state.helpers;
 
         if (
             hint === EmitHint.Expression
             && isCallExpression(node)
             && isPropertyAccessExpression(expNode)
-            && isStringLike(expNode.expression, helpers.typeChecker)
+            && isStringLike(expNode.expression, state.typeChecker)
         ) {
             const func = map[helpers.getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers);
+                return func(node, helpers, state);
             }
         }
 
+        // String.prototype.length
         if (
             hint === EmitHint.Expression
             && isPropertyAccessExpression(node)
-            && isStringLike(expNode, helpers.typeChecker)
+            && isStringLike(expNode, state.typeChecker)
             && helpers.getTextOfNode(node.name) === 'length'
         ) {
             helpers.writePunctuation('strlen(');
@@ -95,7 +98,6 @@ export default {
             helpers.writePunctuation(')');
             return;
         }
-
 
         return false;
     }

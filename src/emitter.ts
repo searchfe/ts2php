@@ -6,11 +6,12 @@
 import * as ts from 'typescript';
 import {
     SyntaxKind,
-    TypeFlags,
+    ListFormat,
     SourceFile,
     Symbol,
     Node
 } from 'typescript';
+
 import {
     createTextWriter,
     nodeIsSynthesized,
@@ -25,7 +26,7 @@ import {
     positionIsSynthesized,
     rangeEndPositionsAreOnSameLine,
     isPrologueDirective,
-    rangeStartPositionsAreOnSameLine
+    rangeStartPositionsAreOnSameLine,
 } from './utilities';
 import * as utilities from './utilities';
 import {
@@ -34,21 +35,17 @@ import {
     shouldUseArray,
     shouldAddDoubleQuote,
     isBlock,
-    isStringLike,
-    isPropertyAccessExpression,
-    isRegularExpressionLiteral,
-    isLiteralTypeNode,
+    isStringLike
 } from './utilities/nodeTest';
 import {
-    forEach,
+    some,
     cast,
-    lastOrUndefined
+    lastOrUndefined,
+    singleOrUndefined
 } from './core';
 import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
-import {Ts2phpOptions, ErrorInfo} from './types';
-import {options as globalOptions, errors} from './globals';
-import {getNodeId} from './checker';
+import {CompilerState} from './types';
 
 import StringPligin from './features/string';
 import MathPlugin from './features/math';
@@ -57,6 +54,7 @@ import JSONPlugin from './features/json';
 import GlobalPlugin from './features/global';
 import NumberPlugin from './features/number';
 import ArrayPlugin from './features/array';
+import ImportPlugin from './features/import';
 
 let currentSourceFile: SourceFile;
 
@@ -67,7 +65,8 @@ const enum TempFlags {
     _i = 0x10000000,  // Use/preference flag for '_i'
 }
 
-export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
+export function emitFile(sourceFile: SourceFile, state: CompilerState) {
+
     const brackets = createBracketsMap();
     currentSourceFile = sourceFile;
     let nodeIdToGeneratedName: string[]; // Map of generated names for specific nodes.
@@ -89,26 +88,30 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         JSONPlugin,
         GlobalPlugin,
         NumberPlugin,
-        ArrayPlugin
+        ArrayPlugin,
+        ImportPlugin
     ];
 
-    const helpers = {
-        emitExpressionList,
-        emitWithHint,
-        emitArrayLiteralExpression,
+    const typeChecker = state.typeChecker;
+
+    state.helpers = {
+
+        emit,
         emitLiteral,
+        emitWithHint,
+        emitExpressionList,
+        emitArrayLiteralExpression,
+
         getLiteralTextOfNode,
-        writePunctuation,
-        typeChecker,
         getTextOfNode,
-        emit
+        writePunctuation
     };
 
     // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
     // 调用函数的时候，需要转换成类方法
     const varModuleMap = {};
 
-    writer.write('<?php\n');
+    writer.write(`<?php\nuse ${state.namespace};\n`);
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
@@ -163,7 +166,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     function emitWithHint(hint: ts.EmitHint, node: ts.Node) {
 
         for (let plugin of buildInPlugins) {
-            let output = plugin.emit(hint, node, helpers);
+            let output = plugin.emit(hint, node, state);
             if (output !== false) {
                 return;
             }
@@ -368,8 +371,8 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                     return emitImportClause(<ts.ImportClause>node);
                 // case SyntaxKind.NamespaceImport:
                 //     return emitNamespaceImport(<NamespaceImport>node);
-                case SyntaxKind.NamedImports:
-                    return emitNamedImports(<ts.NamedImports>node);
+                // case SyntaxKind.NamedImports:
+                //     return emitNamedImports(<ts.NamedImports>node);
                 // case SyntaxKind.ImportSpecifier:
                 //     return emitImportSpecifier(<ImportSpecifier>node);
                 // case SyntaxKind.ExportAssignment:
@@ -503,10 +506,10 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 //     return emitTypeAssertionExpression(<TypeAssertion>node);
                 // case SyntaxKind.ParenthesizedExpression:
                 //     return emitParenthesizedExpression(<ParenthesizedExpression>node);
-                // case SyntaxKind.FunctionExpression:
-                //     return emitFunctionExpression(<FunctionExpression>node);
-                // case SyntaxKind.ArrowFunction:
-                //     return emitArrowFunction(<ArrowFunction>node);
+                case SyntaxKind.FunctionExpression:
+                    return emitFunctionExpression(<ts.FunctionExpression>node);
+                case SyntaxKind.ArrowFunction:
+                    return emitArrowFunction(<ts.ArrowFunction>node);
                 // case SyntaxKind.DeleteExpression:
                 //     return emitDeleteExpression(<DeleteExpression>node);
                 // case SyntaxKind.TypeOfExpression:
@@ -1097,8 +1100,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
         emitWithHint(ts.EmitHint.Expression, node.expression);
-        writePunctuation("->");
+        writePunctuation("[\"");
         emitWithHint(ts.EmitHint.Unspecified, node.name);
+        writePunctuation("\"]");
     }
 
     // // 1..toString is a valid property access, emit a dot after the literal
@@ -1162,24 +1166,24 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression ? node.expression.end : openParenPos, writePunctuation, node);
     // }
 
-    // function emitFunctionExpression(node: FunctionExpression) {
-    //     generateNameIfNeeded(node.name);
-    //     emitFunctionDeclarationOrExpression(node);
-    // }
+    function emitFunctionExpression(node: ts.FunctionExpression) {
+        // generateNameIfNeeded(node.name);
+        emitFunctionDeclarationOrExpression(node);
+    }
 
-    // function emitArrowFunction(node: ArrowFunction) {
-    //     emitDecorators(node, node.decorators);
-    //     emitModifiers(node, node.modifiers);
-    //     emitSignatureAndBody(node, emitArrowFunctionHead);
-    // }
+    function emitArrowFunction(node: ts.ArrowFunction) {
+        emitDecorators(node, node.decorators);
+        emitModifiers(node, node.modifiers);
+        emitSignatureAndBody(node, emitArrowFunctionHead);
+    }
 
-    // function emitArrowFunctionHead(node: ArrowFunction) {
-    //     emitTypeParameters(node, node.typeParameters);
-    //     emitParametersForArrow(node, node.parameters);
-    //     emitTypeAnnotation(node.type);
-    //     writeSpace();
-    //     emit(node.equalsGreaterThanToken);
-    // }
+    function emitArrowFunctionHead(node: ts.ArrowFunction) {
+        // emitTypeParameters(node, node.typeParameters);
+        emitParametersForArrow(node, node.parameters);
+        emitTypeAnnotation(node.type);
+        writeSpace();
+        emit(node.equalsGreaterThanToken);
+    }
 
     // function emitDeleteExpression(node: DeleteExpression) {
     //     emitTokenWithComment(SyntaxKind.DeleteKeyword, node.pos, writeKeyword, node);
@@ -1550,18 +1554,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     }
 
     function emitFunctionDeclaration(node: ts.FunctionDeclaration) {
-        if (node.name) {
-            const functionName = getTextOfNode(node.name, /*includeTrivia*/ false);
-            writeBase("if (!function_exists('" + functionName + "')) {");
-            writeLine();
-            increaseIndent();
-        }
         emitFunctionDeclarationOrExpression(node);
-        if (node.name) {
-            writeLine();
-            decreaseIndent();
-            writeBase("}");
-        }
     }
 
     function emitFunctionDeclarationOrExpression(node: ts.FunctionDeclaration | ts.FunctionExpression) {
@@ -1818,32 +1811,58 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     // }
 
     function emitImportDeclaration(node: ts.ImportDeclaration) {
-        // 暂时先不支持模块化，只允许用户引入 atomWiseUtils 库，方便在开发时有代码补全提示
+
+        // 暂时先不支持模块化，只允许用户引入指定库，方便在开发时有代码补全提示
         if (!node.moduleSpecifier || !node.moduleSpecifier.getText) {
-            errors.push({
+            state.errors.push({
                 code: 100,
                 msg: '模块引入出错'
             });
+            return;
         }
 
-        const allowedModules = globalOptions.modules;
+        const allowedModules = state.modules;
         const importModuleName = getImportModuleName(node);
         if (!allowedModules[importModuleName]) {
-            errors.push({
+            state.errors.push({
                 code: 100,
                 msg: `模块${importModuleName}未找到`
             });
+            return;
         }
 
-        // 不需要 write，但需要将引入的变量跟 module 对应起来
-        if (node.importClause) {
-            emit(node.importClause);
+        const moduleIt = allowedModules[importModuleName];
+
+        // 需要将引入的变量跟 module 对应起来
+        if (node.importClause.namedBindings) {
+            node.importClause.namedBindings.forEachChild(child => {
+                const name = getTextOfNode(child);
+                state.moduleNamedImports[name] = {
+                    className: moduleIt.className,
+                    moduleName: importModuleName
+                };
+            });
         }
 
-        if (allowedModules[importModuleName].path) {
-            writer.write(`require_once("${allowedModules[importModuleName].path}")`);
-            writeSemicolon();
+        if (moduleIt.required) {
+            return;
         }
+
+        if (moduleIt.path) {
+            writeBase(`require_once("${moduleIt.path}");`);
+            writeLine();
+        }
+
+        if (node.importClause.name) {
+            let text = getTextOfNode(node.importClause.name);
+            state.moduleDefaultImports[text] = {
+                className: moduleIt.className,
+                moduleName: importModuleName
+            };
+        }
+
+        moduleIt.required = true;
+
     }
 
     function emitImportClause(node: ts.ImportClause) {
@@ -1863,13 +1882,13 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
     //     emit(node.name);
     // }
 
-    function emitNamedImports(node: ts.NamedImports) {
-        node.forEachChild(child => {
-            const name = getTextOfNode(child);
-            const moduleName = getImportModuleName(node.parent.parent);
-            varModuleMap[name] = moduleName;
-        });
-    }
+    // function emitNamedImports(node: ts.NamedImports) {
+    //     node.forEachChild(child => {
+    //         const name = getTextOfNode(child);
+    //         const moduleName = getImportModuleName(node.parent.parent);
+    //         varModuleMap[name] = moduleName;
+    //     });
+    // }
 
     // function emitImportSpecifier(node: ImportSpecifier) {
     //     emitImportOrExportSpecifier(node);
@@ -2533,32 +2552,32 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
         emitList(parentNode, parameters, ts.ListFormat.Parameters);
     }
 
-    // function canEmitSimpleArrowHead(parentNode: FunctionTypeNode | ArrowFunction, parameters: NodeArray<ParameterDeclaration>) {
-    //     const parameter = singleOrUndefined(parameters);
-    //     return parameter
-    //         && parameter.pos === parentNode.pos // may not have parsed tokens between parent and parameter
-    //         && isArrowFunction(parentNode)      // only arrow functions may have simple arrow head
-    //         && !parentNode.type                 // arrow function may not have return type annotation
-    //         && !some(parentNode.decorators)     // parent may not have decorators
-    //         && !some(parentNode.modifiers)      // parent may not have modifiers
-    //         && !some(parentNode.typeParameters) // parent may not have type parameters
-    //         && !some(parameter.decorators)      // parameter may not have decorators
-    //         && !some(parameter.modifiers)       // parameter may not have modifiers
-    //         && !parameter.dotDotDotToken        // parameter may not be rest
-    //         && !parameter.questionToken         // parameter may not be optional
-    //         && !parameter.type                  // parameter may not have a type annotation
-    //         && !parameter.initializer           // parameter may not have an initializer
-    //         && isIdentifier(parameter.name);    // parameter name must be identifier
-    // }
+    function canEmitSimpleArrowHead(parentNode: ts.FunctionTypeNode | ts.ArrowFunction, parameters: ts.NodeArray<ts.ParameterDeclaration>) {
+        const parameter = singleOrUndefined(parameters);
+        return parameter
+            && parameter.pos === parentNode.pos // may not have parsed tokens between parent and parameter
+            && ts.isArrowFunction(parentNode)      // only arrow functions may have simple arrow head
+            && !parentNode.type                 // arrow function may not have return type annotation
+            && !some(parentNode.decorators)     // parent may not have decorators
+            && !some(parentNode.modifiers)      // parent may not have modifiers
+            && !some(parentNode.typeParameters) // parent may not have type parameters
+            && !some(parameter.decorators)      // parameter may not have decorators
+            && !some(parameter.modifiers)       // parameter may not have modifiers
+            && !parameter.dotDotDotToken        // parameter may not be rest
+            && !parameter.questionToken         // parameter may not be optional
+            && !parameter.type                  // parameter may not have a type annotation
+            && !parameter.initializer           // parameter may not have an initializer
+            && isIdentifier(parameter.name);    // parameter name must be identifier
+    }
 
-    // function emitParametersForArrow(parentNode: FunctionTypeNode | ArrowFunction, parameters: NodeArray<ParameterDeclaration>) {
-    //     if (canEmitSimpleArrowHead(parentNode, parameters)) {
-    //         emitList(parentNode, parameters, ListFormat.Parameters & ~ListFormat.Parenthesis);
-    //     }
-    //     else {
-    //         emitParameters(parentNode, parameters);
-    //     }
-    // }
+    function emitParametersForArrow(parentNode: ts.FunctionTypeNode | ts.ArrowFunction, parameters: ts.NodeArray<ts.ParameterDeclaration>) {
+        if (canEmitSimpleArrowHead(parentNode, parameters)) {
+            emitList(parentNode, parameters, ListFormat.Parameters & ~ListFormat.Parenthesis);
+        }
+        else {
+            emitParameters(parentNode, parameters);
+        }
+    }
 
     // function emitParametersForIndexSignature(parentNode: Node, parameters: NodeArray<ParameterDeclaration>) {
     //     emitList(parentNode, parameters, ListFormat.IndexSignatureParameters);
@@ -2883,7 +2902,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
                 return true;
             }
 
-            const firstChild = children[0];
+            // const firstChild = children[0];
             // if (firstChild === undefined) {
             //     return !rangeIsOnSingleLine(parentNode, currentSourceFile);
             // }
@@ -2994,7 +3013,7 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             let tail = '';
 
             // 需要加 $
-            if (shouldAddDollar(node)) {
+            if (shouldAddDollar(node, state)) {
                 head = '$' + head;
             }
 
@@ -3005,12 +3024,9 @@ export function emitFile(sourceFile: SourceFile, typeChecker: ts.TypeChecker) {
             }
 
             // 是从模块中引入的
-            if (varModuleMap[name]) {
-                const moduleName = varModuleMap[name];
-                const className = globalOptions.modules[moduleName].className;
-                if (className) {
-                    head = className + '::' + head;
-                }
+            if (state.moduleNamedImports[name]) {
+                const className = state.moduleNamedImports[name].className;
+                head = className + '::' + head;
             }
 
             return head + idText(<ts.Identifier>node) + tail;

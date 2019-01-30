@@ -6,10 +6,8 @@
 import {
     EmitHint,
     CallExpression,
-    createIdentifier,
     createLiteral,
     createNodeArray,
-    PropertyAccessExpression,
     ListFormat
 } from 'typescript';
 
@@ -22,7 +20,6 @@ import {
 
 const methods = {
     stringify(node: CallExpression, {emitExpressionList, writePunctuation}) {
-        const expNode = node.expression as PropertyAccessExpression;
         writePunctuation('json_encode');
         const args = createNodeArray([
             node.arguments[0],
@@ -32,7 +29,6 @@ const methods = {
         emitExpressionList(node, args, ListFormat.CallExpressionArguments);
     },
     parse(node: CallExpression, {emitExpressionList, writePunctuation}) {
-        const expNode = node.expression as PropertyAccessExpression;
         writePunctuation('json_decode');
         const args = createNodeArray([
             node.arguments[0],
@@ -44,7 +40,7 @@ const methods = {
 
 export default {
 
-    emit(hint, node, helpers) {
+    emit(hint, node, {helpers}) {
 
         const expNode = node.expression;
         let func;

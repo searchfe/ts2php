@@ -1,4 +1,5 @@
 <?php
+use test\SwitchStatement;
 $b = 2;
 $c = 1;
 switch ($b) {

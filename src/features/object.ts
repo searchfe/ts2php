@@ -25,7 +25,7 @@ const staticMap = {
 
 export default {
 
-    emit(hint, node, helpers) {
+    emit(hint, node, {helpers}) {
 
         const expNode = node.expression;
         let func;

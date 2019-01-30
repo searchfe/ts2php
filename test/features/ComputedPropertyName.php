@@ -1,4 +1,5 @@
 <?php
+use test\ComputedPropertyName;
 $a = "aaa";
 $b = "bbb";
 $c = array(
