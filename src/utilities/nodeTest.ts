@@ -723,7 +723,10 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.PostfixUnaryExpression,
     ts.SyntaxKind.SwitchStatement,
     ts.SyntaxKind.ArrayLiteralExpression,
-    ts.SyntaxKind.ReturnStatement
+    ts.SyntaxKind.ReturnStatement,
+    ts.SyntaxKind.ReturnStatement,
+    ts.SyntaxKind.ForInStatement,
+    ts.SyntaxKind.ForOfStatement
 ]);
 
 /**

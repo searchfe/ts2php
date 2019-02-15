@@ -107,10 +107,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         writePunctuation
     };
 
-    // 变量与 module 的映射，标记某个变量是从哪个 module 中引入的
-    // 调用函数的时候，需要转换成类方法
-    const varModuleMap = {};
-
     writer.write(`<?php\nuse ${state.namespace};\n`);
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
@@ -317,10 +313,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                     return emitWhileStatement(<ts.WhileStatement>node);
                 case SyntaxKind.ForStatement:
                     return emitForStatement(<ts.ForStatement>node);
-                // case SyntaxKind.ForInStatement:
-                //     return emitForInStatement(<ForInStatement>node);
-                // case SyntaxKind.ForOfStatement:
-                //     return emitForOfStatement(<ForOfStatement>node);
+                case SyntaxKind.ForInStatement:
+                    return emitForInStatement(<ts.ForInStatement>node);
+                case SyntaxKind.ForOfStatement:
+                    return emitForOfStatement(<ts.ForOfStatement>node);
                 case SyntaxKind.ContinueStatement:
                     return emitContinueStatement(<ts.ContinueStatement>node);
                 case SyntaxKind.BreakStatement:
@@ -1417,32 +1413,34 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emitEmbeddedStatement(node, node.statement);
     }
 
-    // function emitForInStatement(node: ForInStatement) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.ForKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
-    //     emitForBinding(node.initializer);
-    //     writeSpace();
-    //     emitTokenWithComment(SyntaxKind.InKeyword, node.initializer.end, writeKeyword, node);
-    //     writeSpace();
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
-    //     emitEmbeddedStatement(node, node.statement);
-    // }
+    function emitForInStatement(node: ts.ForInStatement) {
+        writeKeyword('foreach');
+        const openParenPos = node.pos! < 0 ? node.pos! : node.pos! + 7;
+        writeSpace();
+        emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
+        emitExpression(node.expression);
+        writeSpace();
+        writeKeyword('as');
+        writeSpace();
+        emitForBinding(node.initializer);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
+        emitEmbeddedStatement(node, node.statement);
+    }
 
-    // function emitForOfStatement(node: ForOfStatement) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.ForKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitWithTrailingSpace(node.awaitModifier);
-    //     emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
-    //     emitForBinding(node.initializer);
-    //     writeSpace();
-    //     emitTokenWithComment(SyntaxKind.OfKeyword, node.initializer.end, writeKeyword, node);
-    //     writeSpace();
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
-    //     emitEmbeddedStatement(node, node.statement);
-    // }
+    function emitForOfStatement(node: ts.ForOfStatement) {
+        writeKeyword('foreach');
+        const openParenPos = node.pos! < 0 ? node.pos! : node.pos! + 7;
+        writeSpace();
+        // emitWithTrailingSpace(node.awaitModifier);
+        emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
+        emitExpression(node.expression);
+        writeSpace();
+        writeKeyword('as');
+        writeSpace();
+        emitForBinding(node.initializer);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
+        emitEmbeddedStatement(node, node.statement);
+    }
 
     function emitForBinding(node: ts.VariableDeclarationList | ts.Expression | undefined) {
         if (node !== undefined) {
@@ -2514,12 +2512,12 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         }
     }
 
-    // function emitWithTrailingSpace(node: Node | undefined) {
-    //     if (node) {
-    //         emit(node);
-    //         writeSpace();
-    //     }
-    // }
+    function emitWithTrailingSpace(node: Node | undefined) {
+        if (node) {
+            emit(node);
+            writeSpace();
+        }
+    }
 
     function emitEmbeddedStatement(parent: Node, node: ts.Statement) {
         if (isBlock(node) || getEmitFlags(parent) & ts.EmitFlags.SingleLine) {
