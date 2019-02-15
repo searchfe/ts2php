@@ -4,12 +4,7 @@
  */
 
 import {
-    CallExpression,
-    ListFormat,
-    createNodeArray,
-    PropertyAccessExpression,
-    EmitHint,
-    createIdentifier
+    EmitHint
 } from 'typescript';
 
 import {

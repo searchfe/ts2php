@@ -16,8 +16,6 @@ import {
     createTextWriter,
     nodeIsSynthesized,
     isIdentifier,
-    isGeneratedIdentifier,
-    isBindingPattern,
     idText,
     getLiteralText,
     getEmitFlags,
@@ -55,6 +53,7 @@ import GlobalPlugin from './features/global';
 import NumberPlugin from './features/number';
 import ArrayPlugin from './features/array';
 import ImportPlugin from './features/import';
+import ConsolePlugin from './features/console';
 
 let currentSourceFile: SourceFile;
 
@@ -89,7 +88,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         GlobalPlugin,
         NumberPlugin,
         ArrayPlugin,
-        ImportPlugin
+        ImportPlugin,
+        ConsolePlugin
     ];
 
     const typeChecker = state.typeChecker;
@@ -367,8 +367,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitImportEqualsDeclaration(<ImportEqualsDeclaration>node);
                 case SyntaxKind.ImportDeclaration:
                     return emitImportDeclaration(<ts.ImportDeclaration>node);
-                case SyntaxKind.ImportClause:
-                    return emitImportClause(<ts.ImportClause>node);
+                // case SyntaxKind.ImportClause:
+                //     return emitImportClause(<ts.ImportClause>node);
                 // case SyntaxKind.NamespaceImport:
                 //     return emitNamespaceImport(<NamespaceImport>node);
                 // case SyntaxKind.NamedImports:
@@ -376,9 +376,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 // case SyntaxKind.ImportSpecifier:
                 //     return emitImportSpecifier(<ImportSpecifier>node);
                 // case SyntaxKind.ExportAssignment:
-                //     return emitExportAssignment(<ExportAssignment>node);
+                //     return emitExportAssignment(<ts.ExportAssignment>node);
                 // case SyntaxKind.ExportDeclaration:
-                //     return emitExportDeclaration(<ExportDeclaration>node);
+                //     console.log(node);
+                //     return emitExportDeclaration(<ts.ExportDeclaration>node);
                 // case SyntaxKind.NamedExports:
                 //     return emitNamedExports(<NamedExports>node);
                 // case SyntaxKind.ExportSpecifier:
@@ -1865,14 +1866,14 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
     }
 
-    function emitImportClause(node: ts.ImportClause) {
-        // emit(node.name);
-        // if (node.name && node.namedBindings) {
-        //     emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
-        //     writeSpace();
-        // }
-        emit(node.namedBindings);
-    }
+    // function emitImportClause(node: ts.ImportClause) {
+    //     // emit(node.name);
+    //     // if (node.name && node.namedBindings) {
+    //     //     emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
+    //     //     writeSpace();
+    //     // }
+    //     emit(node.namedBindings);
+    // }
 
     // function emitNamespaceImport(node: NamespaceImport) {
     //     const asPos = emitTokenWithComment(SyntaxKind.AsteriskToken, node.pos, writePunctuation, node);
@@ -1908,7 +1909,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     writeSemicolon();
     // }
 
-    // function emitExportDeclaration(node: ExportDeclaration) {
+    // function emitExportDeclaration(node: ts.ExportDeclaration) {
     //     let nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
     //     writeSpace();
     //     if (node.exportClause) {
