@@ -499,8 +499,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                     return emitPostfixUnaryExpression(<ts.PostfixUnaryExpression>node);
                 case SyntaxKind.BinaryExpression:
                     return emitBinaryExpression(<ts.BinaryExpression>node);
-                // case SyntaxKind.ConditionalExpression:
-                //     return emitConditionalExpression(<ConditionalExpression>node);
+                case SyntaxKind.ConditionalExpression:
+                    return emitConditionalExpression(<ts.ConditionalExpression>node);
                 case SyntaxKind.TemplateExpression:
                     return emitTemplateExpression(<ts.TemplateExpression>node);
                 // case SyntaxKind.YieldExpression:
@@ -1225,25 +1225,27 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emitWithHint(ts.EmitHint.Expression, node.right);
     }
 
-    // function emitConditionalExpression(node: ConditionalExpression) {
-    //     const indentBeforeQuestion = needsIndentation(node, node.condition, node.questionToken);
-    //     const indentAfterQuestion = needsIndentation(node, node.questionToken, node.whenTrue);
-    //     const indentBeforeColon = needsIndentation(node, node.whenTrue, node.colonToken);
-    //     const indentAfterColon = needsIndentation(node, node.colonToken, node.whenFalse);
+    function emitConditionalExpression(node: ts.ConditionalExpression) {
+        const indentBeforeQuestion = needsIndentation(node, node.condition, node.questionToken);
+        const indentAfterQuestion = needsIndentation(node, node.questionToken, node.whenTrue);
+        const indentBeforeColon = needsIndentation(node, node.whenTrue, node.colonToken);
+        const indentAfterColon = needsIndentation(node, node.colonToken, node.whenFalse);
 
-    //     emitExpression(node.condition);
-    //     increaseIndentIf(indentBeforeQuestion, " ");
-    //     emit(node.questionToken);
-    //     increaseIndentIf(indentAfterQuestion, " ");
-    //     emitExpression(node.whenTrue);
-    //     decreaseIndentIf(indentBeforeQuestion, indentAfterQuestion);
+        emitExpression(node.condition);
+        increaseIndentIf(indentBeforeQuestion, " ");
+        // emit(node.questionToken);
+        writePunctuation('?');
+        increaseIndentIf(indentAfterQuestion, " ");
+        emitExpression(node.whenTrue);
+        decreaseIndentIf(indentBeforeQuestion, indentAfterQuestion);
 
-    //     increaseIndentIf(indentBeforeColon, " ");
-    //     emit(node.colonToken);
-    //     increaseIndentIf(indentAfterColon, " ");
-    //     emitExpression(node.whenFalse);
-    //     decreaseIndentIf(indentBeforeColon, indentAfterColon);
-    // }
+        increaseIndentIf(indentBeforeColon, " ");
+        // emit(node.colonToken);
+        writePunctuation(':');
+        increaseIndentIf(indentAfterColon, " ");
+        emitExpression(node.whenFalse);
+        decreaseIndentIf(indentBeforeColon, indentAfterColon);
+    }
 
     function emitTemplateExpression(node: ts.TemplateExpression) {
         emit(node.head);
@@ -2847,28 +2849,28 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     }
     // }
 
-    // function increaseIndentIf(value: boolean, valueToWriteWhenNotIndenting?: string) {
-    //     if (value) {
-    //         increaseIndent();
-    //         writeLine();
-    //     }
-    //     else if (valueToWriteWhenNotIndenting) {
-    //         write(valueToWriteWhenNotIndenting);
-    //     }
-    // }
+    function increaseIndentIf(value: boolean, valueToWriteWhenNotIndenting?: string) {
+        if (value) {
+            increaseIndent();
+            writeLine();
+        }
+        else if (valueToWriteWhenNotIndenting) {
+            write(valueToWriteWhenNotIndenting);
+        }
+    }
 
-    // // Helper function to decrease the indent if we previously indented.  Allows multiple
-    // // previous indent values to be considered at a time.  This also allows caller to just
-    // // call this once, passing in all their appropriate indent values, instead of needing
-    // // to call this helper function multiple times.
-    // function decreaseIndentIf(value1: boolean, value2?: boolean) {
-    //     if (value1) {
-    //         decreaseIndent();
-    //     }
-    //     if (value2) {
-    //         decreaseIndent();
-    //     }
-    // }
+    // Helper function to decrease the indent if we previously indented.  Allows multiple
+    // previous indent values to be considered at a time.  This also allows caller to just
+    // call this once, passing in all their appropriate indent values, instead of needing
+    // to call this helper function multiple times.
+    function decreaseIndentIf(value1: boolean, value2?: boolean) {
+        if (value1) {
+            decreaseIndent();
+        }
+        if (value2) {
+            decreaseIndent();
+        }
+    }
 
     function shouldWriteLeadingLineTerminator(parentNode: ts.TextRange, children: ts.NodeArray<Node>, format: ts.ListFormat) {
         if (format & ts.ListFormat.MultiLine) {
@@ -2954,16 +2956,16 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         return (format & ts.ListFormat.PreferNewLine) !== 0;
     }
 
-    // function needsIndentation(parent: ts.Node, node1: ts.Node, node2: ts.Node): boolean {
-    //     parent = skipSynthesizedParentheses(parent);
-    //     node1 = skipSynthesizedParentheses(node1);
-    //     node2 = skipSynthesizedParentheses(node2);
+    function needsIndentation(parent: ts.Node, node1: ts.Node, node2: ts.Node): boolean {
+        parent = skipSynthesizedParentheses(parent);
+        node1 = skipSynthesizedParentheses(node1);
+        node2 = skipSynthesizedParentheses(node2);
 
-    //     return !nodeIsSynthesized(parent)
-    //         && !nodeIsSynthesized(node1)
-    //         && !nodeIsSynthesized(node2)
-    //         && !rangeEndIsOnSameLineAsRangeStart(node1, node2, currentSourceFile);
-    // }
+        return !nodeIsSynthesized(parent)
+            && !nodeIsSynthesized(node1)
+            && !nodeIsSynthesized(node2)
+            && !rangeEndIsOnSameLineAsRangeStart(node1, node2, currentSourceFile);
+    }
 
     function isEmptyBlock(block: ts.BlockLike) {
         return block.statements.length === 0
