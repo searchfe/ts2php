@@ -14,3 +14,4 @@ $e = array_walk($b, function ($value, $index) {
 $g = array_filter($b, function ($value, $index) {
     return $value;
 });
+$t = Ts2Php_Helper::isPlainArray($a);

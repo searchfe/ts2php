@@ -12,7 +12,7 @@ class Ts2Php_Helper {
      * @param $arr mixed
      * @return bool
      */
-    private static function isPlainArray(&$arr) {
+    public static function isPlainArray(&$arr) {
         if (is_array($arr)) {
             $i = 0;
             foreach ($arr as $k => $v) {

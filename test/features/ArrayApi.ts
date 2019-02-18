@@ -12,4 +12,5 @@ const e = b.forEach(function (value, index) {
 const g = b.filter(function (value, index) {
     return value;
 });
+const t = Array.isArray(a);
 

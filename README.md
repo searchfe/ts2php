@@ -6,10 +6,20 @@ ts转php
 ## Features
 
 - Core JavaScript API
+  - parseInt **只接收一个参数**
+  - parseFloat
   - Object
     - Object.assign
     - Object.keys
+    - Object.values
     - Object.freeze
+  - JSON
+    - JSON.stringify **只接收一个参数**
+    - JSON.parse **只接收一个参数**
+  - console **转成var_dump**
+    - console.log
+    - console.info
+    - console.error
   - String
     - String.prototype.replace
     - String.prototype.trim
@@ -19,6 +29,27 @@ ts转php
     - String.prototype.toLowerCase
     - String.prototype.split
     - String.prototype.indexOf
+    - String.prototype.substr
+    - String.prototype.substring
+  - Array
+    - Array.isArray
+    - Array.prototype.length
+    - Array.prototype.filter
+    - Array.prototype.push
+    - Array.prototype.pop
+    - Array.prototype.shift
+    - Array.prototype.unshift
+    - Array.prototype.concat
+    - Array.prototype.reverse
+    - Array.prototype.splice
+    - Array.prototype.reverse
+    - Array.prototype.map
+    - Array.prototype.forEach
+    - Array.prototype.indexOf
+    - Array.prototype.join
+  - Number
+    - Number.isInterger
+    - Number.prototype.toFixed
   - Math
     - Math.abs
     - Math.acos

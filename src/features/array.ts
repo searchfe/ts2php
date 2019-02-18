@@ -10,7 +10,8 @@ import {
 import {
     isArrayLiteralExpression,
     isPropertyAccessExpression,
-    isCallExpression
+    isCallExpression,
+    isIdentifier
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
@@ -28,6 +29,10 @@ const map = {
     indexOf: method('array_search', false, 1, true),
     join: method('join', false, 1, true),
     filter: method('array_filter', true, 1),
+};
+
+const api = {
+    isArray: method('Ts2Php_Helper::isPlainArray', false, 1)
 };
 
 export default {
@@ -50,6 +55,19 @@ export default {
             && typeChecker.isArrayLikeType(typeChecker.getTypeAtLocation(expNode.expression))
         ) {
             const func = map[getTextOfNode(expNode.name)];
+            if (func) {
+                return func(node, helpers);
+            }
+        }
+
+        if (
+            hint === EmitHint.Expression
+            && isCallExpression(node)
+            && isPropertyAccessExpression(expNode)
+            && isIdentifier(expNode.expression)
+            && expNode.expression.escapedText === 'Array'
+        ) {
+            const func = api[getTextOfNode(expNode.name)];
             if (func) {
                 return func(node, helpers);
             }
