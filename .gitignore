@@ -69,6 +69,7 @@ Thumbs.db
 # IDE configurations
 .idea
 .vscode
+.ts2php
 
 # build assets
 /output

@@ -726,7 +726,8 @@ const shouldAddDollerParentList = new Set([
     ts.SyntaxKind.ReturnStatement,
     ts.SyntaxKind.ReturnStatement,
     ts.SyntaxKind.ForInStatement,
-    ts.SyntaxKind.ForOfStatement
+    ts.SyntaxKind.ForOfStatement,
+    ts.SyntaxKind.TypeOfExpression
 ]);
 
 /**

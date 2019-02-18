@@ -10,7 +10,8 @@ export interface Ts2phpOptions {
         }
     },
     getNamespace: () => string,
-    namespace: string
+    namespace: string,
+    plugins: {emit: Function}[]
 }
 
 export interface CompilerState extends Ts2phpOptions {

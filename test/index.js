@@ -3,10 +3,12 @@
  * @author meixuguang
  */
 
+/* eslint-disable  */
+
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const {ts2php} = require('../dist/index.js');
+const {compile, compileCode} = require('../dist/index.js');
 
 const files = fs.readdirSync(path.resolve(__dirname, './features'));
 const featureNames = files.reduce((res, file) => {
@@ -25,15 +27,13 @@ function readFile(path) {
     });
 }
 
-
-
 describe('features', () => {
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
         it(featureName, async () => {
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
             const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);
-            const res = ts2php(tsPath, {
+            const res = compile(tsPath, {
                 modules: {
                     '@baidu/atom-wise-utils': {
                         path: '/home/work/search/view-ui/atom/plugins/aladdin/Atom_Wise_Utils.php',
@@ -48,5 +48,10 @@ describe('features', () => {
             assert.equal(res.errors.length, 0);
         });
     }
+
+    it('compile code', function () {
+        let res = compileCode('var a = 1;');
+        assert.equal(res.phpCode, '<?php\nuse 509b568a;\n$a = 1;\n');
+    });
 });
 

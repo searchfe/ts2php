@@ -18,6 +18,7 @@ import method from '../utilities/method';
 const staticMap = {
     assign: method('array_merge', false),
     keys: method('array_keys', false),
+    values: method('array_values', false),
     freeze(node, {emitWithHint}) {
         emitWithHint(EmitHint.Unspecified, node.arguments[0]);
     }

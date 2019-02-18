@@ -9,3 +9,4 @@
 ci.yml
 tsconfig.json
 typescirpt.d.ts
+.ts2php

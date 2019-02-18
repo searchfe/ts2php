@@ -45,16 +45,6 @@ import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
 
-import StringPligin from './features/string';
-import MathPlugin from './features/math';
-import ObjectPlugin from './features/object';
-import JSONPlugin from './features/json';
-import GlobalPlugin from './features/global';
-import NumberPlugin from './features/number';
-import ArrayPlugin from './features/array';
-import ImportPlugin from './features/import';
-import ConsolePlugin from './features/console';
-
 let currentSourceFile: SourceFile;
 
 // Flags enum to track count of temp variables and a few dedicated names
@@ -79,18 +69,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     reset();
     const writer = createTextWriter("\n");
     writer.writeLine();
-
-    let buildInPlugins = [
-        StringPligin,
-        MathPlugin,
-        ObjectPlugin,
-        JSONPlugin,
-        GlobalPlugin,
-        NumberPlugin,
-        ArrayPlugin,
-        ImportPlugin,
-        ConsolePlugin
-    ];
 
     const typeChecker = state.typeChecker;
 
@@ -161,7 +139,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
     function emitWithHint(hint: ts.EmitHint, node: ts.Node) {
 
-        for (let plugin of buildInPlugins) {
+        for (let plugin of state.plugins) {
             let output = plugin.emit(hint, node, state);
             if (output !== false) {
                 return;
@@ -233,7 +211,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 // case SyntaxKind.ConstructorType:
                 //     return emitConstructorType(<ConstructorTypeNode>node);
                 // case SyntaxKind.TypeQuery:
-                //     return emitTypeQuery(<TypeQueryNode>node);
+                //     return emitTypeQuery(<ts.TypeQueryNode>node);
                 // case SyntaxKind.TypeLiteral:
                 //     return emitTypeLiteral(<TypeLiteralNode>node);
                 // case SyntaxKind.ArrayType:
@@ -507,10 +485,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                     return emitFunctionExpression(<ts.FunctionExpression>node);
                 case SyntaxKind.ArrowFunction:
                     return emitArrowFunction(<ts.ArrowFunction>node);
-                // case SyntaxKind.DeleteExpression:
-                //     return emitDeleteExpression(<DeleteExpression>node);
-                // case SyntaxKind.TypeOfExpression:
-                //     return emitTypeOfExpression(<TypeOfExpression>node);
+                case SyntaxKind.DeleteExpression:
+                    return emitDeleteExpression(<ts.DeleteExpression>node);
+                case SyntaxKind.TypeOfExpression:
+                    return emitTypeOfExpression(<ts.TypeOfExpression>node);
                 // case SyntaxKind.VoidExpression:
                 //     return emitVoidExpression(<VoidExpression>node);
                 // case SyntaxKind.AwaitExpression:
@@ -890,10 +868,11 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     popNameGenerationScope(node);
     // }
 
-    // function emitTypeQuery(node: TypeQueryNode) {
-    //     writeKeyword("typeof");
-    //     writeSpace();
+    // function emitTypeQuery(node: ts.TypeQueryNode) {
+    //     console.log(node);
+    //     writePunctuation('Ts2Php_Helper::typeof(');
     //     emit(node.exprName);
+    //     writePunctuation(')');
     // }
 
     // function emitTypeLiteral(node: TypeLiteralNode) {
@@ -1182,17 +1161,17 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emit(node.equalsGreaterThanToken);
     }
 
-    // function emitDeleteExpression(node: DeleteExpression) {
-    //     emitTokenWithComment(SyntaxKind.DeleteKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitExpression(node.expression);
-    // }
+    function emitDeleteExpression(node: ts.DeleteExpression) {
+        writePunctuation('unset(');
+        emitExpression(node.expression);
+        writePunctuation(')');
+    }
 
-    // function emitTypeOfExpression(node: TypeOfExpression) {
-    //     emitTokenWithComment(SyntaxKind.TypeOfKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitExpression(node.expression);
-    // }
+    function emitTypeOfExpression(node: ts.TypeOfExpression) {
+        writePunctuation('Ts2Php_Helper::typeof(');
+        emitExpression(node.expression);
+        writePunctuation(')');
+    }
 
     // function emitVoidExpression(node: VoidExpression) {
     //     emitTokenWithComment(SyntaxKind.VoidKeyword, node.pos, writeKeyword, node);
