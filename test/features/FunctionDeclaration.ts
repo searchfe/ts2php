@@ -5,3 +5,26 @@ function aaa (a, b: string, c) {
 }
 
 aaa('1', '2', '3');
+
+const bbb = (x: string) => "222";
+
+bbb("1");
+
+const a = {
+    b() {
+        return "111";
+    }
+};
+
+const b = {
+    b: function () {
+        return "111";
+    }
+};
+
+const c = {
+    b: () => {
+        return "111";
+    }
+};
+

@@ -1,5 +1,6 @@
 
 import ts from 'typescript';
+import { cacheDirectory } from '.';
 
 export interface Ts2phpOptions {
     modules: {
@@ -11,7 +12,9 @@ export interface Ts2phpOptions {
     },
     getNamespace: () => string,
     namespace: string,
-    plugins: {emit: Function}[]
+    plugins: {emit: Function}[],
+    cacheDirectory: string,
+    emitHeader: boolean
 }
 
 export interface CompilerState extends Ts2phpOptions {

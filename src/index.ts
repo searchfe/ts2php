@@ -23,7 +23,9 @@ export function compile(filePath: string, options?: Ts2phpOptions) {
 
     const plugins = (options && options.plugins) ? [...buildInPlugins, ...options.plugins] : buildInPlugins;
 
-    const state: CompilerState = Object.assign({}, options, {
+    const state: CompilerState = Object.assign({
+        emitHeader: true
+    }, options, {
         errors: [],
         typeChecker,
         helpers: {},
@@ -59,8 +61,10 @@ export const cacheDirectory = path.resolve('.ts2php');
 
 export function compileCode(code: string, options?: Ts2phpOptions) {
 
+    const finalCacheDirectory = (options && options.cacheDirectory) || cacheDirectory;
+
     const fileName = hash(code) + '.ts';
-    const filePath = path.resolve(cacheDirectory, fileName);
+    const filePath = path.resolve(finalCacheDirectory, fileName);
 
     if (!fs.existsSync(filePath)) {
         fs.outputFileSync(filePath, code);

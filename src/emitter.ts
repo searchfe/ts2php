@@ -86,11 +86,13 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     };
 
     writer.write(`<?php\nuse ${state.namespace};\n`);
+
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
         // console.log(writer.getText());
     });
+
     return writer.getText();
 
 
@@ -185,8 +187,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitPropertyDeclaration(<PropertyDeclaration>node);
                 // case SyntaxKind.MethodSignature:
                 //     return emitMethodSignature(<MethodSignature>node);
-                // case SyntaxKind.MethodDeclaration:
-                //     return emitMethodDeclaration(<MethodDeclaration>node);
+                case SyntaxKind.MethodDeclaration:
+                    return emitMethodDeclaration(<ts.MethodDeclaration>node);
                 // case SyntaxKind.Constructor:
                 //     return emitConstructor(<ConstructorDeclaration>node);
                 // case SyntaxKind.GetAccessor:
@@ -744,14 +746,21 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     popNameGenerationScope(node);
     // }
 
-    // function emitMethodDeclaration(node: MethodDeclaration) {
-    //     emitDecorators(node, node.decorators);
-    //     emitModifiers(node, node.modifiers);
-    //     emit(node.asteriskToken);
-    //     emit(node.name);
-    //     emit(node.questionToken);
-    //     emitSignatureAndBody(node, emitSignatureHead);
-    // }
+    function emitMethodDeclaration(node: ts.MethodDeclaration) {
+        // emitDecorators(node, node.decorators);
+        // emitModifiers(node, node.modifiers);
+        // emit(node.asteriskToken);
+        writer.write("\"");
+        emit(node.name);
+        writer.write("\"");
+        writeSpace();
+        writer.write("=>");
+        writeSpace();
+        writeKeyword("function");
+        writeSpace();
+        // emit(node.questionToken);
+        emitSignatureAndBody(node, emitSignatureHead);
+    }
 
     // function emitConstructor(node: ConstructorDeclaration) {
     //     emitModifiers(node, node.modifiers);
@@ -1067,6 +1076,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         const preferNewLine = node.multiLine ? ts.ListFormat.PreferNewLine : ts.ListFormat.None;
         // const allowTrailingComma = currentSourceFile.languageVersion >= ScriptTarget.ES5 && !isJsonSourceFile(currentSourceFile) ? ListFormat.AllowTrailingComma : ListFormat.None;
         const allowTrailingComma = ts.ListFormat.None;
+        // console.log(node.properties);
         emitList(node, node.properties, ts.ListFormat.ObjectLiteralExpressionProperties | allowTrailingComma | preferNewLine);
 
         // if (indentedFlag) {
@@ -1148,17 +1158,20 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     }
 
     function emitArrowFunction(node: ts.ArrowFunction) {
-        emitDecorators(node, node.decorators);
-        emitModifiers(node, node.modifiers);
+        // emitDecorators(node, node.decorators);
+        // emitModifiers(node, node.modifiers);
         emitSignatureAndBody(node, emitArrowFunctionHead);
     }
 
     function emitArrowFunctionHead(node: ts.ArrowFunction) {
         // emitTypeParameters(node, node.typeParameters);
-        emitParametersForArrow(node, node.parameters);
-        emitTypeAnnotation(node.type);
+        writeKeyword("function");
         writeSpace();
-        emit(node.equalsGreaterThanToken);
+        emitParametersForArrow(node, node.parameters);
+        // emitTypeAnnotation(node.type);
+        // writeSpace();
+        // console.log(node);
+        // emit(node.equalsGreaterThanToken);
     }
 
     function emitDeleteExpression(node: ts.DeleteExpression) {
@@ -1574,8 +1587,13 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
             }
             else {
                 emitSignatureHead(node);
+                writePunctuation("{");
+                writeLine();
+                writeKeyword("return");
                 writeSpace();
                 emitExpression(body);
+                writeLine();
+                writePunctuation("}");
             }
         }
         else {
