@@ -40,7 +40,7 @@ export function compile(filePath: string, options?: Ts2phpOptions) {
     setState(state);
 
     for (const sourceFile of program.getSourceFiles()) {
-        if (sourceFile.fileName === filePath) {
+        if (sourceFile.fileName === filePath && !sourceFile.isDeclarationFile) {
             return {
                 phpCode: emitter.emitFile(sourceFile, state),
                 errors: state.errors

@@ -85,7 +85,9 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         writePunctuation
     };
 
-    writer.write(`<?php\nuse ${state.namespace};\n`);
+    if (state.emitHeader) {
+        writer.write(`<?php\nuse ${state.namespace};\n`);
+    }
 
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
