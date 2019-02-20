@@ -16,7 +16,8 @@ export function compile(filePath: string, options?: Ts2phpOptions) {
 
     const program = ts.createProgram([filePath], {
         target: ts.ScriptTarget.ES5,
-        module: ts.ModuleKind.CommonJS
+        module: ts.ModuleKind.CommonJS,
+        scrict: true
     });
 
     const typeChecker = program.getTypeChecker();
@@ -70,5 +71,10 @@ export function compileCode(code: string, options?: Ts2phpOptions) {
         fs.outputFileSync(filePath, code);
     }
 
-    return compile(filePath, options)
+    const result = compile(filePath, options);
+
+    return {
+        ...result,
+        cachePath: filePath
+    };
 }

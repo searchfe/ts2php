@@ -1,6 +1,5 @@
 
 import ts from 'typescript';
-import { cacheDirectory } from '.';
 
 export interface Ts2phpOptions {
     modules: {
@@ -32,7 +31,8 @@ export interface CompilerState extends Ts2phpOptions {
             className: string;
             moduleName: string;
         }
-    }
+    },
+    sourceFile?: ts.SourceFile
 }
 
 export interface ErrorInfo {

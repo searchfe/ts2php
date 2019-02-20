@@ -3,7 +3,6 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
-
 import {
     EmitHint
 } from 'typescript';
@@ -15,7 +14,6 @@ import {
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
-
 
 let map = {
     abs: 'abs',

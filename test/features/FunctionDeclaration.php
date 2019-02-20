@@ -7,9 +7,9 @@ function aaa($a, $b, $c) {
 }
 aaa("1", "2", "3");
 $bbb = function ($x){
-return "222"
+return "222";
 };
-bbb("1");
+$bbb("1");
 $a = array(
     "b" => function () {
         return "111";
@@ -25,3 +25,4 @@ $c = array(
         return "111";
     }
 );
+$c["b"]();

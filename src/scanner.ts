@@ -6,6 +6,7 @@ import {
     compareValues,
     binarySearch
 } from './core'
+
 import {positionIsSynthesized} from './utilities';
 import {error as pushError} from './state';
 import * as ts from 'typescript';

@@ -85,6 +85,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         writePunctuation
     };
 
+    state.sourceFile = sourceFile;
+
     if (state.emitHeader) {
         writer.write(`<?php\nuse ${state.namespace};\n`);
     }
@@ -92,7 +94,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     ts.forEachChild(sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
-        // console.log(writer.getText());
     });
 
     return writer.getText();
@@ -1121,6 +1122,16 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     }
 
     function emitCallExpression(node: ts.CallExpression) {
+        let flowNode = node.expression.flowNode as ts.FlowAssignment;
+        if (
+            flowNode.node
+            && ts.isVariableDeclaration(flowNode.node)
+            && ts.isIdentifier(node.expression)
+            && ts.isIdentifier(flowNode.node.name)
+            && node.expression.escapedText === flowNode.node.name.escapedText
+        ) {
+            writeBase("$");
+        }
         emitWithHint(ts.EmitHint.Expression, node.expression);
         // emitTypeArguments(node, node.typeArguments);
         emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
@@ -1594,6 +1605,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 writeKeyword("return");
                 writeSpace();
                 emitExpression(body);
+                writePunctuation(";");
                 writeLine();
                 writePunctuation("}");
             }
