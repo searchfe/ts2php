@@ -30,6 +30,9 @@ function readFile(path) {
 describe('features', () => {
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
+        if (featureName !== 'Rest') {
+            continue;
+        }
         it(featureName, async () => {
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
             const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);

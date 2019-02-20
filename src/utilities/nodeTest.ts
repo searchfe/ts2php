@@ -749,6 +749,10 @@ export function shouldAddDollar(node: Node, state: CompilerState): boolean {
         return true;
     }
 
+    // if (ts.isObjectBindingPattern(node.parent) && node.parent.parent && ts.isVariableDeclaration(node.parent.parent)) {
+    //     return true
+    // }
+
     // PropertyAccessExpression
     if (
         isPropertyAccessExpression(node.parent)

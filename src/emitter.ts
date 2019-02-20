@@ -267,7 +267,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
                 // // Binding patterns
                 // case SyntaxKind.ObjectBindingPattern:
-                //     return emitObjectBindingPattern(<ObjectBindingPattern>node);
+                //     return emitObjectBindingPattern(<ts.ObjectBindingPattern>node);
                 // case SyntaxKind.ArrayBindingPattern:
                 //     return emitArrayBindingPattern(<ArrayBindingPattern>node);
                 // case SyntaxKind.BindingElement:
@@ -1036,7 +1036,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     // // Binding patterns
     // //
 
-    // function emitObjectBindingPattern(node: ObjectBindingPattern) {
+    // function emitObjectBindingPattern(node: ts.ObjectBindingPattern) {
     //     writePunctuation("{");
     //     emitList(node, node.elements, ListFormat.ObjectBindingPatternElements);
     //     writePunctuation("}");
@@ -1550,9 +1550,42 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     // //
 
     function emitVariableDeclaration(node: ts.VariableDeclaration) {
-        emit(node.name);
-        // emitTypeAnnotation(node.type);
-        emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
+        if (ts.isObjectBindingPattern(node.name)) {
+            const count = node.name.elements.length;
+            let initializer = node.initializer;
+            node.name.elements.forEach((element, index) => {
+                if (ts.isIdentifier(element.name) && ts.isIdentifier(initializer)) {
+                    const nameNode = element.name;
+                    const access = ts.createPropertyAccess(initializer, nameNode);
+
+                    writeBase("$");
+                    emit(nameNode);
+                    writeBase(" = ");
+
+                    if (element.initializer) {
+                        writeBase('isset(');
+                    }
+
+                    emitExpression(access);
+
+                    if (element.initializer && ts.isLiteralExpression(element.initializer)) {
+                        writeBase(') ? ');
+                        emitExpression(access);
+                        writeBase(' : ');
+                        emitLiteral(element.initializer);
+                    }
+                }
+                if (index < count - 1) {
+                    writeSemicolon();
+                    writeLine();
+                }
+            });
+        }
+        else {
+            emit(node.name);
+            // emitTypeAnnotation(node.type);
+            emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
+        }
     }
 
     function emitVariableDeclarationList(node: ts.VariableDeclarationList) {
@@ -1605,7 +1638,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 writeKeyword("return");
                 writeSpace();
                 emitExpression(body);
-                writePunctuation(";");
+                writeSemicolon();
                 writeLine();
                 writePunctuation("}");
             }
