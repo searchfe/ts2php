@@ -28,7 +28,7 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
     const expNode = node.expression as PropertyAccessExpression;
 
     let nodeList = [...node.arguments, expNode.expression];
-    let method = 'Ts2Php_Helper::str_replace_once';
+    let method = '\\Ts2Php_Helper::str_replace_once';
 
     if (isRegularExpressionLiteral(node.arguments[0])) {
         method = 'preg_replace';
@@ -59,7 +59,7 @@ const map = {
     trimLeft: method('ltrim'),
     toUpperCase: method('strtoupper'),
     toLowerCase: method('strtolower'),
-    slice: method('Ts2Php_Helper::str_slice', true, 2),
+    slice: method('\\Ts2Php_Helper::str_slice', true, 2),
     indexOf: method('strpos', true, 1),
     substr: method('substr', true, 2),
     substring: method('substr', true, 2),

@@ -1195,7 +1195,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     }
 
     function emitTypeOfExpression(node: ts.TypeOfExpression) {
-        writePunctuation('Ts2Php_Helper::typeof(');
+        writePunctuation('\\Ts2Php_Helper::typeof(');
         emitExpression(node.expression);
         writePunctuation(')');
     }
