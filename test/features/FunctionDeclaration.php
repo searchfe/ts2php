@@ -1,5 +1,5 @@
 <?php
-use test\FunctionDeclaration;
+namespace test\FunctionDeclaration;
 function aaa($a, $b, $c) {
     $d = 123;
     $e = $b . 123;

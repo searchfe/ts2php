@@ -1,3 +1,3 @@
 <?php
-use test\ConditionalExpression;
+namespace test\ConditionalExpression;
 $a = $b ? 1 : 2;

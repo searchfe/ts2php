@@ -1,5 +1,5 @@
 <?php
-use test\ArrayApi;
+namespace test\ArrayApi;
 $a = count(array(1));
 $b = array(1, "a");
 $c = count($b);
@@ -14,8 +14,8 @@ $e = array_walk($b, function ($value, $index) {
 $g = array_filter($b, function ($value, $index) {
     return $value;
 });
-$t = Ts2Php_Helper::isPlainArray($a);
+$t = \Ts2Php_Helper::isPlainArray($a);
 function process($x) {
-    Ts2Php_Helper::arraySlice($x["y"], 1);
+    \Ts2Php_Helper::arraySlice($x["y"], 1);
     array_push($x["y"], 1);
 }

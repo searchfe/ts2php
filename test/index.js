@@ -51,7 +51,7 @@ describe('features', () => {
 
     it('compile code', function () {
         let res = compileCode('var a = 1;');
-        assert.equal(res.phpCode, '<?php\nuse 509b568a;\n$a = 1;\n');
+        assert.equal(res.phpCode, '<?php\nnamespace 509b568a;\n$a = 1;\n');
     });
 });
 

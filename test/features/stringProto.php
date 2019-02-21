@@ -1,9 +1,9 @@
 <?php
-use test\stringProto;
+namespace test\stringProto;
 $a = "wwa";
-$b = Ts2Php_Helper::str_replace_once("a", "b", $a);
+$b = \Ts2Php_Helper::str_replace_once("a", "b", $a);
 $c = array( "s" => "aaa" );
-$d = Ts2Php_Helper::str_replace_once("a", "b", $c["s"]);
+$d = \Ts2Php_Helper::str_replace_once("a", "b", $c["s"]);
 $f = preg_replace("/w/", "b", $a);
 $e = preg_replace("/w/", "b", $a, 1);
 $g = trim($a);

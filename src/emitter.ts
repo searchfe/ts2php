@@ -88,7 +88,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     state.sourceFile = sourceFile;
 
     if (state.emitHeader) {
-        writer.write(`<?php\nuse ${state.namespace};\n`);
+        writer.write(`<?php\nnamespace ${state.namespace};\n`);
     }
 
     ts.forEachChild(sourceFile, (node: ts.Node) => {
