@@ -418,3 +418,11 @@ export function escapeNonAsciiString(s: string, quoteChar?: ts.CharacterCodes.do
 export function isFileLevelUniqueName(sourceFile: ts.SourceFile, name: string, hasGlobalName?: ts.PrintHandlers["hasGlobalName"]): boolean {
     return !(hasGlobalName && hasGlobalName(name)) && !sourceFile.identifiers.has(name);
 }
+
+export function getLastExpression(node: ts.Node) {
+    let exp = node as ts.PropertyAccessExpression;
+    do {
+        exp = exp.expression as ts.PropertyAccessExpression;
+    } while (exp.expression);
+    return exp;
+}

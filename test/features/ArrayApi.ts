@@ -14,3 +14,7 @@ const g = b.filter(function (value, index) {
 });
 const t = Array.isArray(a);
 
+function process(x: {y: number[]}) {
+    x.y.slice(1);
+    x.y.push(1);
+}

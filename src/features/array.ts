@@ -29,6 +29,7 @@ const map = {
     indexOf: method('array_search', false, 1, true),
     join: method('join', false, 1, true),
     filter: method('array_filter', true, 1),
+    slice: method('Ts2Php_Helper::arraySlice', true, 2)
 };
 
 const api = {

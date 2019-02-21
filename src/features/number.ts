@@ -4,7 +4,7 @@
  */
 
 import {
-    EmitHint
+    EmitHint, Expression, PropertyAccessExpression
 } from 'typescript';
 
 import {
@@ -15,6 +15,7 @@ import {
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
+import {getLastExpression} from '../utilities';
 
 const staticMap = {
     isInteger: method('is_int', false)

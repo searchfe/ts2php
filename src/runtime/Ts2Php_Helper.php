@@ -52,6 +52,18 @@ class Ts2Php_Helper {
     }
 
     /**
+     * replace once helper for string.prototype.slice
+     * @param $origin {string}
+     * @param $start {string}
+     * @param $end {string}
+     * @return {string}
+     */
+    static public function arraySlice($origin, $start, $end) {
+        return array_slice($origin, $start, $end - $start + 1);
+    }
+
+
+    /**
      * get type of $var
      * @param $origin {*}
      * @return {string}

@@ -484,8 +484,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitTaggedTemplateExpression(<TaggedTemplateExpression>node);
                 // case SyntaxKind.TypeAssertionExpression:
                 //     return emitTypeAssertionExpression(<TypeAssertion>node);
-                // case SyntaxKind.ParenthesizedExpression:
-                //     return emitParenthesizedExpression(<ParenthesizedExpression>node);
+                case SyntaxKind.ParenthesizedExpression:
+                    return emitParenthesizedExpression(<ts.ParenthesizedExpression>node);
                 case SyntaxKind.FunctionExpression:
                     return emitFunctionExpression(<ts.FunctionExpression>node);
                 case SyntaxKind.ArrowFunction:
@@ -1124,7 +1124,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     function emitCallExpression(node: ts.CallExpression) {
         let flowNode = node.expression.flowNode as ts.FlowAssignment;
         if (
-            flowNode.node
+            flowNode
+            && flowNode.node
             && ts.isVariableDeclaration(flowNode.node)
             && ts.isIdentifier(node.expression)
             && ts.isIdentifier(flowNode.node.name)
@@ -1159,11 +1160,11 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     emitExpression(node.expression);
     // }
 
-    // function emitParenthesizedExpression(node: ParenthesizedExpression) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.OpenParenToken, node.pos, writePunctuation, node);
-    //     emitExpression(node.expression);
-    //     emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression ? node.expression.end : openParenPos, writePunctuation, node);
-    // }
+    function emitParenthesizedExpression(node: ts.ParenthesizedExpression) {
+        const openParenPos = emitTokenWithComment(SyntaxKind.OpenParenToken, node.pos, writePunctuation, node);
+        emitExpression(node.expression);
+        emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression ? node.expression.end : openParenPos, writePunctuation, node);
+    }
 
     function emitFunctionExpression(node: ts.FunctionExpression) {
         // generateNameIfNeeded(node.name);
@@ -2166,7 +2167,12 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     // //
 
     function emitPropertyAssignment(node: ts.PropertyAssignment) {
-        emit(node.name);
+        if (ts.isLiteralExpression(node.name)) {
+            emitLiteral(node.name);
+        }
+        else {
+            emit(node.name);
+        }
         writeSpace();
         writePunctuation("=>");
         writeSpace();
