@@ -282,7 +282,7 @@ $a = array(
 - Array
   - Array.isArray
   - Array.prototype.length
-  - Array.prototype.filter
+  - Array.prototype.filter **回调函数只接收第一个参数**
   - Array.prototype.push
   - Array.prototype.pop
   - Array.prototype.shift
@@ -292,7 +292,7 @@ $a = array(
   - Array.prototype.splice
   - Array.prototype.reverse
   - Array.prototype.map **回调函数只接收第一个参数**
-  - Array.prototype.forEach
+  - Array.prototype.forEach **回调函数只接收第一个参数**
   - Array.prototype.indexOf
   - Array.prototype.join
 - Number
