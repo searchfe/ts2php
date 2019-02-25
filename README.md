@@ -149,7 +149,7 @@ $e = array( "a" => 1, "b" => 2 );
 unset($e["a"]);
 ```
 
-### es2015 rest
+### `es2015 object destructuring`
 
 ```javascript
 const tplData: {a: number, difftime?: number, c?: 1} = {a: 1};
@@ -173,7 +173,7 @@ $y = isset($tplData["c"]) ? $tplData["c"] : 1;
 $c = $tplData["a"];
 ```
 
-### es2015 template
+### `es2015 template string`
 
 ```javascript
 const b = '123';
@@ -187,9 +187,75 @@ $b = "123";
 $c = "0" . $b . "45'6'\"789\"";
 ```
 
+### `es2015 object computed property`
+
+```javascript
+let a = 'aaa';
+let b = 'bbb';
+let c = {
+    [a + b]: 123,
+    [b]: 456
+};
+```
+
+output
+
+```php
+$a = "aaa";
+$b = "bbb";
+$c = array(
+    ($a . $b) => 123,
+    ($b) => 456
+);
+```
+
+### `es2015 object shorthand property`
+
+```javascript
+let b = 2;
+let c = 1;
+const a = {
+    b,
+    c
+};
+```
+
+output
+
+```php
+$b = 2;
+$c = 1;
+$a = array(
+    "b" => $b,
+    "c" => $c
+);
+```
+
+### `es2015 object method`
+
+```javascript
+const a = {
+    b() {
+        return "111";
+    }
+};
+```
+
+output
+
+```php
+$a = array(
+    "b" => function () {
+        return "111";
+    }
+);
+```
+
 ### Core JavaScript API
 - parseInt **只接收一个参数**
 - parseFloat
+- Date
+  - now
 - Object
   - Object.assign
   - Object.keys

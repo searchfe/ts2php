@@ -671,9 +671,9 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     // }
 
     function emitComputedPropertyName(node: ts.ComputedPropertyName) {
-        // writePunctuation("[");
+        writePunctuation("(");
         emitExpression(node.expression);
-        // writePunctuation("]");
+        writePunctuation(")");
     }
 
     // //

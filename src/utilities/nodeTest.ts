@@ -23,7 +23,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.ForInStatement,
     SyntaxKind.ForOfStatement,
     SyntaxKind.TypeOfExpression,
-    SyntaxKind.ConditionalExpression
+    SyntaxKind.ConditionalExpression,
+    SyntaxKind.ComputedPropertyName
 ]);
 
 /**
