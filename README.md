@@ -4,7 +4,7 @@ typescript 转 php
 
 ## usage
 
-> 暂时支持
+> 暂时只支持对单文件的编译，不支持多模块
 
 ### compiler
 
@@ -15,6 +15,8 @@ const result = compile(filePath, options);
 ```
 
 ### runtime
+
+> 部分功能依赖一个 php 的类库，需要在 php 工程中引入
 
 ```php
 require_once("/path/to/ts2php/dist/runtime/Ts2Php_Helper.php");
