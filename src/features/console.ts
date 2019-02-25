@@ -4,14 +4,11 @@
  */
 
 import {
-    EmitHint
-} from 'typescript';
-
-import {
+    EmitHint,
     isPropertyAccessExpression,
     isIdentifier,
     isCallExpression
-} from '../utilities/nodeTest';
+} from 'typescript';
 
 import method from '../utilities/method';
 

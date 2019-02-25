@@ -4,12 +4,15 @@
  */
 
 import * as ts from 'typescript';
+
 import {
     SyntaxKind,
     ListFormat,
     SourceFile,
     Symbol,
-    Node
+    Node,
+    isImportSpecifier,
+    isBlock,
 } from 'typescript';
 
 import {
@@ -26,21 +29,23 @@ import {
     isPrologueDirective,
     rangeStartPositionsAreOnSameLine,
 } from './utilities';
+
 import * as utilities from './utilities';
+
 import {
     shouldAddDollar,
-    isImportSpecifier,
     shouldUseArray,
     shouldAddDoubleQuote,
-    isBlock,
     isStringLike
 } from './utilities/nodeTest';
+
 import {
     some,
     cast,
     lastOrUndefined,
     singleOrUndefined
 } from './core';
+
 import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
@@ -516,8 +521,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitClassExpression(<ClassExpression>node);
                 // case SyntaxKind.OmittedExpression:
                 //     return;
-                // case SyntaxKind.AsExpression:
-                //     return emitAsExpression(<AsExpression>node);
+                case SyntaxKind.AsExpression:
+                    return emitAsExpression(<ts.AsExpression>node);
                 // case SyntaxKind.NonNullExpression:
                 //     return emitNonNullExpression(<NonNullExpression>node);
                 // case SyntaxKind.MetaProperty:
@@ -1300,15 +1305,15 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     emitTypeArguments(node, node.typeArguments);
     // }
 
-    // function emitAsExpression(node: AsExpression) {
-    //     emitExpression(node.expression);
-    //     if (node.type) {
-    //         writeSpace();
-    //         writeKeyword("as");
-    //         writeSpace();
-    //         emit(node.type);
-    //     }
-    // }
+    function emitAsExpression(node: ts.AsExpression) {
+        emitExpression(node.expression);
+        // if (node.type) {
+        //     writeSpace();
+        //     writeKeyword("as");
+        //     writeSpace();
+        //     emit(node.type);
+        // }
+    }
 
     // function emitNonNullExpression(node: NonNullExpression) {
     //     emitExpression(node.expression);
@@ -1555,9 +1560,14 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
             const count = node.name.elements.length;
             let initializer = node.initializer;
             node.name.elements.forEach((element, index) => {
-                if (ts.isIdentifier(element.name) && ts.isIdentifier(initializer)) {
+
+                if (ts.isIdentifier(element.name)) {
+
                     const nameNode = element.name;
-                    const access = ts.createPropertyAccess(initializer, nameNode);
+                    const access = ts.createPropertyAccess(
+                        initializer,
+                        element.propertyName ? getTextOfNode(element.propertyName) : nameNode
+                    );
 
                     writeBase("$");
                     emit(nameNode);
@@ -1880,7 +1890,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         const moduleIt = allowedModules[importModuleName];
 
         // 需要将引入的变量跟 module 对应起来
-        if (node.importClause.namedBindings) {
+        if (node.importClause && node.importClause.namedBindings) {
             node.importClause.namedBindings.forEachChild(child => {
                 const name = getTextOfNode(child);
                 state.moduleNamedImports[name] = {
@@ -1899,7 +1909,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
             writeLine();
         }
 
-        if (node.importClause.name) {
+        if (node.importClause && node.importClause.name) {
             let text = getTextOfNode(node.importClause.name);
             state.moduleDefaultImports[text] = {
                 className: moduleIt.className,

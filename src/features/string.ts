@@ -10,14 +10,14 @@ import {
     RegularExpressionLiteral,
     createNodeArray,
     PropertyAccessExpression,
-    EmitHint
+    EmitHint,
+    isPropertyAccessExpression,
+    isCallExpression,
+    isRegularExpressionLiteral
 } from 'typescript';
 
 import {
-    isRegularExpressionLiteral,
     isStringLike,
-    isPropertyAccessExpression,
-    isCallExpression
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';

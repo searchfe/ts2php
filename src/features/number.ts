@@ -4,13 +4,13 @@
  */
 
 import {
-    EmitHint, Expression, PropertyAccessExpression
-} from 'typescript';
-
-import {
+    EmitHint,
     isPropertyAccessExpression,
     isIdentifier,
     isCallExpression,
+} from 'typescript';
+
+import {
     isNumberLike
 } from '../utilities/nodeTest';
 

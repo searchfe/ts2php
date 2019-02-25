@@ -4,12 +4,9 @@
  */
 
 import {
-    EmitHint
-} from 'typescript';
-
-import {
+    EmitHint,
     isCallExpression
-} from '../utilities/nodeTest';
+} from 'typescript';
 
 import method from '../utilities/method';
 

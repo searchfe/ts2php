@@ -8,14 +8,11 @@ import {
     CallExpression,
     createLiteral,
     createNodeArray,
-    ListFormat
-} from 'typescript';
-
-import {
+    ListFormat,
     isPropertyAccessExpression,
     isIdentifier,
     isCallExpression
-} from '../utilities/nodeTest';
+} from 'typescript';
 
 
 const methods = {

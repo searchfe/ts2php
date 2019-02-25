@@ -3,8 +3,6 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
-import * as ts from 'typescript';
-
 import {
     EmitHint,
     isCallExpression,
