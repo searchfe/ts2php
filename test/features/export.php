@@ -1,6 +1,6 @@
 <?php
 namespace test\export;
-function process($a) {
-    $a = "111";
-    var_dump($a);
+function run($a) {
+    $b = "111";
+    var_dump($a, $b);
 }

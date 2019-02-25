@@ -12,13 +12,35 @@ import {setState} from './state';
 import hash from 'hash-sum';
 import buildInPlugins from './features/index';
 
+function reportErrors(errors: ReadonlyArray<ts.Diagnostic>, host: ts.FormatDiagnosticsHost) {
+    ts.sys.write(ts.formatDiagnosticsWithColorAndContext(errors, host) + host.getNewLine());
+}
+
 export function compile(filePath: string, options?: Ts2phpOptions) {
 
     const program = ts.createProgram([filePath], {
-        target: ts.ScriptTarget.ES5,
+        target: ts.ScriptTarget.ES2015,
         module: ts.ModuleKind.CommonJS,
         scrict: true
     });
+
+    const sys = ts.sys;
+
+    const sysFormatDiagnosticsHost: ts.FormatDiagnosticsHost = sys ? {
+        getCurrentDirectory: () => sys.getCurrentDirectory(),
+        getNewLine: () => sys.newLine,
+        getCanonicalFileName: sys.useCaseSensitiveFileNames ? name => name : name => name.toLowerCase()
+    } : undefined;
+
+    const syntaxDiagnostics = program.getSemanticDiagnostics().filter(a => a.code !== 2307);
+
+    if (syntaxDiagnostics.length) {
+        reportErrors(syntaxDiagnostics, sysFormatDiagnosticsHost);
+        return {
+            phpCode: '',
+            errors: syntaxDiagnostics
+        };
+    }
 
     const typeChecker = program.getTypeChecker();
 

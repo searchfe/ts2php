@@ -6,16 +6,16 @@ $c = count($b);
 array_push($b, $c);
 $d = array_search(1, $b);
 $f = array_map(function ($value, $index) {
-    return $value + 1;
+    return $value;
 }, $b);
 $e = array_walk($b, function ($value, $index) {
-    $a = $value + 1;
+    $a = $value;
 });
 $g = array_filter($b, function ($value, $index) {
     return $value;
 });
 $t = \Ts2Php_Helper::isPlainArray($a);
-function process($x) {
+function run($x) {
     \Ts2Php_Helper::arraySlice($x["y"], 1);
     array_push($x["y"], 1);
 }

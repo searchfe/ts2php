@@ -14,7 +14,6 @@ import {
     isCallExpression
 } from 'typescript';
 
-
 const methods = {
     stringify(node: CallExpression, {emitExpressionList, writePunctuation}) {
         writePunctuation('json_encode');
