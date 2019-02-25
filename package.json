@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime",
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
     "test": "tsc && mocha",
     "mocha": "mocha"
