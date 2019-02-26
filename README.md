@@ -281,6 +281,11 @@ $a = array(
   - String.prototype.indexOf
   - String.prototype.substr
   - String.prototype.substring
+  - String.prototype.repeat
+  - String.prototype.startsWidth
+  - String.prototype.endsWidth
+  - String.prototype.includes
+  - String.prototype.padStart
 - Array
   - Array.isArray
   - Array.prototype.length

@@ -52,6 +52,52 @@ class Ts2Php_Helper {
     }
 
     /**
+     * string.prototype.startsWidth
+     * @param $haystack {string}
+     * @param $needle {string}
+     * @param $postion {number}
+     * @return {boolean}
+     */
+    static public function startsWith($haystack, $needle, $postion = 0){
+        return strncmp($haystack, $needle, strlen($needle)) === $postion;
+    }
+
+    /**
+     * string.prototype.endsWith
+     * @param $haystack {string}
+     * @param $needle {string}
+     * @param $postion {number}
+     * @return {boolean}
+     */
+    static public function endsWith($haystack, $needle, $postion){
+        $postion = isset($postion) ? $postion : (strlen($haystack) - 1);
+        return $needle === '' || substr_compare($haystack, $needle, 1 - $postion) === 0;
+    }
+
+    /**
+     * string.prototype.includes
+     * @param $haystack {string}
+     * @param $needle {string}
+     * @param $postion {number}
+     * @return {boolean}
+     */
+    static public function includes($haystack, $needle, $postion = 0){
+        $pos = strpos($haystack, $needle);
+        return $pos >= $postion;
+    }
+
+    /**
+     * string.prototype.padStart
+     * @param $input {string}
+     * @param $pad_length {number}
+     * @param $pad_string {string}
+     * @return {string}
+     */
+    static public function padStart($input, $pad_length, $pad_string = " "){
+        return str_pad($input, $pad_length, $pad_string, STR_PAD_LEFT);
+    }
+
+    /**
      * replace once helper for string.prototype.slice
      * @param $origin {string}
      * @param $start {string}

@@ -63,6 +63,11 @@ const map = {
     indexOf: method('strpos', true, 1),
     substr: method('substr', true, 2),
     substring: method('substr', true, 2),
+    repeat: method('str_repeat', true, 1),
+    startsWith: method('\\Ts2Php_Helper::startsWith', true, 2),
+    endsWith: method('\\Ts2Php_Helper::endsWith', true, 2),
+    includes: method('\\Ts2Php_Helper::includes', true, 2),
+    padStart: method('\\Ts2Php_Helper::padStart', true, 2),
     replace,
     split
 };
