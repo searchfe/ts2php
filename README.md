@@ -123,6 +123,32 @@ switch ($b) {
 }
 ```
 
+#### `while`/`do while`
+
+```javascript
+const a = true;
+let b;
+while(!a) {
+    b = 2;
+}
+do {
+    b++;
+} while(!a);
+```
+
+output
+
+```php
+$a = true;
+$b;
+while (!$a) {
+    $b = 2;
+}
+do {
+    $b++;
+} while (!$a);
+```
+
 #### `typeof`
 
 > 由于 php 中没有 `undefined` 关键字，故不支持返回 `undefined`

@@ -44,12 +44,18 @@ describe('features', () => {
                 },
                 getNamespace() {
                     return `test\\${featureName}`;
-                }
+                },
+                showSemanticDiagnostics: false
             });
             assert.equal(res.phpCode, phpContent);
             assert.equal(res.errors.length, 0);
         });
     }
+
+    it('compile semantic diagnostics', function () {
+        let res = compileCode('const a = 1; a = 2;');
+        assert.equal(res.errors.length, 1);
+    });
 
     it('compile code', function () {
         let res = compileCode('var a = 1;');
