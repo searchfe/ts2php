@@ -295,8 +295,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                     return emitExpressionStatement(<ts.ExpressionStatement>node);
                 case SyntaxKind.IfStatement:
                     return emitIfStatement(<ts.IfStatement>node);
-                // case SyntaxKind.DoStatement:
-                //     return emitDoStatement(<DoStatement>node);
+                case SyntaxKind.DoStatement:
+                    return emitDoStatement(<ts.DoStatement>node);
                 case SyntaxKind.WhileStatement:
                     return emitWhileStatement(<ts.WhileStatement>node);
                 case SyntaxKind.ForStatement:
@@ -1394,19 +1394,18 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
     }
 
-    // function emitDoStatement(node: DoStatement) {
-    //     emitTokenWithComment(SyntaxKind.DoKeyword, node.pos, writeKeyword, node);
-    //     emitEmbeddedStatement(node, node.statement);
-    //     if (isBlock(node.statement)) {
-    //         writeSpace();
-    //     }
-    //     else {
-    //         writeLineOrSpace(node);
-    //     }
-
-    //     emitWhileClause(node, node.statement.end);
-    //     writePunctuation(";");
-    // }
+    function emitDoStatement(node: ts.DoStatement) {
+        emitTokenWithComment(SyntaxKind.DoKeyword, node.pos, writeKeyword, node);
+        emitEmbeddedStatement(node, node.statement);
+        if (isBlock(node.statement)) {
+            writeSpace();
+        }
+        else {
+            writeLineOrSpace(node);
+        }
+        emitWhileClause(node, node.statement.end);
+        writePunctuation(";");
+    }
 
     function emitWhileStatement(node: ts.WhileStatement) {
         emitWhileClause(node, node.pos);

@@ -16,6 +16,11 @@ function reportErrors(errors: ReadonlyArray<ts.Diagnostic>, host: ts.FormatDiagn
     ts.sys.write(ts.formatDiagnosticsWithColorAndContext(errors, host) + host.getNewLine());
 }
 
+const defaultOptions = {
+    showSemanticDiagnostics: true,
+    emitHeader: true
+};
+
 export function compile(filePath: string, options?: Ts2phpOptions) {
 
     const program = ts.createProgram([filePath], {
@@ -24,31 +29,37 @@ export function compile(filePath: string, options?: Ts2phpOptions) {
         scrict: true
     });
 
-    const sys = ts.sys;
+    const finalOptions = {
+        ...defaultOptions,
+        ...options
+    };
 
-    const sysFormatDiagnosticsHost: ts.FormatDiagnosticsHost = sys ? {
-        getCurrentDirectory: () => sys.getCurrentDirectory(),
-        getNewLine: () => sys.newLine,
-        getCanonicalFileName: sys.useCaseSensitiveFileNames ? name => name : name => name.toLowerCase()
-    } : undefined;
+    if (finalOptions.showSemanticDiagnostics) {
 
-    const syntaxDiagnostics = program.getSemanticDiagnostics().filter(a => a.code !== 2307);
+        const sys = ts.sys;
 
-    if (syntaxDiagnostics.length) {
-        reportErrors(syntaxDiagnostics, sysFormatDiagnosticsHost);
-        return {
-            phpCode: '',
-            errors: syntaxDiagnostics
-        };
+        const sysFormatDiagnosticsHost: ts.FormatDiagnosticsHost = sys ? {
+            getCurrentDirectory: () => sys.getCurrentDirectory(),
+            getNewLine: () => sys.newLine,
+            getCanonicalFileName: sys.useCaseSensitiveFileNames ? name => name : name => name.toLowerCase()
+        } : undefined;
+
+        const syntaxDiagnostics = program.getSemanticDiagnostics().filter(a => a.code !== 2307);
+
+        if (syntaxDiagnostics.length) {
+            reportErrors(syntaxDiagnostics, sysFormatDiagnosticsHost);
+            return {
+                phpCode: '',
+                errors: syntaxDiagnostics
+            };
+        }
     }
 
     const typeChecker = program.getTypeChecker();
 
-    const plugins = (options && options.plugins) ? [...buildInPlugins, ...options.plugins] : buildInPlugins;
+    const plugins = (finalOptions && finalOptions.plugins) ? [...buildInPlugins, ...finalOptions.plugins] : buildInPlugins;
 
-    const state: CompilerState = Object.assign({
-        emitHeader: true
-    }, options, {
+    const state: CompilerState = Object.assign({}, finalOptions, {
         errors: [],
         typeChecker,
         helpers: {},

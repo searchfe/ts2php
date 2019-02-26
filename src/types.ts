@@ -13,7 +13,8 @@ export interface Ts2phpOptions {
     namespace: string,
     plugins: {emit: Function}[],
     cacheDirectory: string,
-    emitHeader: boolean
+    emitHeader: boolean,
+    showSemanticDiagnostics: boolean;
 }
 
 export interface CompilerState extends Ts2phpOptions {
