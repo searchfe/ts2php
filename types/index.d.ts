@@ -25,3 +25,7 @@ type UrlInfo = {
 };
 
 declare function parse_url(x: string): false | UrlInfo;
+
+declare function strftime(a: string, b: number | string): string;
+
+declare function strtotime(a: string): number;
