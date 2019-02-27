@@ -14,6 +14,11 @@ const g = b.filter(function (value, index) {
 });
 const t = Array.isArray(a);
 
+const x = {u: []};
+const v = x.u.length;
+
+console.dir(x);
+
 function run(x: {y: number[]}) {
     x.y.slice(1);
     x.y.push(1);

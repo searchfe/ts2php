@@ -82,6 +82,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emit,
         emitLiteral,
         emitWithHint,
+        emitExpression,
         emitExpressionList,
         emitArrayLiteralExpression,
 

@@ -5,7 +5,6 @@
 
 import {
     EmitHint,
-    isArrayLiteralExpression,
     isPropertyAccessExpression,
     isCallExpression,
     isIdentifier
@@ -42,8 +41,7 @@ export default {
         const {
             getTextOfNode,
             writePunctuation,
-            emitArrayLiteralExpression,
-            emit
+            emitExpression
         } = helpers;
 
         if (
@@ -79,12 +77,7 @@ export default {
             && getTextOfNode(node.name) === 'length'
         ) {
             writePunctuation('count(');
-            if (isArrayLiteralExpression(expNode)) {
-                emitArrayLiteralExpression(expNode);
-            }
-            else {
-                emit(expNode);
-            }
+            emitExpression(expNode);
             writePunctuation(')');
             return;
         }

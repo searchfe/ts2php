@@ -91,7 +91,7 @@ export function compile(filePath: string, options?: Ts2phpOptions) {
     }
 }
 
-export const cacheDirectory = path.resolve('.ts2php');
+const cacheDirectory = path.resolve('.ts2php');
 
 export function compileCode(code: string, options?: Ts2phpOptions) {
 

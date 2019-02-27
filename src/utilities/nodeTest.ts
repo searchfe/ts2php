@@ -98,6 +98,7 @@ const stringLikeType = new Set([
     ts.TypeFlags.String,
     ts.TypeFlags.StringLiteral
 ]);
+
 /**
  * 判断是否是 string，用于将 + 改写成 .
  * @param node node
