@@ -20,7 +20,6 @@ import * as ts from 'typescript';
 import {Node} from 'typescript';
 import {error} from './state';
 
-
 const indentStrings: string[] = ["", "    "];
 export function getIndentString(level: number) {
     if (indentStrings[level] === undefined) {

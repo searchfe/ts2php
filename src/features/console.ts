@@ -16,7 +16,7 @@ import method from '../utilities/method';
 const methods = {
     log: method('var_dump', false),
     info: method('var_dump', false),
-    error: method('var_dump', false),
+    error: method('echo', false),
     dir(node: CallExpression, {emitExpression, writePunctuation}) {
         writePunctuation('echo "<script>console.log(" . json_encode(');
         emitExpression(node.arguments[0]);

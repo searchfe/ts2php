@@ -12,7 +12,9 @@ import method from '../utilities/method';
 
 const map = {
     parseInt: method('intval', false, 1),
-    parseFloat: method('floatval', false, 1)
+    parseFloat: method('floatval', false, 1),
+    encodeURIComponent: method('rawurlencode', false, 1),
+    decodeURIComponent: method('rawurldecode', false, 1)
 };
 
 export default {

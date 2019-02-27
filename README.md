@@ -282,6 +282,8 @@ $a = array(
 ### Core JavaScript API
 - parseInt **只接收一个参数**
 - parseFloat
+- encodeURIComponent
+- decodeURIComponent
 - Date
   - now
 - Object
@@ -292,10 +294,10 @@ $a = array(
 - JSON
   - JSON.stringify **只接收一个参数**
   - JSON.parse **只接收一个参数**
-- console **转成var_dump**
-  - console.log
-  - console.info
-  - console.error
+- console
+  - console.log **转成var_dump**
+  - console.info **转成var_dump**
+  - console.error **echo，只接收一个参数**
 - String
   - String.prototype.replace
   - String.prototype.trim

@@ -9,7 +9,7 @@
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
     "test": "tsc && mocha",
     "mocha": "mocha",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm test"
   },
   "repository": {
     "type": "git",
