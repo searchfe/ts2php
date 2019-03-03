@@ -36,7 +36,9 @@ import {
     shouldAddDollar,
     shouldUseArray,
     shouldAddDoubleQuote,
-    isStringLike
+    isStringLike,
+    isClassLike,
+    isFunctionLike
 } from './utilities/nodeTest';
 
 import {
@@ -352,18 +354,17 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitImportEqualsDeclaration(<ImportEqualsDeclaration>node);
                 case SyntaxKind.ImportDeclaration:
                     return emitImportDeclaration(<ts.ImportDeclaration>node);
-                // case SyntaxKind.ImportClause:
-                //     return emitImportClause(<ts.ImportClause>node);
+                case SyntaxKind.ImportClause:
+                    return emitImportClause(<ts.ImportClause>node);
                 // case SyntaxKind.NamespaceImport:
-                //     return emitNamespaceImport(<NamespaceImport>node);
-                // case SyntaxKind.NamedImports:
-                //     return emitNamedImports(<ts.NamedImports>node);
-                // case SyntaxKind.ImportSpecifier:
-                //     return emitImportSpecifier(<ImportSpecifier>node);
+                //     return emitNamespaceImport(<ts.NamespaceImport>node);
+                case SyntaxKind.NamedImports:
+                    return emitNamedImports(<ts.NamedImports>node);
+                case SyntaxKind.ImportSpecifier:
+                    return emitImportSpecifier(<ts.ImportSpecifier>node);
                 // case SyntaxKind.ExportAssignment:
                 //     return emitExportAssignment(<ts.ExportAssignment>node);
                 // case SyntaxKind.ExportDeclaration:
-                //     console.log(node);
                 //     return emitExportDeclaration(<ts.ExportDeclaration>node);
                 // case SyntaxKind.NamedExports:
                 //     return emitNamedExports(<NamedExports>node);
@@ -1094,10 +1095,27 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     }
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
+        const symbol = typeChecker.getSymbolAtLocation(node.name);
+        let prefix = '["';
+        let suffix = '"]';
+        if (isClassLike(node.expression, typeChecker) && symbol) {
+            switch (symbol.getFlags()) {
+                case ts.SymbolFlags.Method:
+                    prefix = '::';
+                    suffix = '';
+                    break;
+                case ts.SymbolFlags.Property:
+                    prefix = '::$';
+                    suffix = '';
+                    break;
+                default:
+                    break;
+            }
+        }
         emitWithHint(ts.EmitHint.Expression, node.expression);
-        writePunctuation("[\"");
+        writePunctuation(prefix);
         emitWithHint(ts.EmitHint.Unspecified, node.name);
-        writePunctuation("\"]");
+        writePunctuation(suffix);
     }
 
     // // 1..toString is a valid property access, emit a dot after the literal
@@ -1253,7 +1271,12 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     function emitBinaryExpression(node: ts.BinaryExpression) {
         emitWithHint(ts.EmitHint.Expression, node.left);
         writeSpace();
-        writeTokenNode(node.operatorToken, writeOperator, node.left, node.right);
+        if (isStringLike(node.left, typeChecker) || isStringLike(node.right, typeChecker)) {
+            writePunctuation(".=");
+        }
+        else {
+            writeTokenNode(node.operatorToken, writeOperator, node.left, node.right);
+        }
         writeSpace();
         emitWithHint(ts.EmitHint.Expression, node.right);
     }
@@ -1868,67 +1891,88 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
     function emitImportDeclaration(node: ts.ImportDeclaration) {
 
-        // 暂时先不支持模块化，只允许用户引入指定库，方便在开发时有代码补全提示
-        if (!node.moduleSpecifier || !node.moduleSpecifier.getText) {
-            state.errors.push({
-                code: 100,
-                msg: '模块引入出错'
-            });
-            return;
-        }
+        // emitModifiers(node, node.modifiers);
+        // emitTokenWithComment(SyntaxKind.ImportKeyword, node.modifiers ? node.modifiers.end : node.pos, writeKeyword, node);
+        // writeSpace();
 
-        const allowedModules = state.modules;
-        const importModuleName = getImportModuleName(node);
-        if (!allowedModules[importModuleName]) {
-            state.errors.push({
-                code: 100,
-                msg: `模块${importModuleName}未找到`
-            });
-            return;
-        }
+        const moduleName = getImportModuleName(node);
+        const moduleIt = state.modules[moduleName];
 
-        const moduleIt = allowedModules[importModuleName];
-
-        // 需要将引入的变量跟 module 对应起来
-        if (node.importClause && node.importClause.namedBindings) {
-            node.importClause.namedBindings.forEachChild(child => {
-                const name = getTextOfNode(child);
-                state.moduleNamedImports[name] = {
-                    className: moduleIt.className,
-                    moduleName: importModuleName
-                };
-            });
-        }
-
-        if (moduleIt.required) {
-            return;
-        }
-
-        if (moduleIt.path) {
-            writeBase(`require_once("${moduleIt.path}");`);
+        if (moduleIt && !moduleIt.required) {
+            writeBase(`require_once("${moduleIt.path ? moduleIt.path : state.getModulePath(moduleName)}")`);
+            writeSemicolon();
             writeLine();
+            moduleIt.required = true;
         }
 
-        if (node.importClause && node.importClause.name) {
-            let text = getTextOfNode(node.importClause.name);
-            state.moduleDefaultImports[text] = {
-                className: moduleIt.className,
-                moduleName: importModuleName
-            };
+        if (node.importClause) {
+            emit(node.importClause);
         }
 
-        moduleIt.required = true;
+        // emitExpression(node.moduleSpecifier);
+        // writeSemicolon();
+
+        // // 暂时先不支持模块化，只允许用户引入指定库，方便在开发时有代码补全提示
+        // if (!node.moduleSpecifier || !node.moduleSpecifier.getText) {
+        //     state.errors.push({
+        //         code: 100,
+        //         msg: '模块引入出错'
+        //     });
+        //     return;
+        // }
+
+        // const allowedModules = state.modules;
+        // const importModuleName = getImportModuleName(node);
+        // if (!allowedModules[importModuleName]) {
+        //     state.errors.push({
+        //         code: 100,
+        //         msg: `模块${importModuleName}未找到`
+        //     });
+        //     return;
+        // }
+
+        // const moduleIt = allowedModules[importModuleName];
+
+        // // 需要将引入的变量跟 module 对应起来
+        // if (node.importClause && node.importClause.namedBindings) {
+        //     node.importClause.namedBindings.forEachChild(child => {
+        //         const name = getTextOfNode(child);
+        //         state.moduleNamedImports[name] = {
+        //             className: moduleIt.className,
+        //             moduleName: importModuleName
+        //         };
+        //     });
+        // }
+
+        // if (moduleIt.required) {
+        //     return;
+        // }
+
+        // if (moduleIt.path) {
+        //     writeBase(`require_once("${moduleIt.path}");`);
+        //     writeLine();
+        // }
+
+        // if (node.importClause && node.importClause.name) {
+        //     let text = getTextOfNode(node.importClause.name);
+        //     state.moduleDefaultImports[text] = {
+        //         className: moduleIt.className,
+        //         moduleName: importModuleName
+        //     };
+        // }
+
+        // moduleIt.required = true;
 
     }
 
-    // function emitImportClause(node: ts.ImportClause) {
-    //     // emit(node.name);
-    //     // if (node.name && node.namedBindings) {
-    //     //     emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
-    //     //     writeSpace();
-    //     // }
-    //     emit(node.namedBindings);
-    // }
+    function emitImportClause(node: ts.ImportClause) {
+        emit(node.name);
+        if (node.name && node.namedBindings) {
+            emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
+            writeSpace();
+        }
+        emit(node.namedBindings);
+    }
 
     // function emitNamespaceImport(node: NamespaceImport) {
     //     const asPos = emitTokenWithComment(SyntaxKind.AsteriskToken, node.pos, writePunctuation, node);
@@ -1938,17 +1982,13 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     emit(node.name);
     // }
 
-    // function emitNamedImports(node: ts.NamedImports) {
-    //     node.forEachChild(child => {
-    //         const name = getTextOfNode(child);
-    //         const moduleName = getImportModuleName(node.parent.parent);
-    //         varModuleMap[name] = moduleName;
-    //     });
-    // }
+    function emitNamedImports(node: ts.NamedImports) {
+        emitNamedImportsOrExports(node);
+    }
 
-    // function emitImportSpecifier(node: ImportSpecifier) {
-    //     emitImportOrExportSpecifier(node);
-    // }
+    function emitImportSpecifier(node: ts.ImportSpecifier) {
+        emitImportOrExportSpecifier(node);
+    }
 
     // function emitExportAssignment(node: ExportAssignment) {
     //     const nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
@@ -2002,22 +2042,36 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     emitImportOrExportSpecifier(node);
     // }
 
-    // function emitNamedImportsOrExports(node: ts.NamedImportsOrExports) {
-    //     writePunctuation("{");
-    //     emitList(node, node.elements, ts.ListFormat.NamedImportsOrExportsElements);
-    //     writePunctuation("}");
-    // }
 
-    // function emitImportOrExportSpecifier(node: ImportOrExportSpecifier) {
-    //     if (node.propertyName) {
-    //         emit(node.propertyName);
-    //         writeSpace();
-    //         emitTokenWithComment(SyntaxKind.AsKeyword, node.propertyName.end, writeKeyword, node);
-    //         writeSpace();
-    //     }
+    function emitNamedImportsOrExports(node: ts.NamedImportsOrExports) {
+        const importNode = node.parent.parent;
 
-    //     emit(node.name);
-    // }
+        if (ts.isImportDeclaration(importNode)) {
+            const moduleName = getImportModuleName(importNode);
+            node.forEachChild(element => {
+                if (isClassLike(element, typeChecker) || isFunctionLike(element, typeChecker)) {
+                    writePunctuation("use");
+                    writeSpace();
+                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
+                    namespace && writeBase(namespace);
+                    emit(element);
+                    writeSemicolon();
+                    writeLine();
+                }
+            });
+        }
+    }
+
+    function emitImportOrExportSpecifier(node: ts.ImportOrExportSpecifier) {
+        if (node.propertyName) {
+            emit(node.propertyName);
+            writeSpace();
+            emitTokenWithComment(SyntaxKind.AsKeyword, node.propertyName.end, writeKeyword, node);
+            writeSpace();
+        }
+
+        emit(node.name);
+    }
 
     // //
     // // Module references
@@ -3085,10 +3139,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
             }
 
             // 是从模块中引入的
-            if (state.moduleNamedImports[name]) {
-                const className = state.moduleNamedImports[name].className;
-                head = className + '::' + head;
-            }
+            // if (state.moduleNamedImports[name]) {
+            //     const className = state.moduleNamedImports[name].className;
+            //     head = className + '::' + head;
+            // }
 
             return head + idText(<ts.Identifier>node) + tail;
         }

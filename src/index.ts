@@ -18,7 +18,10 @@ function reportErrors(errors: ReadonlyArray<ts.Diagnostic>, host: ts.FormatDiagn
 
 const defaultOptions = {
     showSemanticDiagnostics: true,
-    emitHeader: true
+    emitHeader: true,
+    getModulePath: name => name,
+    getModuleNamespace: () => '\\',
+    modules: {}
 };
 
 export function compile(filePath: string, options?: Ts2phpOptions) {
@@ -73,8 +76,22 @@ export function compile(filePath: string, options?: Ts2phpOptions) {
 
     setState(state);
 
+    if (state.modules) {
+        for (let name of Object.keys(state.modules)) {
+            state.modules[name].name = name;
+        }
+    }
+
     for (const sourceFile of program.getSourceFiles()) {
         if (sourceFile.fileName === filePath && !sourceFile.isDeclarationFile) {
+            sourceFile.resolvedModules && sourceFile.resolvedModules.forEach((item, name) => {
+                state.modules[name] = {
+                    name,
+                    path: state.getModulePath(name, item),
+                    namespace: state.getModuleNamespace(name, item),
+                    ...state.modules[name]
+                };
+            });
             return {
                 phpCode: emitter.emitFile(sourceFile, state),
                 errors: state.errors

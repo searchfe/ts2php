@@ -1,38 +1,32 @@
 
 import ts from 'typescript';
 
+interface moduleInfo {
+    name: string;
+    path: string;
+    namespace: string | false;
+    required?: boolean;
+    fileName?: string;
+}
+
 export interface Ts2phpOptions {
     modules: {
-        [moduleName: string]: {
-            path: string;
-            className: string;
-            required?: boolean;
-        }
+        [name: string]: moduleInfo
     },
-    getNamespace: () => string,
-    namespace: string,
-    plugins: {emit: Function}[],
-    cacheDirectory: string,
-    emitHeader: boolean,
+    namespace: string;
+    plugins: {emit: Function}[];
+    cacheDirectory: string;
+    emitHeader: boolean;
     showSemanticDiagnostics: boolean;
+    getNamespace: () => string;
+    getModulePath: (name: string, module?: ts.ResolvedModuleFull) => string;
+    getModuleNamespace: (name: string, module?: ts.ResolvedModuleFull) => string;
 }
 
 export interface CompilerState extends Ts2phpOptions {
     errors: ErrorInfo[],
     typeChecker: ts.TypeChecker,
     helpers: {},
-    moduleNamedImports: {
-        [name: string]: {
-            className: string;
-            moduleName: string;
-        }
-    },
-    moduleDefaultImports: {
-        [name: string]: {
-            className: string;
-            moduleName: string;
-        }
-    },
     sourceFile?: ts.SourceFile
 }
 

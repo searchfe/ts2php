@@ -24,7 +24,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.ForOfStatement,
     SyntaxKind.TypeOfExpression,
     SyntaxKind.ConditionalExpression,
-    SyntaxKind.ComputedPropertyName
+    SyntaxKind.ComputedPropertyName,
+    SyntaxKind.ImportSpecifier
 ]);
 
 /**
@@ -32,6 +33,14 @@ const shouldAddDollerParentList = new Set([
  * @param node 节点
  */
 export function shouldAddDollar(node: Node, state: CompilerState): boolean {
+
+    if (isClassLike(node, state.typeChecker)) {
+        return false;
+    }
+
+    if (isFunctionLike(node, state.typeChecker) && node.parent && ts.isImportSpecifier(node.parent)) {
+        return false;
+    }
 
     // 可以直接通过父元素判断
     if (node.parent && shouldAddDollerParentList.has(node.parent.kind)) {
@@ -125,3 +134,15 @@ export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     return numberLikeType.has(nodeType.getFlags());
 }
 
+
+export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const nodeSymbol = nodeType.getSymbol();
+    return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Class;
+}
+
+export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const nodeSymbol = nodeType.getSymbol();
+    return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Function;
+}

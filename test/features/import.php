@@ -1,6 +1,11 @@
 <?php
 namespace test\import;
-require_once("/home/work/search/view-ui/atom/plugins/aladdin/Atom_Wise_Utils.php");
+require_once("../some-utils");
+use \Other_Utils as Util;
+use \Some_Utils;
+use \func;
 $tplData = array();
-$tplData["src"] = \Atom_Wise_Utils::makeTcLink("url");
-$tplData["title"] = \Atom_Wise_Utils::highlight("title");
+$tplData["src"] = Some_Utils::makeTcLink("url");
+$tplData["title"] = Some_Utils::highlight("title");
+$tplData["title"] = Util::$sample;
+$tplData["title"] = func() . "aa";
