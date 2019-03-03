@@ -1271,7 +1271,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     function emitBinaryExpression(node: ts.BinaryExpression) {
         emitWithHint(ts.EmitHint.Expression, node.left);
         writeSpace();
-        if (isStringLike(node.left, typeChecker) || isStringLike(node.right, typeChecker)) {
+        if (
+            node.operatorToken.kind === ts.SyntaxKind.PlusEqualsToken
+            && (isStringLike(node.left, typeChecker) || isStringLike(node.right, typeChecker))
+        ) {
             writePunctuation(".=");
         }
         else {

@@ -31,9 +31,9 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
-        if (featureName !== 'Alias') {
-            continue;
-        }
+        // if (featureName !== 'Alias') {
+        //     continue;
+        // }
         it(featureName, async function () {
             this.timeout(3000);
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
@@ -49,14 +49,14 @@ describe('features', () => {
         });
     }
 
-    // it('compile semantic diagnostics', function () {
-    //     let res = compileCode('const a = 1; a = 2;');
-    //     assert.equal(res.errors.length, 1);
-    // });
+    it('compile semantic diagnostics', function () {
+        let res = compileCode('const a = 1; a = 2;');
+        assert.equal(res.errors.length, 1);
+    });
 
-    // it('compile code', function () {
-    //     let res = compileCode('var a = 1;');
-    //     assert.equal(res.phpCode, '<?php\nnamespace 509b568a;\n$a = 1;\n');
-    // });
+    it('compile code', function () {
+        let res = compileCode('var a = 1;');
+        assert.equal(res.phpCode, '<?php\nnamespace 509b568a;\n$a = 1;\n');
+    });
 });
 
