@@ -13,3 +13,4 @@ typescirpt.d.ts
 .vscode
 src
 coverage
+.nyc_output
