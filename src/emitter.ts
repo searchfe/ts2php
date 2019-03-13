@@ -250,8 +250,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitInferType(<InferTypeNode>node);
                 // case SyntaxKind.ParenthesizedType:
                 //     return emitParenthesizedType(<ParenthesizedTypeNode>node);
-                // case SyntaxKind.ExpressionWithTypeArguments:
-                //     return emitExpressionWithTypeArguments(<ExpressionWithTypeArguments>node);
+                case SyntaxKind.ExpressionWithTypeArguments:
+                    return emitExpressionWithTypeArguments(<ts.ExpressionWithTypeArguments>node);
                 // case SyntaxKind.ThisType:
                 //     return emitThisType();
                 // case SyntaxKind.TypeOperator:
@@ -338,6 +338,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 case SyntaxKind.StaticKeyword:
                 case SyntaxKind.PublicKeyword:
                 case SyntaxKind.PrivateKeyword:
+                case SyntaxKind.ProtectedKeyword:
                     writeTokenNode(node, writeKeyword);
                     return;
 
@@ -414,8 +415,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                     return emitCaseClause(<ts.CaseClause>node);
                 case SyntaxKind.DefaultClause:
                     return emitDefaultClause(<ts.DefaultClause>node);
-                // case SyntaxKind.HeritageClause:
-                //     return emitHeritageClause(<HeritageClause>node);
+                case SyntaxKind.HeritageClause:
+                    return emitHeritageClause(<ts.HeritageClause>node);
                 // case SyntaxKind.CatchClause:
                 //     return emitCatchClause(<CatchClause>node);
 
@@ -748,7 +749,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
     function emitPropertyDeclaration(node: ts.PropertyDeclaration) {
         // emitDecorators(node, node.decorators);
-        // console.log('haha', node);
         emitModifiers(node, node.modifiers);
         emit(node.name);
         // emit(node.questionToken);
@@ -794,7 +794,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
     function emitConstructor(node: ts.ConstructorDeclaration) {
         // emitModifiers(node, node.modifiers);
-        writeKeyword("constructor");
+        writeKeyword("__construct");
         emitSignatureAndBody(node, emitSignatureHead);
     }
 
@@ -1105,7 +1105,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         const preferNewLine = node.multiLine ? ts.ListFormat.PreferNewLine : ts.ListFormat.None;
         // const allowTrailingComma = currentSourceFile.languageVersion >= ScriptTarget.ES5 && !isJsonSourceFile(currentSourceFile) ? ListFormat.AllowTrailingComma : ListFormat.None;
         const allowTrailingComma = ts.ListFormat.None;
-        // console.log(node.properties);
         emitList(node, node.properties, ts.ListFormat.ObjectLiteralExpressionProperties | allowTrailingComma | preferNewLine);
 
         // if (indentedFlag) {
@@ -1231,7 +1230,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emitParametersForArrow(node, node.parameters);
         // emitTypeAnnotation(node.type);
         // writeSpace();
-        // console.log(node);
         // emit(node.equalsGreaterThanToken);
     }
 
@@ -1350,10 +1348,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emitClassDeclarationOrExpression(node);
     }
 
-    // function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments) {
-    //     emitExpression(node.expression);
-    //     emitTypeArguments(node, node.typeArguments);
-    // }
+    function emitExpressionWithTypeArguments(node: ts.ExpressionWithTypeArguments) {
+        emitExpression(node.expression);
+        // emitTypeArguments(node, node.typeArguments);
+    }
 
     function emitAsExpression(node: ts.AsExpression) {
         emitExpression(node.expression);
@@ -2233,12 +2231,12 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         emitList(parentNode, statements, format);
     }
 
-    // function emitHeritageClause(node: HeritageClause) {
-    //     writeSpace();
-    //     writeTokenText(node.token, writeKeyword);
-    //     writeSpace();
-    //     emitList(node, node.types, ListFormat.HeritageClauseTypes);
-    // }
+    function emitHeritageClause(node: ts.HeritageClause) {
+        writeSpace();
+        writeTokenText(node.token, writeKeyword);
+        writeSpace();
+        emitList(node, node.types, ListFormat.HeritageClauseTypes);
+    }
 
     // function emitCatchClause(node: CatchClause) {
     //     const openParenPos = emitTokenWithComment(SyntaxKind.CatchKeyword, node.pos, writeKeyword, node);
@@ -2979,6 +2977,14 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         }
         if (node.kind === SyntaxKind.ThisKeyword) {
             writer('$');
+        }
+        if (node.kind === SyntaxKind.SuperKeyword && ts.isCallExpression(node.parent)) {
+            writer('parent::__construct');
+            return;
+        }
+        if (node.kind === SyntaxKind.SuperKeyword && ts.isPropertyAccessExpression(node.parent)) {
+            writer('parent');
+            return;
         }
         writer(tokenToString(node.kind)!);
     }

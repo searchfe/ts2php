@@ -1,6 +1,7 @@
 
+import {Base} from '../some-utils';
 
-class Article {
+class Article extends Base {
 
     public title: string;
     id: number;
@@ -10,11 +11,13 @@ class Article {
     static published = [];
 
     constructor(options: {title: string}) {
+        super(options);
         this.title = options.title;
         this.publish(1);
     }
 
     private publish(id) {
         Article.published.push(id);
+        super.dispose();
     }
 }

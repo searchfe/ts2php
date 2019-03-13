@@ -11,3 +11,8 @@ export class Other_Utils {
 }
 
 export function func(): string;
+
+export class Base {
+    constructor(options: {title: string});
+    dispose(): void;
+}

@@ -154,7 +154,9 @@ do {
 #### `Class`/
 
 ```javascript
-class Article {
+import {Base} from '../some-utils';
+
+class Article extends Base {
 
     public title: string;
     id: number;
@@ -164,12 +166,14 @@ class Article {
     static published = [];
 
     constructor(options: {title: string}) {
+        super(options);
         this.title = options.title;
         this.publish(1);
     }
 
     private publish(id) {
         Article.published.push(id);
+        super.dispose();
     }
 }
 ```
@@ -177,19 +181,24 @@ class Article {
 output
 
 ```php
-class Article {
+require_once("../some-utils");
+use \Base;
+class Article extends Base {
     public $title;
     $id;
     private $_x;
     static $published = array();
-    constructor($options) {
+    __construct($options) {
+        parent::__construct($options);
         $this->title = $options["title"];
         $this->publish(1);
     }
     private publish($id) {
         array_push(Article::$published, $id);
+        parent::dispose();
     }
 }
+
 ```
 
 #### `typeof`

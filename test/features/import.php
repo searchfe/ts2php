@@ -1,6 +1,5 @@
 <?php
 namespace test\import;
-require_once("../some-utils");
 use \Other_Utils as Util;
 use \Some_Utils;
 use \func;
