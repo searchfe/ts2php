@@ -47,13 +47,14 @@ describe('features', () => {
     }
 
     it('compile semantic diagnostics', function () {
+        this.timeout(5000);
         let res = compileCode('const a = 1; a = 2;');
         assert.equal(res.errors.length, 1);
     });
 
     it('compile code', function () {
-        let res = compileCode('var a = 1;');
-        assert.equal(res.phpCode, '<?php\nnamespace 509b568a;\n$a = 1;\n');
+        let res = compileCode('var a = 1;', {namespace: 'test'});
+        assert.equal(res.phpCode, '<?php\nnamespace test;\n$a = 1;\n');
     });
 });
 
