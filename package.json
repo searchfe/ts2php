@@ -7,31 +7,59 @@
   "scripts": {
     "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime",
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
-    "test": "tsc && mocha",
-    "mocha": "mocha",
-    "prepublishOnly": "npm test"
+    "test": "mocha",
+    "coverage": "nyc _mocha",
+    "prepublishOnly": "npm test & npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@icode.baidu.com:8235/baidu/atom/ts2php"
+    "url": "https://github.com/cxtom/ts2php.git"
   },
   "author": "meixuguang",
-  "license": "UNLICENSED",
+  "contributors": [
+    "cxtom <cxtom2008@gmail.com>"
+  ],
+  "license": "MIT",
   "dependencies": {
     "fs-extra": "^7.0.1",
     "hash-sum": "^1.0.2",
     "lodash": "^4.17.11",
     "typescript": "^3.1.6"
   },
+  "nyc": {
+    "include": [
+      "src/*.ts",
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "test/**/*.ts",
+      "**/*.d.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
   "devDependencies": {
     "@types/fs-extra": "^5.0.5",
     "@types/lodash": "^4.14.117",
     "@types/node": "^10.12.0",
+    "istanbul": "^0.4.5",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "mocha": "^5.2.0",
+    "nyc": "^13.3.0",
+    "source-map-support": "^0.5.11",
     "sync-files": "^1.0.3",
     "ts-node": "^7.0.1"
   }

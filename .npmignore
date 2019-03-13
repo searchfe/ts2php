@@ -12,3 +12,4 @@ typescirpt.d.ts
 .ts2php
 .vscode
 src
+coverage

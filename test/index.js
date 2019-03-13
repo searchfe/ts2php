@@ -8,7 +8,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const {compile, compileCode} = require('../dist/index.js');
+const {compile, compileCode} = require('../src/index.ts');
 
 const files = fs.readdirSync(path.resolve(__dirname, './features'));
 const featureNames = files.reduce((res, file) => {
