@@ -53,6 +53,7 @@ describe('features', () => {
     });
 
     it('compile code', function () {
+        this.timeout(5000);
         let res = compileCode('var a = 1;', {namespace: 'test'});
         assert.equal(res.phpCode, '<?php\nnamespace test;\n$a = 1;\n');
     });
