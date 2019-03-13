@@ -13,6 +13,7 @@ import {
     Node,
     isImportSpecifier,
     isBlock,
+    escapeLeadingUnderscores
 } from 'typescript';
 
 import {
@@ -28,6 +29,9 @@ import {
     rangeEndPositionsAreOnSameLine,
     isPrologueDirective,
     rangeStartPositionsAreOnSameLine,
+    isGeneratedIdentifier,
+    isBindingPattern,
+    isNodeDescendantOf
 } from './utilities';
 
 import * as utilities from './utilities';
@@ -45,12 +49,15 @@ import {
     some,
     cast,
     lastOrUndefined,
-    singleOrUndefined
+    singleOrUndefined,
+    createMap,
+    forEach
 } from './core';
 
 import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
+import {getNodeId} from './checker';
 
 let currentSourceFile: SourceFile;
 
@@ -194,14 +201,14 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 // // Type members
                 // case SyntaxKind.PropertySignature:
                 //     return emitPropertySignature(<PropertySignature>node);
-                // case SyntaxKind.PropertyDeclaration:
-                //     return emitPropertyDeclaration(<PropertyDeclaration>node);
+                case SyntaxKind.PropertyDeclaration:
+                    return emitPropertyDeclaration(<ts.PropertyDeclaration>node);
                 // case SyntaxKind.MethodSignature:
                 //     return emitMethodSignature(<MethodSignature>node);
                 case SyntaxKind.MethodDeclaration:
                     return emitMethodDeclaration(<ts.MethodDeclaration>node);
-                // case SyntaxKind.Constructor:
-                //     return emitConstructor(<ConstructorDeclaration>node);
+                case SyntaxKind.Constructor:
+                    return emitConstructor(<ts.ConstructorDeclaration>node);
                 // case SyntaxKind.GetAccessor:
                 // case SyntaxKind.SetAccessor:
                 //     return emitAccessorDeclaration(<AccessorDeclaration>node);
@@ -327,6 +334,13 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 // case SyntaxKind.DebuggerStatement:
                 //     return emitDebuggerStatement(<DebuggerStatement>node);
 
+                // Reserved words
+                case SyntaxKind.StaticKeyword:
+                case SyntaxKind.PublicKeyword:
+                case SyntaxKind.PrivateKeyword:
+                    writeTokenNode(node, writeKeyword);
+                    return;
+
                 // // Declarations
                 case SyntaxKind.VariableDeclaration:
                     return emitVariableDeclaration(<ts.VariableDeclaration>node);
@@ -334,8 +348,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                     return emitVariableDeclarationList(<ts.VariableDeclarationList>node);
                 case SyntaxKind.FunctionDeclaration:
                     return emitFunctionDeclaration(<ts.FunctionDeclaration>node);
-                // case SyntaxKind.ClassDeclaration:
-                //     return emitClassDeclaration(<ClassDeclaration>node);
+                case SyntaxKind.ClassDeclaration:
+                    return emitClassDeclaration(<ts.ClassDeclaration>node);
                 // case SyntaxKind.InterfaceDeclaration:
                 //     return emitInterfaceDeclaration(<InterfaceDeclaration>node);
                 // case SyntaxKind.TypeAliasDeclaration:
@@ -519,8 +533,8 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 //     return emitYieldExpression(<YieldExpression>node);
                 // case SyntaxKind.SpreadElement:
                 //     return emitSpreadExpression(<SpreadElement>node);
-                // case SyntaxKind.ClassExpression:
-                //     return emitClassExpression(<ClassExpression>node);
+                case SyntaxKind.ClassExpression:
+                    return emitClassExpression(<ts.ClassExpression>node);
                 // case SyntaxKind.OmittedExpression:
                 //     return;
                 case SyntaxKind.AsExpression:
@@ -732,16 +746,17 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     writeSemicolon();
     // }
 
-    // function emitPropertyDeclaration(node: PropertyDeclaration) {
-    //     emitDecorators(node, node.decorators);
-    //     emitModifiers(node, node.modifiers);
-    //     emit(node.name);
-    //     emit(node.questionToken);
-    //     emit(node.exclamationToken);
-    //     emitTypeAnnotation(node.type);
-    //     emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name.end, node);
-    //     writeSemicolon();
-    // }
+    function emitPropertyDeclaration(node: ts.PropertyDeclaration) {
+        // emitDecorators(node, node.decorators);
+        // console.log('haha', node);
+        emitModifiers(node, node.modifiers);
+        emit(node.name);
+        // emit(node.questionToken);
+        // emit(node.exclamationToken);
+        // emitTypeAnnotation(node.type);
+        emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name.end, node);
+        writeSemicolon();
+    }
 
     // function emitMethodSignature(node: MethodSignature) {
     //     pushNameGenerationScope(node);
@@ -758,25 +773,30 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
 
     function emitMethodDeclaration(node: ts.MethodDeclaration) {
         // emitDecorators(node, node.decorators);
-        // emitModifiers(node, node.modifiers);
+        emitModifiers(node, node.modifiers);
         // emit(node.asteriskToken);
-        writer.write("\"");
-        emit(node.name);
-        writer.write("\"");
-        writeSpace();
-        writer.write("=>");
-        writeSpace();
-        writeKeyword("function");
-        writeSpace();
+        if (ts.isClassDeclaration(node.parent)) {
+            emit(node.name);
+        }
+        else {
+            writer.write("\"");
+            emit(node.name);
+            writer.write("\"");
+            writeSpace();
+            writer.write("=>");
+            writeSpace();
+            writeKeyword("function");
+            writeSpace();
+        }
         // emit(node.questionToken);
         emitSignatureAndBody(node, emitSignatureHead);
     }
 
-    // function emitConstructor(node: ConstructorDeclaration) {
-    //     emitModifiers(node, node.modifiers);
-    //     writeKeyword("constructor");
-    //     emitSignatureAndBody(node, emitSignatureHead);
-    // }
+    function emitConstructor(node: ts.ConstructorDeclaration) {
+        // emitModifiers(node, node.modifiers);
+        writeKeyword("constructor");
+        emitSignatureAndBody(node, emitSignatureHead);
+    }
 
     // function emitAccessorDeclaration(node: AccessorDeclaration) {
     //     emitDecorators(node, node.decorators);
@@ -888,7 +908,6 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     // }
 
     // function emitTypeQuery(node: ts.TypeQueryNode) {
-    //     console.log(node);
     //     writePunctuation('Ts2Php_Helper::typeof(');
     //     emit(node.exprName);
     //     writePunctuation(')');
@@ -1098,7 +1117,11 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         const symbol = typeChecker.getSymbolAtLocation(node.name);
         let prefix = '["';
         let suffix = '"]';
-        if (isClassLike(node.expression, typeChecker) && symbol) {
+        if (node.expression.kind === ts.SyntaxKind.ThisKeyword && symbol) {
+            prefix = '->';
+            suffix = '';
+        }
+        else if (isClassLike(node.expression, typeChecker) && symbol) {
             switch (symbol.getFlags()) {
                 case ts.SymbolFlags.Method:
                     prefix = '::';
@@ -1322,10 +1345,10 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     emitExpression(node.expression);
     // }
 
-    // function emitClassExpression(node: ClassExpression) {
-    //     generateNameIfNeeded(node.name);
-    //     emitClassDeclarationOrExpression(node);
-    // }
+    function emitClassExpression(node: ts.ClassExpression) {
+        generateNameIfNeeded(node.name);
+        emitClassDeclarationOrExpression(node);
+    }
 
     // function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments) {
     //     emitExpression(node.expression);
@@ -1585,7 +1608,7 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         if (ts.isObjectBindingPattern(node.name)) {
             const count = node.name.elements.length;
             let initializer = node.initializer;
-            node.name.elements.forEach((element, index) => {
+            forEach(node.name.elements, (element, index) => {
 
                 if (ts.isIdentifier(element.name)) {
 
@@ -1765,38 +1788,38 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         }
     }
 
-    // function emitClassDeclaration(node: ClassDeclaration) {
-    //     emitClassDeclarationOrExpression(node);
-    // }
+    function emitClassDeclaration(node: ts.ClassDeclaration) {
+        emitClassDeclarationOrExpression(node);
+    }
 
-    // function emitClassDeclarationOrExpression(node: ClassDeclaration | ClassExpression) {
-    //     forEach(node.members, generateMemberNames);
+    function emitClassDeclarationOrExpression(node: ts.ClassDeclaration | ts.ClassExpression) {
+        // forEach(node.members, generateMemberNames);
 
-    //     emitDecorators(node, node.decorators);
-    //     emitModifiers(node, node.modifiers);
-    //     writeKeyword("class");
-    //     if (node.name) {
-    //         writeSpace();
-    //         emitIdentifierName(node.name);
-    //     }
+        // emitDecorators(node, node.decorators);
+        // emitModifiers(node, node.modifiers);
+        writeKeyword("class");
+        if (node.name) {
+            writeSpace();
+            emitIdentifierName(node.name);
+        }
 
-    //     const indentedFlag = getEmitFlags(node) & EmitFlags.Indented;
-    //     if (indentedFlag) {
-    //         increaseIndent();
-    //     }
+        const indentedFlag = getEmitFlags(node) & ts.EmitFlags.Indented;
+        if (indentedFlag) {
+            increaseIndent();
+        }
 
-    //     emitTypeParameters(node, node.typeParameters);
-    //     emitList(node, node.heritageClauses, ListFormat.ClassHeritageClauses);
+        // emitTypeParameters(node, node.typeParameters);
+        emitList(node, node.heritageClauses, ListFormat.ClassHeritageClauses);
 
-    //     writeSpace();
-    //     writePunctuation("{");
-    //     emitList(node, node.members, ListFormat.ClassMembers);
-    //     writePunctuation("}");
+        writeSpace();
+        writePunctuation("{");
+        emitList(node, node.members, ListFormat.ClassMembers);
+        writePunctuation("}");
 
-    //     if (indentedFlag) {
-    //         decreaseIndent();
-    //     }
-    // }
+        if (indentedFlag) {
+            decreaseIndent();
+        }
+    }
 
     // function emitInterfaceDeclaration(node: InterfaceDeclaration) {
     //     emitDecorators(node, node.decorators);
@@ -2954,6 +2977,9 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
                 return;
             }
         }
+        if (node.kind === SyntaxKind.ThisKeyword) {
+            writer('$');
+        }
         writer(tokenToString(node.kind)!);
     }
 
@@ -3207,95 +3233,95 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         reservedNames = reservedNamesStack.pop()!;
     }
 
-    // function reserveNameInNestedScopes(name: string) {
-    //     if (!reservedNames || reservedNames === lastOrUndefined(reservedNamesStack)) {
-    //         reservedNames = createMap<true>();
-    //     }
-    //     reservedNames.set(name, true);
-    // }
+    function reserveNameInNestedScopes(name: string) {
+        if (!reservedNames || reservedNames === lastOrUndefined(reservedNamesStack)) {
+            reservedNames = createMap<true>();
+        }
+        reservedNames.set(name, true);
+    }
 
-    // function generateNames(node: Node | undefined) {
-    //     if (!node) return;
-    //     switch (node.kind) {
-    //         case SyntaxKind.Block:
-    //             forEach((<ts.Block>node).statements, generateNames);
-    //             break;
-    //         case SyntaxKind.LabeledStatement:
-    //         case SyntaxKind.WithStatement:
-    //         case SyntaxKind.DoStatement:
-    //         case SyntaxKind.WhileStatement:
-    //             generateNames((<ts.LabeledStatement | ts.WithStatement | ts.DoStatement | ts.WhileStatement>node).statement);
-    //             break;
-    //         case SyntaxKind.IfStatement:
-    //             generateNames((<ts.IfStatement>node).thenStatement);
-    //             generateNames((<ts.IfStatement>node).elseStatement);
-    //             break;
-    //         case SyntaxKind.ForStatement:
-    //         case SyntaxKind.ForOfStatement:
-    //         case SyntaxKind.ForInStatement:
-    //             generateNames((<ts.ForStatement | ts.ForInOrOfStatement>node).initializer);
-    //             generateNames((<ts.ForStatement | ts.ForInOrOfStatement>node).statement);
-    //             break;
-    //         case SyntaxKind.SwitchStatement:
-    //             generateNames((<ts.SwitchStatement>node).caseBlock);
-    //             break;
-    //         case SyntaxKind.CaseBlock:
-    //             forEach((<ts.CaseBlock>node).clauses, generateNames);
-    //             break;
-    //         case SyntaxKind.CaseClause:
-    //         case SyntaxKind.DefaultClause:
-    //             forEach((<ts.CaseOrDefaultClause>node).statements, generateNames);
-    //             break;
-    //         case SyntaxKind.TryStatement:
-    //             generateNames((<ts.TryStatement>node).tryBlock);
-    //             generateNames((<ts.TryStatement>node).catchClause);
-    //             generateNames((<ts.TryStatement>node).finallyBlock);
-    //             break;
-    //         case SyntaxKind.CatchClause:
-    //             generateNames((<ts.CatchClause>node).variableDeclaration);
-    //             generateNames((<ts.CatchClause>node).block);
-    //             break;
-    //         case SyntaxKind.VariableStatement:
-    //             generateNames((<ts.VariableStatement>node).declarationList);
-    //             break;
-    //         case SyntaxKind.VariableDeclarationList:
-    //             forEach((<ts.VariableDeclarationList>node).declarations, generateNames);
-    //             break;
-    //         case SyntaxKind.VariableDeclaration:
-    //         case SyntaxKind.Parameter:
-    //         case SyntaxKind.BindingElement:
-    //         case SyntaxKind.ClassDeclaration:
-    //             generateNameIfNeeded((<ts.NamedDeclaration>node).name);
-    //             break;
-    //         case SyntaxKind.FunctionDeclaration:
-    //             generateNameIfNeeded((<ts.FunctionDeclaration>node).name);
-    //             if (getEmitFlags(node) & ts.EmitFlags.ReuseTempVariableScope) {
-    //                 forEach((<ts.FunctionDeclaration>node).parameters, generateNames);
-    //                 generateNames((<ts.FunctionDeclaration>node).body);
-    //             }
-    //             break;
-    //         case SyntaxKind.ObjectBindingPattern:
-    //         case SyntaxKind.ArrayBindingPattern:
-    //             forEach((<ts.BindingPattern>node).elements, generateNames);
-    //             break;
-    //         case SyntaxKind.ImportDeclaration:
-    //             generateNames((<ts.ImportDeclaration>node).importClause);
-    //             break;
-    //         case SyntaxKind.ImportClause:
-    //             generateNameIfNeeded((<ts.ImportClause>node).name);
-    //             generateNames((<ts.ImportClause>node).namedBindings);
-    //             break;
-    //         case SyntaxKind.NamespaceImport:
-    //             generateNameIfNeeded((<ts.NamespaceImport>node).name);
-    //             break;
-    //         case SyntaxKind.NamedImports:
-    //             forEach((<ts.NamedImports>node).elements, generateNames);
-    //             break;
-    //         case SyntaxKind.ImportSpecifier:
-    //             generateNameIfNeeded((<ts.ImportSpecifier>node).propertyName || (<ts.ImportSpecifier>node).name);
-    //             break;
-    //     }
-    // }
+    function generateNames(node: Node | undefined) {
+        if (!node) return;
+        switch (node.kind) {
+            case SyntaxKind.Block:
+                forEach((<ts.Block>node).statements, generateNames);
+                break;
+            case SyntaxKind.LabeledStatement:
+            case SyntaxKind.WithStatement:
+            case SyntaxKind.DoStatement:
+            case SyntaxKind.WhileStatement:
+                generateNames((<ts.LabeledStatement | ts.WithStatement | ts.DoStatement | ts.WhileStatement>node).statement);
+                break;
+            case SyntaxKind.IfStatement:
+                generateNames((<ts.IfStatement>node).thenStatement);
+                generateNames((<ts.IfStatement>node).elseStatement);
+                break;
+            case SyntaxKind.ForStatement:
+            case SyntaxKind.ForOfStatement:
+            case SyntaxKind.ForInStatement:
+                generateNames((<ts.ForStatement | ts.ForInOrOfStatement>node).initializer);
+                generateNames((<ts.ForStatement | ts.ForInOrOfStatement>node).statement);
+                break;
+            case SyntaxKind.SwitchStatement:
+                generateNames((<ts.SwitchStatement>node).caseBlock);
+                break;
+            case SyntaxKind.CaseBlock:
+                forEach((<ts.CaseBlock>node).clauses, generateNames);
+                break;
+            case SyntaxKind.CaseClause:
+            case SyntaxKind.DefaultClause:
+                forEach((<ts.CaseOrDefaultClause>node).statements, generateNames);
+                break;
+            case SyntaxKind.TryStatement:
+                generateNames((<ts.TryStatement>node).tryBlock);
+                generateNames((<ts.TryStatement>node).catchClause);
+                generateNames((<ts.TryStatement>node).finallyBlock);
+                break;
+            case SyntaxKind.CatchClause:
+                generateNames((<ts.CatchClause>node).variableDeclaration);
+                generateNames((<ts.CatchClause>node).block);
+                break;
+            case SyntaxKind.VariableStatement:
+                generateNames((<ts.VariableStatement>node).declarationList);
+                break;
+            case SyntaxKind.VariableDeclarationList:
+                forEach((<ts.VariableDeclarationList>node).declarations, generateNames);
+                break;
+            case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.BindingElement:
+            case SyntaxKind.ClassDeclaration:
+                generateNameIfNeeded((<ts.NamedDeclaration>node).name);
+                break;
+            case SyntaxKind.FunctionDeclaration:
+                generateNameIfNeeded((<ts.FunctionDeclaration>node).name);
+                if (getEmitFlags(node) & ts.EmitFlags.ReuseTempVariableScope) {
+                    forEach((<ts.FunctionDeclaration>node).parameters, generateNames);
+                    generateNames((<ts.FunctionDeclaration>node).body);
+                }
+                break;
+            case SyntaxKind.ObjectBindingPattern:
+            case SyntaxKind.ArrayBindingPattern:
+                forEach((<ts.BindingPattern>node).elements, generateNames);
+                break;
+            case SyntaxKind.ImportDeclaration:
+                generateNames((<ts.ImportDeclaration>node).importClause);
+                break;
+            case SyntaxKind.ImportClause:
+                generateNameIfNeeded((<ts.ImportClause>node).name);
+                generateNames((<ts.ImportClause>node).namedBindings);
+                break;
+            case SyntaxKind.NamespaceImport:
+                generateNameIfNeeded((<ts.NamespaceImport>node).name);
+                break;
+            case SyntaxKind.NamedImports:
+                forEach((<ts.NamedImports>node).elements, generateNames);
+                break;
+            case SyntaxKind.ImportSpecifier:
+                generateNameIfNeeded((<ts.ImportSpecifier>node).propertyName || (<ts.ImportSpecifier>node).name);
+                break;
+        }
+    }
 
     // function generateMemberNames(node: Node | undefined) {
     //     if (!node) return;
@@ -3311,38 +3337,38 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
     //     }
     // }
 
-    // function generateNameIfNeeded(name: ts.DeclarationName | undefined) {
-    //     if (name) {
-    //         if (isGeneratedIdentifier(name)) {
-    //             generateName(<ts.GeneratedIdentifier>name);
-    //         }
-    //         else if (isBindingPattern(name)) {
-    //             generateNames(name);
-    //         }
-    //     }
-    // }
+    function generateNameIfNeeded(name: ts.DeclarationName | undefined) {
+        if (name) {
+            if (isGeneratedIdentifier(name)) {
+                generateName(<ts.GeneratedIdentifier>name);
+            }
+            else if (isBindingPattern(name)) {
+                generateNames(name);
+            }
+        }
+    }
 
     /**
      * Generate the text for a generated identifier.
      */
-    // function generateName(name: ts.GeneratedIdentifier) {
-    //     if ((name.autoGenerateFlags & ts.GeneratedIdentifierFlags.KindMask) === ts.GeneratedIdentifierFlags.Node) {
-    //         // Node names generate unique names based on their original node
-    //         // and are cached based on that node's id.
-    //         return generateNameCached(getNodeForGeneratedName(name), name.autoGenerateFlags);
-    //     }
-    //     else {
-    //         // Auto, Loop, and Unique names are cached based on their unique
-    //         // autoGenerateId.
-    //         const autoGenerateId = name.autoGenerateId!;
-    //         return autoGeneratedIdToGeneratedName[autoGenerateId] || (autoGeneratedIdToGeneratedName[autoGenerateId] = makeName(name));
-    //     }
-    // }
+    function generateName(name: ts.GeneratedIdentifier) {
+        if ((name.autoGenerateFlags & ts.GeneratedIdentifierFlags.KindMask) === ts.GeneratedIdentifierFlags.Node) {
+            // Node names generate unique names based on their original node
+            // and are cached based on that node's id.
+            return generateNameCached(getNodeForGeneratedName(name), name.autoGenerateFlags);
+        }
+        else {
+            // Auto, Loop, and Unique names are cached based on their unique
+            // autoGenerateId.
+            const autoGenerateId = name.autoGenerateId!;
+            return autoGeneratedIdToGeneratedName[autoGenerateId] || (autoGeneratedIdToGeneratedName[autoGenerateId] = makeName(name) as string);
+        }
+    }
 
-    // function generateNameCached(node: Node, flags?: ts.GeneratedIdentifierFlags) {
-    //     const nodeId = getNodeId(node);
-    //     return nodeIdToGeneratedName[nodeId] || (nodeIdToGeneratedName[nodeId] = generateNameForNode(node, flags));
-    // }
+    function generateNameCached(node: Node, flags?: ts.GeneratedIdentifierFlags) {
+        const nodeId = getNodeId(node);
+        return nodeIdToGeneratedName[nodeId] || (nodeIdToGeneratedName[nodeId] = generateNameForNode(node, flags));
+    }
 
     /**
      * Returns a value indicating whether a name is unique globally, within the current file,
@@ -3361,192 +3387,196 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         return currentSourceFile ? utilities.isFileLevelUniqueName(currentSourceFile, name) : true;
     }
 
-    // /**
-    //  * Returns a value indicating whether a name is unique within a container.
-    //  */
-    // function isUniqueLocalName(name: string, container: Node): boolean {
-    //     for (let node = container; isNodeDescendantOf(node, container); node = node.nextContainer!) {
-    //         if (node.locals) {
-    //             const local = node.locals.get(escapeLeadingUnderscores(name));
-    //             // We conservatively include alias symbols to cover cases where they're emitted as locals
-    //             if (local && local.flags & (SymbolFlags.Value | SymbolFlags.ExportValue | SymbolFlags.Alias)) {
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    //     return true;
-    // }
+    /**
+     * Returns a value indicating whether a name is unique within a container.
+     */
+    function isUniqueLocalName(name: string, container: Node): boolean {
+        for (let node = container; isNodeDescendantOf(node, container); node = node.nextContainer!) {
+            if (node.locals) {
+                const local = node.locals.get(escapeLeadingUnderscores(name));
+                // We conservatively include alias symbols to cover cases where they're emitted as locals
+                if (local && local.flags & (ts.SymbolFlags.Value | ts.SymbolFlags.ExportValue | ts.SymbolFlags.Alias)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      * Return the next available name in the pattern _a ... _z, _0, _1, ...
      * TempFlags._i or TempFlags._n may be used to express a preference for that dedicated name.
      * Note that names generated by makeTempVariableName and makeUniqueName will never conflict.
      */
-    // function makeTempVariableName(flags: TempFlags, reservedInNestedScopes?: boolean): string {
-    //     if (flags && !(tempFlags & flags)) {
-    //         const name = flags === TempFlags._i ? "_i" : "_n";
-    //         if (isUniqueName(name)) {
-    //             tempFlags |= flags;
-    //             if (reservedInNestedScopes) {
-    //                 reserveNameInNestedScopes(name);
-    //             }
-    //             return name;
-    //         }
-    //     }
-    //     while (true) {
-    //         const count = tempFlags & TempFlags.CountMask;
-    //         tempFlags++;
-    //         // Skip over 'i' and 'n'
-    //         if (count !== 8 && count !== 13) {
-    //             const name = count < 26
-    //                 ? "_" + String.fromCharCode(ts.CharacterCodes.a + count)
-    //                 : "_" + (count - 26);
-    //             if (isUniqueName(name)) {
-    //                 if (reservedInNestedScopes) {
-    //                     reserveNameInNestedScopes(name);
-    //                 }
-    //                 return name;
-    //             }
-    //         }
-    //     }
-    // }
+    function makeTempVariableName(flags: TempFlags, reservedInNestedScopes?: boolean): string {
+        if (flags && !(tempFlags & flags)) {
+            const name = flags === TempFlags._i ? "_i" : "_n";
+            if (isUniqueName(name)) {
+                tempFlags |= flags;
+                if (reservedInNestedScopes) {
+                    reserveNameInNestedScopes(name);
+                }
+                return name;
+            }
+        }
+        while (true) {
+            const count = tempFlags & TempFlags.CountMask;
+            tempFlags++;
+            // Skip over 'i' and 'n'
+            if (count !== 8 && count !== 13) {
+                const name = count < 26
+                    ? "_" + String.fromCharCode(ts.CharacterCodes.a + count)
+                    : "_" + (count - 26);
+                if (isUniqueName(name)) {
+                    if (reservedInNestedScopes) {
+                        reserveNameInNestedScopes(name);
+                    }
+                    return name;
+                }
+            }
+        }
+    }
 
-    // /**
-    //  * Generate a name that is unique within the current file and doesn't conflict with any names
-    //  * in global scope. The name is formed by adding an '_n' suffix to the specified base name,
-    //  * where n is a positive integer. Note that names generated by makeTempVariableName and
-    //  * makeUniqueName are guaranteed to never conflict.
-    //  * If `optimistic` is set, the first instance will use 'baseName' verbatim instead of 'baseName_1'
-    //  */
-    // function makeUniqueName(baseName: string, checkFn: (name: string) => boolean = isUniqueName, optimistic?: boolean, scoped?: boolean): string {
-    //     if (optimistic) {
-    //         if (checkFn(baseName)) {
-    //             if (scoped) {
-    //                 reserveNameInNestedScopes(baseName);
-    //             }
-    //             else {
-    //                 generatedNames.set(baseName, true);
-    //             }
-    //             return baseName;
-    //         }
-    //     }
-    //     // Find the first unique 'name_n', where n is a positive number
-    //     if (baseName.charCodeAt(baseName.length - 1) !== CharacterCodes._) {
-    //         baseName += "_";
-    //     }
-    //     let i = 1;
-    //     while (true) {
-    //         const generatedName = baseName + i;
-    //         if (checkFn(generatedName)) {
-    //             if (scoped) {
-    //                 reserveNameInNestedScopes(generatedName);
-    //             }
-    //             else {
-    //                 generatedNames.set(generatedName, true);
-    //             }
-    //             return generatedName;
-    //         }
-    //         i++;
-    //     }
-    // }
+    /**
+     * Generate a name that is unique within the current file and doesn't conflict with any names
+     * in global scope. The name is formed by adding an '_n' suffix to the specified base name,
+     * where n is a positive integer. Note that names generated by makeTempVariableName and
+     * makeUniqueName are guaranteed to never conflict.
+     * If `optimistic` is set, the first instance will use 'baseName' verbatim instead of 'baseName_1'
+     */
+    function makeUniqueName(baseName: string, checkFn: (name: string) => boolean = isUniqueName, optimistic?: boolean, scoped?: boolean): string {
+        if (optimistic) {
+            if (checkFn(baseName)) {
+                if (scoped) {
+                    reserveNameInNestedScopes(baseName);
+                }
+                else {
+                    generatedNames.set(baseName, true);
+                }
+                return baseName;
+            }
+        }
+        // Find the first unique 'name_n', where n is a positive number
+        if (baseName.charCodeAt(baseName.length - 1) !== ts.CharacterCodes._) {
+            baseName += "_";
+        }
+        let i = 1;
+        while (true) {
+            const generatedName = baseName + i;
+            if (checkFn(generatedName)) {
+                if (scoped) {
+                    reserveNameInNestedScopes(generatedName);
+                }
+                else {
+                    generatedNames.set(generatedName, true);
+                }
+                return generatedName;
+            }
+            i++;
+        }
+    }
 
     // function makeFileLevelOptimisticUniqueName(name: string) {
     //     return makeUniqueName(name, isFileLevelUniqueName, /*optimistic*/ true);
     // }
 
-    // /**
-    //  * Generates a unique name for a ModuleDeclaration or EnumDeclaration.
-    //  */
-    // function generateNameForModuleOrEnum(node: ModuleDeclaration | EnumDeclaration) {
-    //     const name = getTextOfNode(node.name);
-    //     // Use module/enum name itself if it is unique, otherwise make a unique variation
-    //     return isUniqueLocalName(name, node) ? name : makeUniqueName(name);
-    // }
+    /**
+     * Generates a unique name for a ModuleDeclaration or EnumDeclaration.
+     */
+    function generateNameForModuleOrEnum(node: ts.ModuleDeclaration | ts.EnumDeclaration) {
+        const name = getTextOfNode(node.name);
+        // Use module/enum name itself if it is unique, otherwise make a unique variation
+        return isUniqueLocalName(name, node) ? name : makeUniqueName(name);
+    }
 
-    // /**
-    //  * Generates a unique name for an ImportDeclaration or ExportDeclaration.
-    //  */
-    // function generateNameForImportOrExportDeclaration(node: ImportDeclaration | ExportDeclaration) {
+    /**
+     * Generates a unique name for an ImportDeclaration or ExportDeclaration.
+     */
+    // function generateNameForImportOrExportDeclaration(node: ts.ImportDeclaration | ts.ExportDeclaration) {
     //     const expr = getExternalModuleName(node)!; // TODO: GH#18217
-    //     const baseName = isStringLiteral(expr) ?
+    //     const baseName = ts.isStringLiteral(expr) ?
     //         makeIdentifierFromModuleName(expr.text) : "module";
     //     return makeUniqueName(baseName);
     // }
 
-    // /**
-    //  * Generates a unique name for a default export.
-    //  */
-    // function generateNameForExportDefault() {
-    //     return makeUniqueName("default");
-    // }
+    /**
+     * Generates a unique name for a default export.
+     */
+    function generateNameForExportDefault() {
+        return makeUniqueName("default");
+    }
 
-    // /**
-    //  * Generates a unique name for a class expression.
-    //  */
-    // function generateNameForClassExpression() {
-    //     return makeUniqueName("class");
-    // }
+    /**
+     * Generates a unique name for a class expression.
+     */
+    function generateNameForClassExpression() {
+        return makeUniqueName("class");
+    }
 
-    // function generateNameForMethodOrAccessor(node: MethodDeclaration | AccessorDeclaration) {
-    //     if (isIdentifier(node.name)) {
-    //         return generateNameCached(node.name);
-    //     }
-    //     return makeTempVariableName(TempFlags.Auto);
-    // }
+    function generateNameForMethodOrAccessor(node: ts.MethodDeclaration | ts.AccessorDeclaration) {
+        if (isIdentifier(node.name)) {
+            return generateNameCached(node.name);
+        }
+        return makeTempVariableName(TempFlags.Auto);
+    }
 
-    // /**
-    //  * Generates a unique name from a node.
-    //  */
-    // function generateNameForNode(node: Node, flags?: GeneratedIdentifierFlags): string {
-    //     switch (node.kind) {
-    //         case SyntaxKind.Identifier:
-    //             return makeUniqueName(
-    //                 getTextOfNode(node),
-    //                 isUniqueName,
-    //                 !!(flags! & GeneratedIdentifierFlags.Optimistic),
-    //                 !!(flags! & GeneratedIdentifierFlags.ReservedInNestedScopes)
-    //             );
-    //         case SyntaxKind.ModuleDeclaration:
-    //         case SyntaxKind.EnumDeclaration:
-    //             return generateNameForModuleOrEnum(<ModuleDeclaration | EnumDeclaration>node);
-    //         case SyntaxKind.ImportDeclaration:
-    //         case SyntaxKind.ExportDeclaration:
-    //             return generateNameForImportOrExportDeclaration(<ImportDeclaration | ExportDeclaration>node);
-    //         case SyntaxKind.FunctionDeclaration:
-    //         case SyntaxKind.ClassDeclaration:
-    //         case SyntaxKind.ExportAssignment:
-    //             return generateNameForExportDefault();
-    //         case SyntaxKind.ClassExpression:
-    //             return generateNameForClassExpression();
-    //         case SyntaxKind.MethodDeclaration:
-    //         case SyntaxKind.GetAccessor:
-    //         case SyntaxKind.SetAccessor:
-    //             return generateNameForMethodOrAccessor(<MethodDeclaration | AccessorDeclaration>node);
-    //         default:
-    //             return makeTempVariableName(TempFlags.Auto);
-    //     }
-    // }
+    /**
+     * Generates a unique name from a node.
+     */
+    function generateNameForNode(node: Node, flags?: ts.GeneratedIdentifierFlags): string {
+        switch (node.kind) {
+            case SyntaxKind.Identifier:
+                return makeUniqueName(
+                    getTextOfNode(node),
+                    isUniqueName,
+                    !!(flags! & ts.GeneratedIdentifierFlags.Optimistic),
+                    !!(flags! & ts.GeneratedIdentifierFlags.ReservedInNestedScopes)
+                );
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.EnumDeclaration:
+                return generateNameForModuleOrEnum(<ts.ModuleDeclaration | ts.EnumDeclaration>node);
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ExportDeclaration:
+                // return generateNameForImportOrExportDeclaration(<ts.ImportDeclaration | ts.ExportDeclaration>node);
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ExportAssignment:
+                return generateNameForExportDefault();
+            case SyntaxKind.ClassExpression:
+                return generateNameForClassExpression();
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.SetAccessor:
+                return generateNameForMethodOrAccessor(<ts.MethodDeclaration | ts.AccessorDeclaration>node);
+            default:
+                return makeTempVariableName(TempFlags.Auto);
+        }
+    }
 
     /**
      * Generates a unique identifier for a node.
      */
-    // function makeName(name: ts.GeneratedIdentifier) {
-    //     switch (name.autoGenerateFlags & ts.GeneratedIdentifierFlags.KindMask) {
-    //         case ts.GeneratedIdentifierFlags.Auto:
-    //             return makeTempVariableName(TempFlags.Auto, !!(name.autoGenerateFlags & ts.GeneratedIdentifierFlags.ReservedInNestedScopes));
-    //         case ts.GeneratedIdentifierFlags.Loop:
-    //             return makeTempVariableName(TempFlags._i, !!(name.autoGenerateFlags & ts.GeneratedIdentifierFlags.ReservedInNestedScopes));
-    //         case ts.GeneratedIdentifierFlags.Unique:
-    //             return makeUniqueName(
-    //                 idText(name),
-    //                 (name.autoGenerateFlags & GeneratedIdentifierFlags.FileLevel) ? isFileLevelUniqueName : isUniqueName,
-    //                 !!(name.autoGenerateFlags & GeneratedIdentifierFlags.Optimistic),
-    //                 !!(name.autoGenerateFlags & GeneratedIdentifierFlags.ReservedInNestedScopes)
-    //             );
-    //     }
+    function makeName(name: ts.GeneratedIdentifier) {
+        switch (name.autoGenerateFlags & ts.GeneratedIdentifierFlags.KindMask) {
+            case ts.GeneratedIdentifierFlags.Auto:
+                return makeTempVariableName(TempFlags.Auto, !!(name.autoGenerateFlags & ts.GeneratedIdentifierFlags.ReservedInNestedScopes));
+            case ts.GeneratedIdentifierFlags.Loop:
+                return makeTempVariableName(TempFlags._i, !!(name.autoGenerateFlags & ts.GeneratedIdentifierFlags.ReservedInNestedScopes));
+            case ts.GeneratedIdentifierFlags.Unique:
+                return makeUniqueName(
+                    idText(name),
+                    (name.autoGenerateFlags & ts.GeneratedIdentifierFlags.FileLevel) ? isFileLevelUniqueName : isUniqueName,
+                    !!(name.autoGenerateFlags & ts.GeneratedIdentifierFlags.Optimistic),
+                    !!(name.autoGenerateFlags & ts.GeneratedIdentifierFlags.ReservedInNestedScopes)
+                );
+        }
 
-    //     return Debug.fail("Unsupported GeneratedIdentifierKind.");
-    // }
+        // return Debug.fail("Unsupported GeneratedIdentifierKind.");
+        return state.errors.push({
+            code: 1001,
+            msg: "Unsupported GeneratedIdentifierKind."
+        });
+    }
 
     /**
      * Gets the node from which a name should be generated.

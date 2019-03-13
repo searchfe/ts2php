@@ -285,6 +285,14 @@ export function isBindingPattern(node: Node | undefined): node is ts.BindingPatt
     return false;
 }
 
+export function isNodeDescendantOf(node: Node, ancestor: Node): boolean {
+    while (node) {
+        if (node === ancestor) return true;
+        node = node.parent;
+    }
+    return false;
+}
+
 /* @internal */
 export function isAssignmentPattern(node: Node): node is ts.AssignmentPattern {
     const kind = node.kind;

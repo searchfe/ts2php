@@ -31,9 +31,6 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
-        // if (featureName !== 'Alias') {
-        //     continue;
-        // }
         it(featureName, async function () {
             this.timeout(3000);
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));

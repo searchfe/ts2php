@@ -25,7 +25,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.TypeOfExpression,
     SyntaxKind.ConditionalExpression,
     SyntaxKind.ComputedPropertyName,
-    SyntaxKind.ImportSpecifier
+    SyntaxKind.ImportSpecifier,
+    SyntaxKind.PropertyDeclaration
 ]);
 
 /**

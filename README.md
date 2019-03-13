@@ -1,5 +1,7 @@
 # ts2php
 
+> under development
+
 typescript 转 php
 
 ## usage
@@ -147,6 +149,47 @@ while (!$a) {
 do {
     $b++;
 } while (!$a);
+```
+
+#### `Class`/
+
+```javascript
+class Article {
+
+    public title: string;
+    id: number;
+
+    private _x: number;
+
+    static published = [];
+
+    constructor(options: {title: string}) {
+        this.title = options.title;
+        this.publish(1);
+    }
+
+    private publish(id) {
+        Article.published.push(id);
+    }
+}
+```
+
+output
+
+```php
+class Article {
+    public $title;
+    $id;
+    private $_x;
+    static $published = array();
+    constructor($options) {
+        $this->title = $options["title"];
+        $this->publish(1);
+    }
+    private publish($id) {
+        array_push(Article::$published, $id);
+    }
+}
 ```
 
 #### `typeof`
