@@ -14,6 +14,7 @@ before_install:
 
 install:
   - npm install
+  - cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts
 
 script:
   - npm test
