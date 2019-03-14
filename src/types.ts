@@ -10,17 +10,18 @@ interface moduleInfo {
 }
 
 export interface Ts2phpOptions {
-    modules: {
+    modules?: {
         [name: string]: moduleInfo
     },
-    namespace: string;
-    plugins: {emit: Function}[];
-    cacheDirectory: string;
-    emitHeader: boolean;
-    showSemanticDiagnostics: boolean;
-    getNamespace: () => string;
-    getModulePath: (name: string, module?: ts.ResolvedModuleFull) => string;
-    getModuleNamespace: (name: string, module?: ts.ResolvedModuleFull) => string;
+    namespace?: string;
+    plugins?: {emit: Function}[];
+    cacheDirectory?: string;
+    emitHeader?: boolean;
+    showSemanticDiagnostics?: boolean;
+    getNamespace?: () => string;
+    getModulePath?: (name: string, module?: ts.ResolvedModuleFull) => string;
+    getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull) => string;
+    tsConfig?: object
 }
 
 export interface CompilerState extends Ts2phpOptions {

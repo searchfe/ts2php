@@ -24,12 +24,13 @@ const defaultOptions = {
     modules: {}
 };
 
-export function compile(filePath: string, options?: Ts2phpOptions) {
+export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
     const program = ts.createProgram([filePath], {
         target: ts.ScriptTarget.ES2015,
         module: ts.ModuleKind.CommonJS,
-        scrict: true
+        scrict: true,
+        ...options.tsConfig
     });
 
     const finalOptions = {

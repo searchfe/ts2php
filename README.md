@@ -6,8 +6,6 @@ typescript 转 php
 
 ## usage
 
-> 暂时只支持对单文件的编译，不支持多模块
-
 ### compiler
 
 ```javascript
