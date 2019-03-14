@@ -83,7 +83,19 @@ class Ts2Php_Helper {
      */
     static public function includes($haystack, $needle, $postion = 0){
         $pos = strpos($haystack, $needle);
-        return $pos >= $postion;
+        return $pos !== false && $pos >= $postion;
+    }
+
+    /**
+     * string.prototype.indexOf
+     * @param $haystack {string}
+     * @param $needle {string}
+     * @param $postion {number}
+     * @return {boolean}
+     */
+    static public function str_pos($haystack, $needle, $postion = 0){
+        $pos = strpos($haystack, $needle);
+        return $pos === false ? -1 : $pos;
     }
 
     /**
