@@ -76,3 +76,5 @@ Thumbs.db
 /dist
 /dll
 coverage
+
+/example
