@@ -90,10 +90,9 @@ class Ts2Php_Helper {
      * string.prototype.indexOf
      * @param $haystack {string}
      * @param $needle {string}
-     * @param $postion {number}
-     * @return {boolean}
+     * @return {number}
      */
-    static public function str_pos($haystack, $needle, $postion = 0){
+    static public function str_pos($haystack, $needle){
         $pos = strpos($haystack, $needle);
         return $pos === false ? -1 : $pos;
     }
