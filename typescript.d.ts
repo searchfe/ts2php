@@ -2196,6 +2196,7 @@ declare namespace ts {
          * Gets a type checker that can be used to semantically analyze source files in the program.
          */
         getTypeChecker(): TypeChecker;
+        getDiagnosticsProducingTypeChecker(): TypeChecker;
         isSourceFileFromExternalLibrary(file: SourceFile): boolean;
         isSourceFileDefaultLibrary(file: SourceFile): boolean;
         getProjectReferences(): ReadonlyArray<ProjectReference> | undefined;
@@ -2335,6 +2336,7 @@ declare namespace ts {
         getApparentType(type: Type): Type;
         getBaseConstraintOfType(type: Type): Type | undefined;
         getDefaultFromTypeParameter(type: Type): Type | undefined;
+        getEmitResolver(sourceFile?: SourceFile, cancellationToken?: CancellationToken): EmitResolver;
         /**
          * Depending on the operation performed, it may be appropriate to throw away the checker
          * if the cancellation token is triggered. Typically, if it is used for error checking
@@ -2419,6 +2421,140 @@ declare namespace ts {
         parameterIndex: number;
     }
     type TypePredicate = IdentifierTypePredicate | ThisTypePredicate;
+
+    export const enum NodeCheckFlags {
+        TypeChecked                         = 0x00000001,  // Node has been type checked
+        LexicalThis                         = 0x00000002,  // Lexical 'this' reference
+        CaptureThis                         = 0x00000004,  // Lexical 'this' used in body
+        CaptureNewTarget                    = 0x00000008,  // Lexical 'new.target' used in body
+        SuperInstance                       = 0x00000100,  // Instance 'super' reference
+        SuperStatic                         = 0x00000200,  // Static 'super' reference
+        ContextChecked                      = 0x00000400,  // Contextual types have been assigned
+        AsyncMethodWithSuper                = 0x00000800,  // An async method that reads a value from a member of 'super'.
+        AsyncMethodWithSuperBinding         = 0x00001000,  // An async method that assigns a value to a member of 'super'.
+        CaptureArguments                    = 0x00002000,  // Lexical 'arguments' used in body
+        EnumValuesComputed                  = 0x00004000,  // Values for enum members have been computed, and any errors have been reported for them.
+        LexicalModuleMergesWithClass        = 0x00008000,  // Instantiated lexical module declaration is merged with a previous class declaration.
+        LoopWithCapturedBlockScopedBinding  = 0x00010000,  // Loop that contains block scoped variable captured in closure
+        ContainsCapturedBlockScopeBinding   = 0x00020000,  // Part of a loop that contains block scoped variable captured in closure
+        CapturedBlockScopedBinding          = 0x00040000,  // Block-scoped binding that is captured in some function
+        BlockScopedBindingInLoop            = 0x00080000,  // Block-scoped binding with declaration nested inside iteration statement
+        ClassWithBodyScopedClassBinding     = 0x00100000,  // Decorated class that contains a binding to itself inside of the class body.
+        BodyScopedClassBinding              = 0x00200000,  // Binding to a decorated class inside of the class's body.
+        NeedsLoopOutParameter               = 0x00400000,  // Block scoped binding whose value should be explicitly copied outside of the converted loop
+        AssignmentsMarked                   = 0x00800000,  // Parameter assignments have been marked
+        ClassWithConstructorReference       = 0x01000000,  // Class that contains a binding to its constructor inside of the class body.
+        ConstructorReferenceInClass         = 0x02000000,  // Binding to a class constructor inside of the class's body.
+    }
+    export type AnyImportSyntax = ImportDeclaration | ImportEqualsDeclaration;
+
+    export interface DynamicNamedDeclaration extends NamedDeclaration {
+        name: ComputedPropertyName;
+    }
+    // A declaration that supports late-binding (used in checker)
+    export interface LateBoundDeclaration extends DynamicNamedDeclaration {
+        name: LateBoundName;
+    }
+    // A name that supports late-binding (used in checker)
+    export interface LateBoundName extends ComputedPropertyName {
+        expression: EntityNameExpression;
+    }
+
+
+    export interface EmitResolver {
+        hasGlobalName(name: string): boolean;
+        getReferencedExportContainer(node: Identifier, prefixLocals?: boolean): SourceFile | ModuleDeclaration | EnumDeclaration | undefined;
+        getReferencedImportDeclaration(node: Identifier): Declaration | undefined;
+        getReferencedDeclarationWithCollidingName(node: Identifier): Declaration | undefined;
+        isDeclarationWithCollidingName(node: Declaration): boolean;
+        isValueAliasDeclaration(node: Node): boolean;
+        isReferencedAliasDeclaration(node: Node, checkChildren?: boolean): boolean;
+        isTopLevelValueImportEqualsWithEntityName(node: ImportEqualsDeclaration): boolean;
+        getNodeCheckFlags(node: Node): NodeCheckFlags;
+        isDeclarationVisible(node: Declaration | AnyImportSyntax): boolean;
+        isLateBound(node: Declaration): node is LateBoundDeclaration;
+        collectLinkedAliases(node: Identifier, setVisibility?: boolean): Node[] | undefined;
+        isImplementationOfOverload(node: FunctionLike): boolean | undefined;
+        isRequiredInitializedParameter(node: ParameterDeclaration): boolean;
+        isOptionalUninitializedParameterProperty(node: ParameterDeclaration): boolean;
+        isExpandoFunctionDeclaration(node: FunctionDeclaration): boolean;
+        getPropertiesOfContainerFunction(node: Declaration): Symbol[];
+        createTypeOfDeclaration(declaration: AccessorDeclaration | VariableLikeDeclaration | PropertyAccessExpression, enclosingDeclaration: Node, flags: NodeBuilderFlags, tracker: SymbolTracker, addUndefined?: boolean): TypeNode | undefined;
+        createReturnTypeOfSignatureDeclaration(signatureDeclaration: SignatureDeclaration, enclosingDeclaration: Node, flags: NodeBuilderFlags, tracker: SymbolTracker): TypeNode | undefined;
+        createTypeOfExpression(expr: Expression, enclosingDeclaration: Node, flags: NodeBuilderFlags, tracker: SymbolTracker): TypeNode | undefined;
+        createLiteralConstValue(node: VariableDeclaration | PropertyDeclaration | PropertySignature | ParameterDeclaration): Expression;
+        isSymbolAccessible(symbol: Symbol, enclosingDeclaration: Node | undefined, meaning: SymbolFlags | undefined, shouldComputeAliasToMarkVisible: boolean): SymbolAccessibilityResult;
+        isEntityNameVisible(entityName: EntityNameOrEntityNameExpression, enclosingDeclaration: Node): SymbolVisibilityResult;
+        // Returns the constant value this property access resolves to, or 'undefined' for a non-constant
+        getConstantValue(node: EnumMember | PropertyAccessExpression | ElementAccessExpression): string | number | undefined;
+        getReferencedValueDeclaration(reference: Identifier): Declaration | undefined;
+        getTypeReferenceSerializationKind(typeName: EntityName, location?: Node): TypeReferenceSerializationKind;
+        isOptionalParameter(node: ParameterDeclaration): boolean;
+        moduleExportsSomeValue(moduleReferenceExpression: Expression): boolean;
+        isArgumentsLocalBinding(node: Identifier): boolean;
+        getExternalModuleFileFromDeclaration(declaration: ImportEqualsDeclaration | ImportDeclaration | ExportDeclaration | ModuleDeclaration | ImportTypeNode): SourceFile | undefined;
+        getTypeReferenceDirectivesForEntityName(name: EntityNameOrEntityNameExpression): string[] | undefined;
+        getTypeReferenceDirectivesForSymbol(symbol: Symbol, meaning?: SymbolFlags): string[] | undefined;
+        isLiteralConstDeclaration(node: VariableDeclaration | PropertyDeclaration | PropertySignature | ParameterDeclaration): boolean;
+        getJsxFactoryEntity(location?: Node): EntityName | undefined;
+        getAllAccessorDeclarations(declaration: AccessorDeclaration): AllAccessorDeclarations;
+        getSymbolOfExternalModuleSpecifier(node: StringLiteralLike): Symbol | undefined;
+        isBindingCapturedByNode(node: Node, decl: VariableDeclaration | BindingElement): boolean;
+    }
+
+
+    interface SymbolVisibilityResult {
+        accessibility: SymbolAccessibility;
+        aliasesToMakeVisible?: LateVisibilityPaintedStatement[]; // aliases that need to have this symbol visible
+        errorSymbolName?: string; // Optional symbol name that results in error
+        errorNode?: Node; // optional node that results in error
+    }
+    interface SymbolAccessibilityResult extends SymbolVisibilityResult {
+        errorModuleName?: string; // If the symbol is not visible from module, module's name
+    }
+
+    interface AllAccessorDeclarations {
+        firstAccessor: AccessorDeclaration;
+        secondAccessor: AccessorDeclaration | undefined;
+        getAccessor: GetAccessorDeclaration | undefined;
+        setAccessor: SetAccessorDeclaration | undefined;
+    }
+
+    /** Indicates how to serialize the name for a TypeReferenceNode when emitting decorator metadata */
+    enum TypeReferenceSerializationKind {
+        Unknown,                            // The TypeReferenceNode could not be resolved. The type name
+                                            // should be emitted using a safe fallback.
+        TypeWithConstructSignatureAndValue, // The TypeReferenceNode resolves to a type with a constructor
+                                            // function that can be reached at runtime (e.g. a `class`
+                                            // declaration or a `var` declaration for the static side
+                                            // of a type, such as the global `Promise` type in lib.d.ts).
+        VoidNullableOrNeverType,            // The TypeReferenceNode resolves to a Void-like, Nullable, or Never type.
+        NumberLikeType,                     // The TypeReferenceNode resolves to a Number-like type.
+        StringLikeType,                     // The TypeReferenceNode resolves to a String-like type.
+        BooleanType,                        // The TypeReferenceNode resolves to a Boolean-like type.
+        ArrayLikeType,                      // The TypeReferenceNode resolves to an Array-like type.
+        ESSymbolType,                       // The TypeReferenceNode resolves to the ESSymbol type.
+        Promise,                            // The TypeReferenceNode resolved to the global Promise constructor symbol.
+        TypeWithCallSignature,              // The TypeReferenceNode resolves to a Function type or a type
+                                            // with call signatures.
+        ObjectType,                         // The TypeReferenceNode resolves to any other type.
+    }
+    const enum SymbolAccessibility {
+        Accessible,
+        NotAccessible,
+        CannotBeNamed
+    }
+
+    type LateVisibilityPaintedStatement =
+        | AnyImportSyntax
+        | VariableStatement
+        | ClassDeclaration
+        | FunctionDeclaration
+        | ModuleDeclaration
+        | TypeAliasDeclaration
+        | InterfaceDeclaration
+        | EnumDeclaration;
+
     enum SymbolFlags {
         None = 0,
         FunctionScopedVariable = 1,
@@ -3142,7 +3278,29 @@ declare namespace ts {
         MappedTypeParameter = 3,
         Unspecified = 4
     }
+
+    interface EmitHost extends ScriptReferenceHost, ModuleSpecifierResolutionHost {
+        getSourceFiles(): ReadonlyArray<SourceFile>;
+        useCaseSensitiveFileNames(): boolean;
+        getCurrentDirectory(): string;
+
+        /* @internal */
+        isSourceFileFromExternalLibrary(file: SourceFile): boolean;
+        getLibFileFromReference(ref: FileReference): SourceFile | undefined;
+
+        getCommonSourceDirectory(): string;
+        getCanonicalFileName(fileName: string): string;
+        getNewLine(): string;
+
+        isEmitBlocked(emitFileName: string): boolean;
+
+        getPrependNodes(): ReadonlyArray<InputFiles>;
+
+        writeFile: WriteFileCallback;
+    }
     interface TransformationContext {
+        getEmitResolver(): EmitResolver;
+        getEmitHost(): EmitHost;
         /** Gets the compiler options supplied to the transformer. */
         getCompilerOptions(): CompilerOptions;
         /** Starts a new lexical environment. */
@@ -5938,6 +6096,20 @@ declare namespace ts {
      * @param compilerOptions Optional compiler options.
      */
     function transform<T extends Node>(source: T | T[], transformers: TransformerFactory<T>[], compilerOptions?: CompilerOptions): TransformationResult<T>;
+}
+declare namespace ts {
+    function transformTypeScript(context: TransformationContext): (node: SourceFile | Bundle) => SourceFile | Bundle;
+    function transformNodes<T extends Node>(resolver: EmitResolver | undefined, host: EmitHost | undefined, options: CompilerOptions, nodes: ReadonlyArray<T>, transformers: ReadonlyArray<TransformerFactory<T>>, allowDtsFiles: boolean): TransformationResult<T>;
+    function getLocalName(node: Declaration, allowComments?: boolean | undefined, allowSourceMaps?: boolean | undefined): Identifier;
+    function map<T, U>(array: ReadonlyArray<T>, f: (x: T, i: number) => U): U[];
+    function map<T, U>(array: ReadonlyArray<T> | undefined, f: (x: T, i: number) => U): U[] | undefined;
+    function map<T, U>(array: ReadonlyArray<T> | undefined, f: (x: T, i: number) => U): U[] | undefined;
+    function isExpression(node: Node): node is Expression;
+    function isGeneratedIdentifier(node: Node): node is GeneratedIdentifier;
+    function createMap<T>(): Map<T>;
+    function getNodeId(node: Node): number;
+    function isNodeDescendantOf(node: Node, ancestor: Node): boolean;
+    function forEach<T, U>(array: ReadonlyArray<T> | undefined, callback: (element: T, index: number) => U | undefined): U | undefined;
 }
 
 export = ts;

@@ -26,7 +26,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.ConditionalExpression,
     SyntaxKind.ComputedPropertyName,
     SyntaxKind.ImportSpecifier,
-    SyntaxKind.PropertyDeclaration
+    SyntaxKind.PropertyDeclaration,
+    SyntaxKind.EnumDeclaration
 ]);
 
 /**
@@ -79,7 +80,10 @@ export function shouldAddDoubleQuote(node: Node): boolean {
 
     if (
         node.parent
-        && node.parent.kind === ts.SyntaxKind.PropertyAssignment
+        && (
+            node.parent.kind === ts.SyntaxKind.PropertyAssignment
+            || node.parent.kind === ts.SyntaxKind.EnumMember
+        )
         && (<ts.PropertyAssignment>node.parent).name === node
     ) {
         return true;

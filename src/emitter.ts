@@ -68,7 +68,12 @@ const enum TempFlags {
     _i = 0x10000000,  // Use/preference flag for '_i'
 }
 
-export function emitFile(sourceFile: SourceFile, state: CompilerState) {
+export function emitFile(
+    sourceFile: SourceFile,
+    state: CompilerState,
+    resolver: ts.EmitResolver,
+    transformers?: ts.TransformerFactory<ts.Bundle | SourceFile>[]
+) {
 
     const brackets = createBracketsMap();
     currentSourceFile = sourceFile;
@@ -100,13 +105,15 @@ export function emitFile(sourceFile: SourceFile, state: CompilerState) {
         writePunctuation
     };
 
-    state.sourceFile = sourceFile;
+    const transform = ts.transformNodes(resolver, undefined, {}, [sourceFile], transformers!, /*allowDtsFiles*/ false);
+
+    state.sourceFile = (transform.transformed[0] as SourceFile);
 
     if (state.emitHeader) {
         writer.write(`<?php\nnamespace ${state.namespace};\n`);
     }
 
-    ts.forEachChild(sourceFile, (node: ts.Node) => {
+    ts.forEachChild(state.sourceFile, (node: ts.Node) => {
         emitWithHint(ts.EmitHint.Unspecified, node);
         writer.writeLine();
     });
