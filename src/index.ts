@@ -11,6 +11,7 @@ import {Ts2phpOptions, CompilerState} from './types';
 import {setState} from './state';
 import hash from 'hash-sum';
 import buildInPlugins from './features/index';
+import {transform} from './transformer';
 
 function reportErrors(errors: ReadonlyArray<ts.Diagnostic>, host: ts.FormatDiagnosticsHost) {
     ts.sys.write(ts.formatDiagnosticsWithColorAndContext(errors, host) + host.getNewLine());
@@ -93,8 +94,14 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
                     ...state.modules[name]
                 };
             });
+
+            const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [];
+            transformers.push(transform);
+
+            const emitResolver = program.getDiagnosticsProducingTypeChecker()
+                .getEmitResolver(sourceFile, undefined);
             return {
-                phpCode: emitter.emitFile(sourceFile, state),
+                phpCode: emitter.emitFile(sourceFile, state, emitResolver, transformers),
                 errors: state.errors
             }
         }
