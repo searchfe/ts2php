@@ -42,7 +42,8 @@ import {
     shouldAddDoubleQuote,
     isStringLike,
     isClassLike,
-    isFunctionLike
+    isFunctionLike,
+    isClassInstance
 } from './utilities/nodeTest';
 
 import {
@@ -507,8 +508,8 @@ export function emitFile(
                     return emitElementAccessExpression(<ts.ElementAccessExpression>node);
                 case SyntaxKind.CallExpression:
                     return emitCallExpression(<ts.CallExpression>node);
-                // case SyntaxKind.NewExpression:
-                //     return emitNewExpression(<NewExpression>node);
+                case SyntaxKind.NewExpression:
+                    return emitNewExpression(<ts.NewExpression>node);
                 // case SyntaxKind.TaggedTemplateExpression:
                 //     return emitTaggedTemplateExpression(<TaggedTemplateExpression>node);
                 // case SyntaxKind.TypeAssertionExpression:
@@ -1123,7 +1124,7 @@ export function emitFile(
         const symbol = typeChecker.getSymbolAtLocation(node.name);
         let prefix = '["';
         let suffix = '"]';
-        if (node.expression.kind === ts.SyntaxKind.ThisKeyword && symbol) {
+        if ((node.expression.kind === ts.SyntaxKind.ThisKeyword || isClassInstance(node.expression, typeChecker)) && symbol) {
             prefix = '->';
             suffix = '';
         }
@@ -1191,13 +1192,13 @@ export function emitFile(
         emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
     }
 
-    // function emitNewExpression(node: NewExpression) {
-    //     emitTokenWithComment(SyntaxKind.NewKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emitExpression(node.expression);
-    //     emitTypeArguments(node, node.typeArguments);
-    //     emitExpressionList(node, node.arguments, ListFormat.NewExpressionArguments);
-    // }
+    function emitNewExpression(node: ts.NewExpression) {
+        emitTokenWithComment(SyntaxKind.NewKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        emitExpression(node.expression);
+        // emitTypeArguments(node, node.typeArguments);
+        emitExpressionList(node, node.arguments, ListFormat.NewExpressionArguments);
+    }
 
     // function emitTaggedTemplateExpression(node: TaggedTemplateExpression) {
     //     emitExpression(node.tag);

@@ -21,3 +21,8 @@ class Article extends Base {
         super.dispose();
     }
 }
+
+const a = new Article({title: 'a'});
+const b = a.base;
+a.dispose();
+console.log(b);

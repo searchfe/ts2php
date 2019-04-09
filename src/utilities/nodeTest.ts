@@ -143,7 +143,13 @@ export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
 export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = nodeType.getSymbol();
-    return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Class;
+    return !nodeType.isClass() && !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Class;
+}
+
+export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const nodeSymbol = nodeType.getSymbol();
+    return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Class && nodeType.isClass();
 }
 
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {

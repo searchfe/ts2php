@@ -179,6 +179,10 @@ class Article extends Base {
         super.dispose();
     }
 }
+
+const a = new Article({title: 'a'});
+const b = a.base;
+a.dispose();
 ```
 
 output
@@ -201,7 +205,9 @@ class Article extends Base {
         parent::dispose();
     }
 }
-
+$a = new Article(array( "title" => "a" ));
+$b = $a->base;
+$a->dispose();
 ```
 
 #### `typeof`
