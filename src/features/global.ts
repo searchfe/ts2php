@@ -5,7 +5,9 @@
 
 import {
     EmitHint,
-    isCallExpression
+    isCallExpression,
+    isPropertyAccessExpression,
+    isIdentifier
 } from 'typescript';
 
 import method from '../utilities/method';
@@ -30,6 +32,18 @@ export default {
             && (func = map[expNode.escapedText])
         ) {
             return func(node, helpers);
+        }
+
+        if (
+            isPropertyAccessExpression(node)
+            && isIdentifier(node.expression)
+            && node.expression.escapedText === 'navigator'
+        ) {
+            if (
+                helpers.getTextOfNode(node.name) === 'userAgent'
+            ) {
+                return helpers.writePunctuation('$_SERVER["HTTP_USER_AGENT"]');
+            }
         }
 
         return false;
