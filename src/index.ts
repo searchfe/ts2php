@@ -18,7 +18,8 @@ const defaultOptions = {
     emitHeader: true,
     getModulePath: name => name,
     getModuleNamespace: () => '\\',
-    modules: {}
+    modules: {},
+    customTransformers: []
 };
 
 export function compile(filePath: string, options: Ts2phpOptions = {}) {
@@ -103,8 +104,10 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         };
     });
 
-    const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [];
-    transformers.push(transform);
+    const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [
+        transform,
+        ...(options.customTransformers || [])
+    ];
 
     const emitResolver = program.getDiagnosticsProducingTypeChecker()
         .getEmitResolver(sourceFile, undefined);

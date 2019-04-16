@@ -106,7 +106,7 @@ export function emitFile(
         writePunctuation
     };
 
-    const transform = ts.transformNodes(resolver, undefined, {}, [sourceFile], transformers!, /*allowDtsFiles*/ false);
+    const transform = ts.transformNodes(resolver, undefined, {}, [sourceFile], transformers!, /* allowDtsFiles */ false);
 
     state.sourceFile = (transform.transformed[0] as SourceFile);
 

@@ -1,11 +1,12 @@
 /**
  * @file 生成代码前，对 ast 进行转换
- * @author meixuguang 
+ * @author meixuguang
  */
 
 import ts from 'typescript';
 
 export function transform(context: ts.TransformationContext) {
+
     const {
         startLexicalEnvironment
     } = context;

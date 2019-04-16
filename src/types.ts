@@ -22,7 +22,8 @@ export interface Ts2phpOptions {
     getNamespace?: () => string;
     getModulePath?: (name: string, module?: ts.ResolvedModuleFull) => string;
     getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull) => string;
-    tsConfig?: object
+    tsConfig?: object,
+    customTransformers?: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[]
 }
 
 export interface CompilerState extends Ts2phpOptions {
