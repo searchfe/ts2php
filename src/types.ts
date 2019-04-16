@@ -15,9 +15,10 @@ export interface Ts2phpOptions {
     },
     namespace?: string;
     plugins?: {emit: Function}[];
-    cacheDirectory?: string;
+    source?: string;
+    filePath?: string;
     emitHeader?: boolean;
-    showSemanticDiagnostics?: boolean;
+    showDiagnostics?: boolean;
     getNamespace?: () => string;
     getModulePath?: (name: string, module?: ts.ResolvedModuleFull) => string;
     getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull) => string;

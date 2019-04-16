@@ -31,9 +31,6 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
-        // if (featureName !== 'Class') {
-        //     continue;
-        // }
         it(featureName, async function () {
             this.timeout(3000);
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
@@ -42,7 +39,7 @@ describe('features', () => {
                 getNamespace() {
                     return `test\\${featureName}`;
                 },
-                showSemanticDiagnostics: false
+                showDiagnostics: false
             });
             assert.equal(res.phpCode, phpContent);
             assert.equal(res.errors.length, 0);
@@ -51,13 +48,13 @@ describe('features', () => {
 
     it('compile semantic diagnostics', function () {
         this.timeout(5000);
-        let res = compileCode('const a = 1; a = 2;');
+        let res = compile('test.ts', {source: 'const a = 1; a = 2;'});
         assert.equal(res.errors.length, 1);
     });
 
     it('compile code', function () {
         this.timeout(5000);
-        let res = compileCode('var a = 1;', {namespace: 'test'});
+        let res = compile('test.ts', {namespace: 'test', source: 'var a = 1;'});
         assert.equal(res.phpCode, '<?php\nnamespace test;\n$a = 1;\n');
     });
 });
