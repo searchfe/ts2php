@@ -8,7 +8,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const {compile, compileCode} = require('../src/index.ts');
+const {compile} = require('../src/index.ts');
 
 const files = fs.readdirSync(path.resolve(__dirname, './features'));
 const featureNames = files.reduce((res, file) => {
@@ -32,14 +32,11 @@ describe('features', () => {
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
         it(featureName, async function () {
-            this.timeout(3000);
+            this.timeout(5000);
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
             const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);
             const res = compile(tsPath, {
-                getNamespace() {
-                    return `test\\${featureName}`;
-                },
-                showDiagnostics: false
+                namespace: `test\\${featureName}`
             });
             assert.equal(res.phpCode, phpContent);
             assert.equal(res.errors.length, 0);

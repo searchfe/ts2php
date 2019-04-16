@@ -114,8 +114,8 @@ export function emitFile(
         writer.write(`<?php\nnamespace ${state.namespace};\n`);
     }
 
-    ts.forEachChild(state.sourceFile, (node: ts.Node) => {
-        emitWithHint(ts.EmitHint.Unspecified, node);
+    state.sourceFile.forEachChild((node: ts.Node) => {
+        emit(node);
         writer.writeLine();
     });
 
@@ -385,8 +385,8 @@ export function emitFile(
                     return emitNamedImports(<ts.NamedImports>node);
                 case SyntaxKind.ImportSpecifier:
                     return emitImportSpecifier(<ts.ImportSpecifier>node);
-                // case SyntaxKind.ExportAssignment:
-                //     return emitExportAssignment(<ts.ExportAssignment>node);
+                case SyntaxKind.ExportAssignment:
+                    return emitExportAssignment(<ts.ExportAssignment>node);
                 // case SyntaxKind.ExportDeclaration:
                 //     return emitExportDeclaration(<ts.ExportDeclaration>node);
                 // case SyntaxKind.NamedExports:
@@ -2022,19 +2022,20 @@ export function emitFile(
         emitImportOrExportSpecifier(node);
     }
 
-    // function emitExportAssignment(node: ExportAssignment) {
-    //     const nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     if (node.isExportEquals) {
-    //         emitTokenWithComment(SyntaxKind.EqualsToken, nextPos, writeOperator, node);
-    //     }
-    //     else {
-    //         emitTokenWithComment(SyntaxKind.DefaultKeyword, nextPos, writeKeyword, node);
-    //     }
-    //     writeSpace();
-    //     emitExpression(node.expression);
-    //     writeSemicolon();
-    // }
+    function emitExportAssignment(node: ts.ExportAssignment) {
+        // const nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
+        // writeSpace();
+        // if (node.isExportEquals) {
+        //     emitTokenWithComment(SyntaxKind.EqualsToken, nextPos, writeOperator, node);
+        // }
+        // else {
+        //     emitTokenWithComment(SyntaxKind.DefaultKeyword, nextPos, writeKeyword, node);
+        // }
+        // writeSpace();
+        console.log(node);
+        emitExpression(node.expression);
+        writeSemicolon();
+    }
 
     // function emitExportDeclaration(node: ts.ExportDeclaration) {
     //     let nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);

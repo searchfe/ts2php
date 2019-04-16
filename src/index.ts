@@ -37,7 +37,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         sourceFile = project.addExistingSourceFile(filePath).compilerNode;
     }
     else if (options.source) {
-        sourceFile = project.createSourceFile(filePath, options.source).compilerNode;
+        filePath = /\.ts$/.test(filePath) ? filePath : (filePath + '.ts');
+        sourceFile = project.createSourceFile(filePath, options.source, {overwrite: true}).compilerNode;
     }
     else {
         return {
@@ -46,7 +47,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
                 code: 501,
                 msg: '未找到文件'
             }]
-        }
+        };
     }
 
     const program = project.getProgram().compilerObject;
@@ -60,8 +61,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
     if (finalOptions.showDiagnostics) {
         diagnostics = diagnostics.filter(a => a.compilerObject.code !== 2307)
         let diags = diagnostics.map(a => a.compilerObject);
-        console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
         if (diags.length) {
+            console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
             return {
                 phpCode: '',
                 errors: diags
