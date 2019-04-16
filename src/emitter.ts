@@ -2032,7 +2032,6 @@ export function emitFile(
         //     emitTokenWithComment(SyntaxKind.DefaultKeyword, nextPos, writeKeyword, node);
         // }
         // writeSpace();
-        console.log(node);
         emitExpression(node.expression);
         writeSemicolon();
     }
