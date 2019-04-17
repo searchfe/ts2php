@@ -14,3 +14,4 @@ typescirpt.d.ts
 src
 coverage
 .nyc_output
+docs

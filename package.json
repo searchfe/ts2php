@@ -12,7 +12,8 @@
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
     "test": "mocha",
     "coverage": "nyc _mocha",
-    "prepublishOnly": "npm test && npm run build"
+    "prepublishOnly": "npm test && npm run build",
+    "doc": "typedoc --out docs --includeDeclarations --excludeNotExported --excludeExternals --mode file ./types/index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -67,6 +68,7 @@
     "source-map-support": "^0.5.11",
     "sync-files": "^1.0.3",
     "ts-node": "^7.0.1",
+    "typedoc": "^0.14.2",
     "vue": "^2.6.10"
   }
 }
