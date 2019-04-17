@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { compile } from '../index'
-import { Ts2phpOptions } from '../types';
 import { join, resolve, dirname } from 'path'
 import { readdirSync, lstatSync, ensureDirSync, writeFileSync } from 'fs-extra'
 import yargs = require('yargs')
