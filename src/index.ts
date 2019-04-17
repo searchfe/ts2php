@@ -5,13 +5,14 @@
 
 import fs from 'fs-extra';
 import * as ts from 'typescript';
+import hash from 'hash-sum';
+import {Project} from 'ts-morph';
+
 import * as emitter from './emitter';
 import {Ts2phpOptions, CompilerState} from './types';
 import {setState} from './state';
-import hash from 'hash-sum';
 import buildInPlugins from './features/index';
 import {transform} from './transformer';
-import {Project} from 'ts-morph';
 
 const defaultOptions = {
     showDiagnostics: true,
@@ -28,6 +29,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         compilerOptions: {
             target: ts.ScriptTarget.ES2016,
             scrict: true,
+            transpileOnly: false,
+            moduleResolution: ts.ModuleResolutionKind.NodeJs,
             ...options.tsConfig
         }
     });

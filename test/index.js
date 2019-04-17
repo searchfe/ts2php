@@ -31,12 +31,20 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
+        // if (featureName !== 'vue') {
+        //     continue;
+        // }
         it(featureName, async function () {
             this.timeout(5000);
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
             const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);
             const res = compile(tsPath, {
-                namespace: `test\\${featureName}`
+                namespace: `test\\${featureName}`,
+                modules: {
+                    'vue': {
+                        required: true
+                    }
+                }
             });
             assert.equal(res.phpCode, phpContent);
             assert.equal(res.errors.length, 0);

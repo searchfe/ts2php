@@ -1998,11 +1998,11 @@ export function emitFile(
     }
 
     function emitImportClause(node: ts.ImportClause) {
-        emit(node.name);
-        if (node.name && node.namedBindings) {
-            emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
-            writeSpace();
-        }
+        // emit(node.name);
+        // if (node.name && node.namedBindings) {
+        //     emitTokenWithComment(SyntaxKind.CommaToken, node.name.end, writePunctuation, node);
+        //     writeSpace();
+        // }
         emit(node.namedBindings);
     }
 
