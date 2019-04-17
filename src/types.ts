@@ -1,5 +1,6 @@
 
 import ts from 'typescript';
+import {Ts2phpOptions, ErrorInfo} from '../types/index';
 
 interface moduleInfo {
     name: string;
@@ -9,31 +10,10 @@ interface moduleInfo {
     fileName?: string;
 }
 
-export interface Ts2phpOptions {
-    modules?: {
-        [name: string]: moduleInfo
-    },
-    namespace?: string;
-    plugins?: {emit: Function}[];
-    source?: string;
-    filePath?: string;
-    emitHeader?: boolean;
-    showDiagnostics?: boolean;
-    getNamespace?: () => string;
-    getModulePath?: (name: string, module?: ts.ResolvedModuleFull) => string;
-    getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull) => string;
-    tsConfig?: object,
-    customTransformers?: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[]
-}
 
 export interface CompilerState extends Ts2phpOptions {
     errors: ErrorInfo[],
     typeChecker: ts.TypeChecker,
     helpers: {},
     sourceFile?: ts.SourceFile
-}
-
-export interface ErrorInfo {
-    code: number;
-    msg: string;
 }

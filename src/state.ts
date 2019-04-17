@@ -3,7 +3,7 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
-import {ErrorInfo} from './types';
+import {ErrorInfo} from '../types/index';
 
 let globalState;
 

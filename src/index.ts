@@ -9,10 +9,11 @@ import hash from 'hash-sum';
 import {Project} from 'ts-morph';
 
 import * as emitter from './emitter';
-import {Ts2phpOptions, CompilerState} from './types';
+import {CompilerState} from './types';
 import {setState} from './state';
 import buildInPlugins from './features/index';
 import {transform} from './transformer';
+import {Ts2phpOptions} from '../types/index';
 
 const defaultOptions = {
     showDiagnostics: true,
