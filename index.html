@@ -1,0 +1,534 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ts2php</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">ts2php</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> ts2php</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="ts2php">ts2php</h1>
+				<blockquote>
+					<p>under development</p>
+				</blockquote>
+				<p>typescript 转 php</p>
+				<p><img src="https://img.shields.io/badge/-TypeScript-blue.svg" alt="Language">
+					<a href="https://travis-ci.org/cxtom/ts2php"><img src="https://travis-ci.org/cxtom/ts2php.svg?branch=master" alt="Build Status"></a>
+					<a href="https://www.npmjs.org/package/ts2php"><img src="https://img.shields.io/npm/v/ts2php.svg" alt="npm package"></a>
+				<a href="https://www.npmjs.org/package/ts2php"><img src="http://img.shields.io/npm/dm/ts2php.svg" alt="npm downloads"></a></p>
+				<h2 id="usage">usage</h2>
+				<h3 id="compiler">compiler</h3>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> {compile} <span class="hljs-keyword">from</span> <span class="hljs-string">'ts2php'</span>;
+
+<span class="hljs-keyword">const</span> result = compile(filePath, options);</code></pre>
+				<h3 id="runtime">runtime</h3>
+				<blockquote>
+					<p>部分功能依赖一个 php 的类库，需要在 php 工程中引入</p>
+				</blockquote>
+				<pre><code class="language-php"><span class="hljs-keyword">require_once</span>(<span class="hljs-string">"/path/to/ts2php/dist/runtime/Ts2Php_Helper.php"</span>);</code></pre>
+				<h3 id="cli">CLI</h3>
+				<p>简单使用：</p>
+				<pre><code class="language-bash">$ npm i -g ts2php
+$ ts2php ./a.ts                   <span class="hljs-comment"># 编译输出到 stdout</span></code></pre>
+				<p>使用配置并输出到文件：</p>
+				<pre><code class="language-bash">$ cat config.js
+module.exports = {
+  showDiagnostics: <span class="hljs-literal">true</span>,
+  emitHeader: <span class="hljs-literal">true</span>,
+  getModulePath: name =&gt; name,
+  getModuleNamespace: () =&gt; <span class="hljs-string">'\\'</span>,
+  modules: {},
+  customTransformers: []
+};
+$ ts2php -c config.js src/ -o output/</code></pre>
+				<p>更多选项：</p>
+				<pre><code class="language-bash">$ ts2php --show-diagnostics       <span class="hljs-comment"># 输出诊断信息</span>
+$ ts2php --emit-header            <span class="hljs-comment"># 输出头部信息</span>
+$ ts2php -h                       <span class="hljs-comment"># 更多功能请查看帮助</span></code></pre>
+				<h2 id="options">Options</h2>
+				<h2 id="features">Features</h2>
+				<h3 id="javascript-syntax">Javascript Syntax</h3>
+				<h4 id="for-for-of-for-in"><code>for</code>/<code>for of</code>/<code>for in</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> b = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++) {
+    b += <span class="hljs-number">10</span>;
+}
+
+<span class="hljs-keyword">const</span> a = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> iterator <span class="hljs-keyword">of</span> a) {
+    <span class="hljs-built_in">console</span>.log(iterator);
+}
+
+<span class="hljs-keyword">const</span> d = {<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">2</span>};
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> iterator <span class="hljs-keyword">in</span> d) {
+    <span class="hljs-built_in">console</span>.log(iterator);
+}</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$b = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">for</span> ($i = <span class="hljs-number">0</span>; $i &lt; <span class="hljs-number">10</span>; $i++) {
+    $b += <span class="hljs-number">10</span>;
+}
+$a = <span class="hljs-keyword">array</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+<span class="hljs-keyword">foreach</span> ($a <span class="hljs-keyword">as</span> $iterator) {
+    var_dump($iterator);
+}
+$d = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">2</span> );
+<span class="hljs-keyword">foreach</span> ($d <span class="hljs-keyword">as</span> $iterator) {
+    var_dump($iterator);
+}</code></pre>
+				<h4 id="if-else-if-else"><code>if</code>/<code>else if</code>/<code>else</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> a = <span class="hljs-literal">true</span>;
+
+<span class="hljs-keyword">if</span> (!a) {
+    <span class="hljs-keyword">const</span> b = <span class="hljs-number">456</span>;
+    <span class="hljs-keyword">const</span> c = <span class="hljs-number">123</span>;
+}
+<span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">const</span> d = <span class="hljs-number">789</span>;
+}</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$a = <span class="hljs-keyword">true</span>;
+<span class="hljs-keyword">if</span> (!$a) {
+    $b = <span class="hljs-number">456</span>;
+    $c = <span class="hljs-number">123</span>;
+}
+<span class="hljs-keyword">else</span> {
+    $d = <span class="hljs-number">789</span>;
+}</code></pre>
+				<h4 id="swtich"><code>swtich</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> b = <span class="hljs-number">2</span>;
+<span class="hljs-keyword">let</span> c = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">switch</span> (b) {
+    <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+        c = <span class="hljs-number">2</span>;
+        <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+        c = <span class="hljs-number">3</span>;
+        <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">default</span>:
+        c = <span class="hljs-number">4</span>;
+}</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$b = <span class="hljs-number">2</span>;
+$c = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">switch</span> ($b) {
+    <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+        $c = <span class="hljs-number">2</span>;
+        <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+        $c = <span class="hljs-number">3</span>;
+        <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">default</span>:
+        $c = <span class="hljs-number">4</span>;
+}</code></pre>
+				<h4 id="while-do-while"><code>while</code>/<code>do while</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> a = <span class="hljs-literal">true</span>;
+<span class="hljs-keyword">let</span> b;
+<span class="hljs-keyword">while</span>(!a) {
+    b = <span class="hljs-number">2</span>;
+}
+<span class="hljs-keyword">do</span> {
+    b++;
+} <span class="hljs-keyword">while</span>(!a);</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$a = <span class="hljs-keyword">true</span>;
+$b;
+<span class="hljs-keyword">while</span> (!$a) {
+    $b = <span class="hljs-number">2</span>;
+}
+<span class="hljs-keyword">do</span> {
+    $b++;
+} <span class="hljs-keyword">while</span> (!$a);</code></pre>
+				<h4 id="class-"><code>Class</code>/</h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> {Base} <span class="hljs-keyword">from</span> <span class="hljs-string">'../some-utils'</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Article</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Base</span> </span>{
+
+    public title: string;
+    id: number;
+
+    private _x: number;
+
+    <span class="hljs-keyword">static</span> published = [];
+
+    <span class="hljs-keyword">constructor</span>(options: {title: string}) {
+        <span class="hljs-keyword">super</span>(options);
+        <span class="hljs-keyword">this</span>.title = options.title;
+        <span class="hljs-keyword">this</span>.publish(<span class="hljs-number">1</span>);
+    }
+
+    private publish(id) {
+        Article.published.push(id);
+        <span class="hljs-keyword">super</span>.dispose();
+    }
+}
+
+<span class="hljs-keyword">const</span> a = <span class="hljs-keyword">new</span> Article({<span class="hljs-attr">title</span>: <span class="hljs-string">'a'</span>});
+<span class="hljs-keyword">const</span> b = a.base;
+a.dispose();</code></pre>
+				<p>output</p>
+				<pre><code class="language-php"><span class="hljs-keyword">require_once</span>(<span class="hljs-string">"../some-utils"</span>);
+<span class="hljs-keyword">use</span> \<span class="hljs-title">Base</span>;
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Article</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Base</span> </span>{
+    <span class="hljs-keyword">public</span> $title;
+    $id;
+    <span class="hljs-keyword">private</span> $_x;
+    <span class="hljs-keyword">static</span> $published = <span class="hljs-keyword">array</span>();
+    __construct($options) {
+        <span class="hljs-keyword">parent</span>::__construct($options);
+        <span class="hljs-keyword">$this</span>-&gt;title = $options[<span class="hljs-string">"title"</span>];
+        <span class="hljs-keyword">$this</span>-&gt;publish(<span class="hljs-number">1</span>);
+    }
+    <span class="hljs-keyword">private</span> publish($id) {
+        array_push(Article::$published, $id);
+        <span class="hljs-keyword">parent</span>::dispose();
+    }
+}
+$a = <span class="hljs-keyword">new</span> Article(<span class="hljs-keyword">array</span>( <span class="hljs-string">"title"</span> =&gt; <span class="hljs-string">"a"</span> ));
+$b = $a-&gt;base;
+$a-&gt;dispose();</code></pre>
+				<h4 id="typeof"><code>typeof</code></h4>
+				<blockquote>
+					<p>由于 php 中没有 <code>undefined</code> 关键字，故不支持返回 <code>undefined</code></p>
+				</blockquote>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> d = <span class="hljs-keyword">typeof</span> c === <span class="hljs-string">'string'</span>;</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$d = \Ts2Php_Helper::typeof($c) === <span class="hljs-string">"string"</span>;</code></pre>
+				<h4 id="delete"><code>delete</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> e = {<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">2</span>};
+<span class="hljs-keyword">delete</span> e.a;</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$e = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">2</span> );
+<span class="hljs-keyword">unset</span>($e[<span class="hljs-string">"a"</span>]);</code></pre>
+				<h4 id="es2015-object-destructuring"><code>es2015 object destructuring</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> tplData: {<span class="hljs-attr">a</span>: number, difftime?: number, c?: <span class="hljs-number">1</span>} = {<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>};
+
+<span class="hljs-keyword">const</span> {
+    difftime = <span class="hljs-number">8</span>,
+    a,
+    <span class="hljs-attr">c</span>: y = <span class="hljs-number">1</span>
+} = tplData;
+
+<span class="hljs-keyword">const</span> c = tplData.a;</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$tplData = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">1</span> );
+$difftime = <span class="hljs-keyword">isset</span>($tplData[<span class="hljs-string">"difftime"</span>]) ? $tplData[<span class="hljs-string">"difftime"</span>] : <span class="hljs-number">8</span>;
+$a = $tplData[<span class="hljs-string">"a"</span>];
+$y = <span class="hljs-keyword">isset</span>($tplData[<span class="hljs-string">"c"</span>]) ? $tplData[<span class="hljs-string">"c"</span>] : <span class="hljs-number">1</span>;
+$c = $tplData[<span class="hljs-string">"a"</span>];</code></pre>
+				<h4 id="es2015-template-string"><code>es2015 template string</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> b = <span class="hljs-string">'123'</span>;
+<span class="hljs-keyword">const</span> c = <span class="hljs-string">`0<span class="hljs-subst">${b}</span>45'6'"789"`</span>;</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$b = <span class="hljs-string">"123"</span>;
+$c = <span class="hljs-string">"0"</span> . $b . <span class="hljs-string">"45'6'\"789\""</span>;</code></pre>
+				<h4 id="es2015-object-computed-property"><code>es2015 object computed property</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> a = <span class="hljs-string">'aaa'</span>;
+<span class="hljs-keyword">let</span> b = <span class="hljs-string">'bbb'</span>;
+<span class="hljs-keyword">let</span> c = {
+    [a + b]: <span class="hljs-number">123</span>,
+    [b]: <span class="hljs-number">456</span>
+};</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$a = <span class="hljs-string">"aaa"</span>;
+$b = <span class="hljs-string">"bbb"</span>;
+$c = <span class="hljs-keyword">array</span>(
+    ($a . $b) =&gt; <span class="hljs-number">123</span>,
+    ($b) =&gt; <span class="hljs-number">456</span>
+);</code></pre>
+				<h4 id="es2015-object-shorthand-property"><code>es2015 object shorthand property</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> b = <span class="hljs-number">2</span>;
+<span class="hljs-keyword">let</span> c = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">const</span> a = {
+    b,
+    c
+};</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$b = <span class="hljs-number">2</span>;
+$c = <span class="hljs-number">1</span>;
+$a = <span class="hljs-keyword">array</span>(
+    <span class="hljs-string">"b"</span> =&gt; $b,
+    <span class="hljs-string">"c"</span> =&gt; $c
+);</code></pre>
+				<h4 id="es2015-object-method"><code>es2015 object method</code></h4>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> a = {
+    b() {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"111"</span>;
+    }
+};</code></pre>
+				<p>output</p>
+				<pre><code class="language-php">$a = <span class="hljs-keyword">array</span>(
+    <span class="hljs-string">"b"</span> =&gt; <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"111"</span>;
+    }
+);</code></pre>
+				<h4 id="enum"><code>enum</code></h4>
+				<pre><code class="language-typescript"><span class="hljs-keyword">enum</span> aaa {a = <span class="hljs-number">1</span>, b, c}
+<span class="hljs-keyword">enum</span> bbb {a, b, c}
+<span class="hljs-keyword">enum</span> ccc {
+    a = <span class="hljs-string">'a'</span>,
+    b = <span class="hljs-string">'b'</span>,
+    c = <span class="hljs-string">'c'</span>
+}
+
+<span class="hljs-keyword">const</span> str = <span class="hljs-string">'123'</span>;
+<span class="hljs-keyword">enum</span> ddd {
+    a = str.length,
+    b = str.length + <span class="hljs-number">1</span>
+}</code></pre>
+				<pre><code class="language-php">$aaa = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">2</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-number">3</span> );
+$bbb = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">0</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-number">2</span> );
+$ccc = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-string">"c"</span> );
+$str = <span class="hljs-string">"123"</span>;
+$ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; strlen($str), <span class="hljs-string">"b"</span> =&gt; strlen($str) + <span class="hljs-number">1</span> );</code></pre>
+				<h3 id="core-javascript-api">Core JavaScript API</h3>
+				<ul>
+					<li>parseInt <strong>只接收一个参数</strong></li>
+					<li>parseFloat</li>
+					<li>encodeURIComponent</li>
+					<li>decodeURIComponent</li>
+					<li>Date<ul>
+							<li>now</li>
+						</ul>
+					</li>
+					<li>Object<ul>
+							<li>Object.assign</li>
+							<li>Object.keys</li>
+							<li>Object.values</li>
+							<li>Object.freeze</li>
+						</ul>
+					</li>
+					<li>JSON<ul>
+							<li>JSON.stringify <strong>只接收一个参数</strong></li>
+							<li>JSON.parse <strong>只接收一个参数</strong></li>
+						</ul>
+					</li>
+					<li>console<ul>
+							<li>console.log <strong>转成var_dump</strong></li>
+							<li>console.info <strong>转成var_dump</strong></li>
+							<li>console.error <strong>echo，只接收一个参数</strong></li>
+						</ul>
+					</li>
+					<li>String<ul>
+							<li>String.prototype.replace</li>
+							<li>String.prototype.trim</li>
+							<li>String.prototype.trimRight</li>
+							<li>String.prototype.trimLeft</li>
+							<li>String.prototype.toUpperCase</li>
+							<li>String.prototype.toLowerCase</li>
+							<li>String.prototype.split</li>
+							<li>String.prototype.indexOf</li>
+							<li>String.prototype.substr</li>
+							<li>String.prototype.substring</li>
+							<li>String.prototype.repeat</li>
+							<li>String.prototype.startsWidth</li>
+							<li>String.prototype.endsWidth</li>
+							<li>String.prototype.includes</li>
+							<li>String.prototype.padStart</li>
+						</ul>
+					</li>
+					<li>Array<ul>
+							<li>Array.isArray</li>
+							<li>Array.prototype.length</li>
+							<li>Array.prototype.filter <strong>回调函数只接收第一个参数</strong></li>
+							<li>Array.prototype.push</li>
+							<li>Array.prototype.pop</li>
+							<li>Array.prototype.shift</li>
+							<li>Array.prototype.unshift</li>
+							<li>Array.prototype.concat</li>
+							<li>Array.prototype.reverse</li>
+							<li>Array.prototype.splice</li>
+							<li>Array.prototype.reverse</li>
+							<li>Array.prototype.map <strong>回调函数只接收第一个参数</strong></li>
+							<li>Array.prototype.forEach <strong>回调函数只接收第一个参数</strong></li>
+							<li>Array.prototype.indexOf</li>
+							<li>Array.prototype.join</li>
+						</ul>
+					</li>
+					<li>Number<ul>
+							<li>Number.isInterger</li>
+							<li>Number.prototype.toFixed</li>
+						</ul>
+					</li>
+					<li>Math<ul>
+							<li>Math.abs</li>
+							<li>Math.acos</li>
+							<li>Math.acosh</li>
+							<li>Math.asin</li>
+							<li>Math.asinh</li>
+							<li>Math.atan</li>
+							<li>Math.atanh</li>
+							<li>Math.atan2</li>
+							<li>Math.cbrt</li>
+							<li>Math.ceil</li>
+							<li>Math.clz32</li>
+							<li>Math.cos</li>
+							<li>Math.cosh</li>
+							<li>Math.exp</li>
+							<li>Math.expm1</li>
+							<li>Math.floor</li>
+							<li>Math.hypot</li>
+							<li>Math.log</li>
+							<li>Math.log1p</li>
+							<li>Math.log10</li>
+							<li>Math.max</li>
+							<li>Math.min</li>
+							<li>Math.pow</li>
+							<li>Math.random</li>
+							<li>Math.round</li>
+							<li>Math.sin</li>
+							<li>Math.sinh</li>
+							<li>Math.sqrt</li>
+							<li>Math.tan</li>
+							<li>Math.tanh</li>
+						</ul>
+					</li>
+				</ul>
+				<h2 id="thanks-to">Thanks to</h2>
+				<p>Based on <a href="https://github.com/Microsoft/TypeScript">Typescript</a> compiler</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/errorinfo.html" class="tsd-kind-icon">Error<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ts2phpoptions.html" class="tsd-kind-icon">Ts2php<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#compile" class="tsd-kind-icon">compile</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
