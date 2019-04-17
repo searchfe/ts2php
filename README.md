@@ -27,6 +27,40 @@ const result = compile(filePath, options);
 require_once("/path/to/ts2php/dist/runtime/Ts2Php_Helper.php");
 ```
 
+### CLI
+
+简单使用：
+
+```bash
+$ npm i -g ts2php
+$ ts2php ./a.ts                   # 编译输出到 stdout
+```
+
+使用配置并输出到文件：
+
+```bash
+$ cat config.js
+module.exports = {
+  showDiagnostics: true,
+  emitHeader: true,
+  getModulePath: name => name,
+  getModuleNamespace: () => '\\',
+  modules: {},
+  customTransformers: []
+};
+$ ts2php -c config.js src/ -o output/
+```
+
+更多选项：
+
+```bash
+$ ts2php --show-diagnostics       # 输出诊断信息
+$ ts2php --emit-header            # 输出头部信息
+$ ts2php -h                       # 更多功能请查看帮助
+```
+
+## Options
+
 ## Features
 
 ### Javascript Syntax

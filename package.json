@@ -4,8 +4,11 @@
   "description": "",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
+  "bin": {
+    "ts2php": "dist/bin/ts2php.js"
+  },
   "scripts": {
-    "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime",
+    "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime && chmod a+x dist/bin/*",
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
     "test": "mocha",
     "coverage": "nyc _mocha",
@@ -25,7 +28,8 @@
     "hash-sum": "^1.0.2",
     "lodash": "^4.17.11",
     "ts-morph": "^1.3.3",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.3",
+    "yargs": "^13.2.2"
   },
   "nyc": {
     "include": [
