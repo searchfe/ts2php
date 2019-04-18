@@ -1938,7 +1938,7 @@ export function emitFile(
                 return;
             }
             const symbolFlags = typeNode.symbol ? typeNode.symbol.getFlags() : true;
-            if (symbolFlags !== ts.SymbolFlags.Interface && node.symbol.isReferenced) {
+            if (symbolFlags !== ts.SymbolFlags.Interface) {
                 validImportMember = true;
             }
         }
