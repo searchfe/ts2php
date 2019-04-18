@@ -2710,6 +2710,7 @@ declare namespace ts {
     interface Type {
         flags: TypeFlags;
         symbol: Symbol;
+        objectFlags: ObjectFlags;
         pattern?: DestructuringPattern;
         aliasSymbol?: Symbol;
         aliasTypeArguments?: ReadonlyArray<Type>;

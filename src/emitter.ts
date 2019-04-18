@@ -1930,7 +1930,32 @@ export function emitFile(
         const moduleName = getImportModuleName(node);
         const moduleIt = state.modules[moduleName];
 
-        if (moduleIt && !moduleIt.required) {
+        let validImportMember = false;
+
+        const isType = node => {
+            const {symbol} = typeChecker.getDeclaredTypeOfSymbol(node.symbol);
+            if (!symbol) {
+                validImportMember = true;
+            }
+            const symbolFlags = symbol.getFlags();
+            if (
+                symbolFlags !== ts.SymbolFlags.Interface
+                && symbolFlags !== ts.SymbolFlags.TypeAlias
+            ) {
+                validImportMember = true;
+            }
+        }
+
+        if (node.importClause) {
+            if (node.importClause.name) {
+                isType(node.importClause.name);
+            }
+            if (node.importClause.namedBindings) {
+                node.importClause.namedBindings.forEachChild(isType);
+            }
+        }
+
+        if (moduleIt && !moduleIt.required && validImportMember) {
             writeBase(`require_once("${moduleIt.path ? moduleIt.path : state.getModulePath(moduleName)}")`);
             writeSemicolon();
             writeLine();
@@ -1943,58 +1968,6 @@ export function emitFile(
 
         // emitExpression(node.moduleSpecifier);
         // writeSemicolon();
-
-        // // 暂时先不支持模块化，只允许用户引入指定库，方便在开发时有代码补全提示
-        // if (!node.moduleSpecifier || !node.moduleSpecifier.getText) {
-        //     state.errors.push({
-        //         code: 100,
-        //         msg: '模块引入出错'
-        //     });
-        //     return;
-        // }
-
-        // const allowedModules = state.modules;
-        // const importModuleName = getImportModuleName(node);
-        // if (!allowedModules[importModuleName]) {
-        //     state.errors.push({
-        //         code: 100,
-        //         msg: `模块${importModuleName}未找到`
-        //     });
-        //     return;
-        // }
-
-        // const moduleIt = allowedModules[importModuleName];
-
-        // // 需要将引入的变量跟 module 对应起来
-        // if (node.importClause && node.importClause.namedBindings) {
-        //     node.importClause.namedBindings.forEachChild(child => {
-        //         const name = getTextOfNode(child);
-        //         state.moduleNamedImports[name] = {
-        //             className: moduleIt.className,
-        //             moduleName: importModuleName
-        //         };
-        //     });
-        // }
-
-        // if (moduleIt.required) {
-        //     return;
-        // }
-
-        // if (moduleIt.path) {
-        //     writeBase(`require_once("${moduleIt.path}");`);
-        //     writeLine();
-        // }
-
-        // if (node.importClause && node.importClause.name) {
-        //     let text = getTextOfNode(node.importClause.name);
-        //     state.moduleDefaultImports[text] = {
-        //         className: moduleIt.className,
-        //         moduleName: importModuleName
-        //     };
-        // }
-
-        // moduleIt.required = true;
-
     }
 
     function emitImportClause(node: ts.ImportClause) {
