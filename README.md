@@ -5,7 +5,7 @@
 TypeScript 转 PHP
 
 ![Language](https://img.shields.io/badge/-TypeScript-blue.svg)
-[![Build Status](https://travis-ci.org/cxtom/ts2php.svg?branch=master)](https://travis-ci.org/cxtom/ts2php)
+[![Build Status](https://travis-ci.org/max-team/ts2php.svg?branch=master)](https://travis-ci.org/max-team/ts2php)
 [![npm package](https://img.shields.io/npm/v/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 [![npm downloads](http://img.shields.io/npm/dm/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 
