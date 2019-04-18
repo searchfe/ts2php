@@ -8,6 +8,7 @@
     "ts2php": "dist/bin/ts2php.js"
   },
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime && chmod a+x dist/bin/*",
     "sync": "sync-files -w ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
     "test": "mocha",
@@ -17,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cxtom/ts2php.git"
+    "url": "https://github.com/max-team/ts2php.git"
   },
   "author": "meixuguang",
   "contributors": [
@@ -56,16 +57,17 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.5",
-    "@types/lodash": "^4.14.117",
-    "@types/node": "^10.12.0",
+    "@types/lodash": "^4.14.123",
+    "@types/node": "^10.14.4",
     "istanbul": "^0.4.5",
-    "koa": "^2.6.2",
+    "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "mocha": "^5.2.0",
     "nyc": "^13.3.0",
-    "source-map-support": "^0.5.11",
+    "rimraf": "^2.6.3",
+    "source-map-support": "^0.5.12",
     "sync-files": "^1.0.3",
     "ts-node": "^7.0.1",
     "typedoc": "^0.14.2",
