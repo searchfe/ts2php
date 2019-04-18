@@ -1933,15 +1933,12 @@ export function emitFile(
         let validImportMember = false;
 
         const isType = node => {
-            const {symbol} = typeChecker.getDeclaredTypeOfSymbol(node.symbol);
-            if (!symbol) {
-                validImportMember = true;
+            const typeNode = node.symbol ? typeChecker.getDeclaredTypeOfSymbol(node.symbol) : null;
+            if (!typeNode || typeNode.aliasSymbol) {
+                return;
             }
-            const symbolFlags = symbol.getFlags();
-            if (
-                symbolFlags !== ts.SymbolFlags.Interface
-                && symbolFlags !== ts.SymbolFlags.TypeAlias
-            ) {
+            const symbolFlags = typeNode.symbol ? typeNode.symbol.getFlags() : true;
+            if (symbolFlags !== ts.SymbolFlags.Interface) {
                 validImportMember = true;
             }
         }
