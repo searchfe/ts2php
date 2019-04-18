@@ -1,15 +1,15 @@
 # ts2php
 
-> under development
+**under development**
 
-typescript 转 php
+TypeScript 转 PHP
 
 ![Language](https://img.shields.io/badge/-TypeScript-blue.svg)
 [![Build Status](https://travis-ci.org/cxtom/ts2php.svg?branch=master)](https://travis-ci.org/cxtom/ts2php)
 [![npm package](https://img.shields.io/npm/v/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 [![npm downloads](http://img.shields.io/npm/dm/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 
-## usage
+## Usage
 
 ### compiler
 
@@ -21,7 +21,7 @@ const result = compile(filePath, options);
 
 ### runtime
 
-> 部分功能依赖一个 php 的类库，需要在 php 工程中引入
+> 部分功能依赖一个 PHP 的类库，需要在 PHP 工程中引入
 
 ```php
 require_once("/path/to/ts2php/dist/runtime/Ts2Php_Helper.php");
@@ -58,8 +58,6 @@ $ ts2php --show-diagnostics       # 输出诊断信息
 $ ts2php --emit-header            # 输出头部信息
 $ ts2php -h                       # 更多功能请查看帮助
 ```
-
-## Options
 
 ## Features
 

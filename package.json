@@ -13,7 +13,7 @@
     "test": "mocha",
     "coverage": "nyc _mocha",
     "prepublishOnly": "npm test && npm run build",
-    "doc": "typedoc --out docs --includeDeclarations --excludeNotExported --excludeExternals --mode file ./types/index.d.ts"
+    "doc": "typedoc --out docs --theme minimal --includeDeclarations --excludeNotExported --excludeExternals --mode file ./types/index.d.ts"
   },
   "repository": {
     "type": "git",

@@ -31,8 +31,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
             target: ts.ScriptTarget.ES2016,
             scrict: true,
             transpileOnly: false,
-            moduleResolution: ts.ModuleResolutionKind.NodeJs,
-            ...options.tsConfig
+            module: ts.ModuleKind.CommonJS,
+            ...options.compilerOptions
         }
     });
 
@@ -99,14 +99,16 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         }
     }
 
-    sourceFile.resolvedModules && sourceFile.resolvedModules.forEach((item, name) => {
-        state.modules[name] = {
-            name,
-            path: state.getModulePath(name, item),
-            namespace: state.getModuleNamespace(name, item),
-            ...state.modules[name]
-        };
-    });
+    if (sourceFile.resolvedModules) {
+        sourceFile.resolvedModules.forEach((item, name) => {
+            state.modules[name] = {
+                name,
+                path: state.getModulePath(name, item),
+                namespace: state.getModuleNamespace(name, item),
+                ...state.modules[name]
+            };
+        });
+    }
 
     const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [
         transform,
