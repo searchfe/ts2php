@@ -19,6 +19,11 @@ const map = {
     decodeURIComponent: method('rawurldecode', false, 1)
 };
 
+const identifierMap = new Map([
+    ['__dirname', 'dirname(__FILE__)'],
+    ['__filename', '__FILE__']
+]);
+
 export default {
 
     emit(hint, node, {helpers}) {
@@ -43,6 +48,13 @@ export default {
                 helpers.getTextOfNode(node.name) === 'userAgent'
             ) {
                 return helpers.writePunctuation('$_SERVER["HTTP_USER_AGENT"]');
+            }
+        }
+
+        if (isIdentifier(node)) {
+            const text = (node.escapedText || node.getText()) as string;
+            if (identifierMap.has(text)) {
+                return helpers.writePunctuation(identifierMap.get(text));
             }
         }
 

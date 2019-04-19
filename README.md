@@ -406,6 +406,8 @@ $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
 - parseFloat
 - encodeURIComponent
 - decodeURIComponent
+- __dirname
+- __filename
 - Date
   - Date.now
   - Date.prototype.getTime

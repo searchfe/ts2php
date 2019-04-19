@@ -31,7 +31,7 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
-        // if (featureName !== 'Class') {
+        // if (featureName !== 'Destructuring') {
         //     continue;
         // }
         it(featureName, async function () {
