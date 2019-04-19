@@ -1,5 +1,5 @@
 <?php
-namespace test\IfStatement;
+namespace test\case_IfStatement;
 $a = true;
 if (!$a) {
     $b = 456;

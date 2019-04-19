@@ -1,5 +1,5 @@
 <?php
-namespace test\vue;
+namespace test\case_vue;
 $Vue["extend"](array(
     "props" => array(
         "b" => String,

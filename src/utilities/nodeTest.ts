@@ -174,3 +174,13 @@ export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeSymbol = nodeType.getSymbol();
     return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Function;
 }
+
+export function isVisibilityModifier(node: ts.Modifier) {
+    return node.kind === SyntaxKind.PublicKeyword
+        || node.kind === SyntaxKind.PrivateKeyword
+        || node.kind === SyntaxKind.ProtectedKeyword;
+}
+
+export function isSupportedPropertyModifier(node: ts.Modifier) {
+    return isVisibilityModifier(node) || node.kind === SyntaxKind.StaticKeyword;
+}

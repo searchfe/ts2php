@@ -1,5 +1,5 @@
 <?php
-namespace test\FunctionDeclaration;
+namespace test\case_FunctionDeclaration;
 function aaa($a, $b, $c) {
     $d = 123;
     $e = $b . 123;

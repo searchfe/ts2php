@@ -40,6 +40,8 @@ import {
     shouldAddDollar,
     shouldUseArray,
     shouldAddDoubleQuote,
+    isVisibilityModifier,
+    isSupportedPropertyModifier,
     isStringLike,
     isClassLike,
     isFunctionLike,
@@ -757,7 +759,15 @@ export function emitFile(
 
     function emitPropertyDeclaration(node: ts.PropertyDeclaration) {
         // emitDecorators(node, node.decorators);
-        emitModifiers(node, node.modifiers);
+        let modifiers = (node.modifiers || [] as any as ts.NodeArray<ts.Modifier>)
+            .filter(isSupportedPropertyModifier) as any as ts.NodeArray<ts.Modifier>
+
+        const hasVisibilityModifier = modifiers.some(isVisibilityModifier);
+        if (!hasVisibilityModifier) {
+            writeKeyword('public');
+            writeSpace();
+        }
+        emitModifiers(node, modifiers);
         emit(node.name);
         // emit(node.questionToken);
         // emit(node.exclamationToken);
@@ -784,6 +794,8 @@ export function emitFile(
         emitModifiers(node, node.modifiers);
         // emit(node.asteriskToken);
         if (ts.isClassDeclaration(node.parent)) {
+            writeKeyword("function");
+            writeSpace();
             emit(node.name);
         }
         else {
@@ -802,6 +814,8 @@ export function emitFile(
 
     function emitConstructor(node: ts.ConstructorDeclaration) {
         // emitModifiers(node, node.modifiers);
+        writeKeyword("function");
+        writeSpace();
         writeKeyword("__construct");
         emitSignatureAndBody(node, emitSignatureHead);
     }

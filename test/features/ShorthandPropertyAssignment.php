@@ -1,5 +1,5 @@
 <?php
-namespace test\ShorthandPropertyAssignment;
+namespace test\case_ShorthandPropertyAssignment;
 $b = 2;
 $c = 1;
 $a = array(

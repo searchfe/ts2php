@@ -1,5 +1,5 @@
 <?php
-namespace test\ForStatement;
+namespace test\case_ForStatement;
 $b = 1;
 for ($i = 0; $i < 10; $i++) {
     $b += 10;

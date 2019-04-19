@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 
 import { compile } from '../index'
-import { join, resolve, dirname } from 'path'
+import { normalize, join, resolve, dirname } from 'path'
 import { readdirSync, lstatSync, ensureDirSync, writeFileSync } from 'fs-extra'
 import yargs = require('yargs')
 
 yargs.usage('ts2php [options] <files ...>')
     .describe('Transpile TypeScript files to PHP, see: https://github.com/max-team/ts2php')
     .example('$0 -c config.js src/index.ts', 'Transpile using a config file')
-    .alias('d', 'show-diagnostics').describe('d', 'Show diagnostics').boolean('d')
-    .alias('H', 'emit-header').describe('H', 'Emit header').boolean('H')
-    .alias('c', 'config').describe('c', 'Specify a config file').string('c')
+    .alias('c', 'config').describe('c', 'Specify a config file, see: https://max-team.github.io/ts2php/interfaces/ts2phpoptions.html').string('c')
     .alias('o', 'out').describe('o', 'Output directory, defaults to stdout').string('o')
     .demandCommand(1, 'Invalid options, specify a file')
     .help('h').alias('h', 'help')
@@ -18,26 +16,32 @@ yargs.usage('ts2php [options] <files ...>')
 
 const argv = yargs.argv
 
-const options = argv.config
-    ? require(resolve(argv.config))
-    : {
-        showDiagnostics: !!argv.showDiagnostics,
-        emitHeader: !!argv.emitHeader,
-    };
+let options = {};
+if (argv.config) {
+    const configFile = resolve(argv.config)
+    console.error('[options]', configFile)
+    options = require(configFile)
+}
 
-console.error('using options:', options)
+const stripPrefix = argv._.length === 1 && lstatSync(argv._[0]).isDirectory()
 argv._.forEach(compilePath)
 
 function compileFile(filepath) {
-    console.error(`transpiling ${filepath}...`)
+    console.error(`[compile] ${filepath}...`)
 
     const { errors, phpCode } = compile(filepath, options);
-    if (errors.length) throw new Error('error:' + JSON.stringify(errors))
+    if (errors.length) {
+        errors.forEach(({file, messageText, start}) => {
+            const text = typeof messageText === 'string' ? messageText : messageText.messageText
+            console.error(`[error] ${text} in ${file.fileName} at ${start}`)
+        })
+        process.exit(1);
+    }
     if (argv.out) {
-        const outpath = join(argv.out, filepath).replace(/\.ts$/, '.php')
+        const outpath = outPath(filepath)
         ensureDirSync(dirname(outpath))
         writeFileSync(outpath, phpCode, 'utf8')
-        console.error(`${phpCode.length} chars written to ${outpath}`)
+        console.error(`[written] ${phpCode.length} chars to ${outpath}`)
     } else {
         console.log(phpCode)
     }
@@ -49,4 +53,13 @@ function compilePath(path) {
     else if (stat.isDirectory()) {
         readdirSync(path).forEach(file => compilePath(join(path, file)))
     }
+}
+
+function outPath(filepath: string) {
+    if (stripPrefix) {
+        filepath = normalize(filepath)
+        const prefix = normalize(argv._[0])
+        filepath = filepath.replace(prefix, '')
+    }
+    return join(argv.out, filepath).replace(/\.ts$/, '.php')
 }
