@@ -5,8 +5,9 @@ use \Base;
 class Article extends Base {
     public $title;
     public $id;
+    public $foo;
     private $_x;
-    static $published = array();
+    public static $published = array();
     function __construct($options) {
         parent::__construct($options);
         $this->title = $options["title"];

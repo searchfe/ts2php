@@ -40,6 +40,8 @@ import {
     shouldAddDollar,
     shouldUseArray,
     shouldAddDoubleQuote,
+    isVisibilityModifier,
+    isSupportedPropertyModifier,
     isStringLike,
     isClassLike,
     isFunctionLike,
@@ -757,13 +759,15 @@ export function emitFile(
 
     function emitPropertyDeclaration(node: ts.PropertyDeclaration) {
         // emitDecorators(node, node.decorators);
-        if (node.modifiers) {
-            emitModifiers(node, node.modifiers);
-        }
-        else {
+        let modifiers = (node.modifiers || [] as any as ts.NodeArray<ts.Modifier>)
+            .filter(isSupportedPropertyModifier) as any as ts.NodeArray<ts.Modifier>
+
+        const hasVisibilityModifier = modifiers.some(isVisibilityModifier);
+        if (!hasVisibilityModifier) {
             writeKeyword('public');
             writeSpace();
         }
+        emitModifiers(node, modifiers);
         emit(node.name);
         // emit(node.questionToken);
         // emit(node.exclamationToken);

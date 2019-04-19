@@ -5,6 +5,7 @@ class Article extends Base {
 
     public title: string;
     id: number;
+    readonly foo: number;
 
     private _x: number;
 
