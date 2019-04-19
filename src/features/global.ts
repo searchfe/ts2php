@@ -20,13 +20,13 @@ const map = {
 };
 
 const identifierMap = new Map([
-    ['__dirname', 'dirname(__FILE__)'],
-    ['__filename', '__FILE__']
+    ['___dirname', 'dirname(__FILE__)'],
+    ['___filename', '__FILE__']
 ]);
 
 export default {
 
-    emit(hint, node, {helpers}) {
+    emit(hint, node, {helpers, typeChecker}) {
 
         const expNode = node.expression;
         let func;
@@ -52,7 +52,7 @@ export default {
         }
 
         if (isIdentifier(node)) {
-            const text = (node.escapedText || node.getText()) as string;
+            const text = node.escapedText as string;
             if (identifierMap.has(text)) {
                 return helpers.writePunctuation(identifierMap.get(text));
             }
