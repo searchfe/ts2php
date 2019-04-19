@@ -220,19 +220,21 @@ a.dispose();
 output
 
 ```php
+namespace test\case_Class;
 require_once("../some-utils");
 use \Base;
 class Article extends Base {
     public $title;
-    $id;
+    public $id;
+    public $foo;
     private $_x;
-    static $published = array();
-    __construct($options) {
+    public static $published = array();
+    function __construct($options) {
         parent::__construct($options);
         $this->title = $options["title"];
         $this->publish(1);
     }
-    private publish($id) {
+    private function publish($id) {
         array_push(Article::$published, $id);
         parent::dispose();
     }
@@ -399,12 +401,28 @@ $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
 ```
 
 ### Core JavaScript API
+
 - parseInt **只接收一个参数**
 - parseFloat
 - encodeURIComponent
 - decodeURIComponent
 - Date
-  - now
+  - Date.now
+  - Date.prototype.getTime
+  - Date.prototype.getDate
+  - Date.prototype.getDay
+  - Date.prototype.getFullYear
+  - Date.prototype.getHours
+  - Date.prototype.getMinutes
+  - Date.prototype.getMonth
+  - Date.prototype.getSeconds
+  - Date.prototype.setDate
+  - Date.prototype.setFullYear
+  - Date.prototype.setHours
+  - Date.prototype.setMinutes
+  - Date.prototype.setMonth
+  - Date.prototype.setSeconds
+  - Date.prototype.setTime
 - Object
   - Object.assign
   - Object.keys

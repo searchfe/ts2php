@@ -206,7 +206,7 @@ class Ts2Php_Date {
 		return time() * 1000;
 	}
 	// Parses a date string and returns the number of milliseconds since January 1, 1970
-	public function parse($s) {
+	public static function parse($s) {
 		return strtotime($s) * 1000;
 	}
 	// Sets the day of the month of a date object
