@@ -1081,19 +1081,21 @@ $b;
 <span class="hljs-keyword">const</span> b = a.base;
 a.dispose();</code></pre>
 			<p>output</p>
-			<pre><code class="language-php"><span class="hljs-keyword">require_once</span>(<span class="hljs-string">"../some-utils"</span>);
+			<pre><code class="language-php"><span class="hljs-keyword">namespace</span> <span class="hljs-title">test</span>\<span class="hljs-title">case_Class</span>;
+<span class="hljs-keyword">require_once</span>(<span class="hljs-string">"../some-utils"</span>);
 <span class="hljs-keyword">use</span> \<span class="hljs-title">Base</span>;
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Article</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Base</span> </span>{
     <span class="hljs-keyword">public</span> $title;
-    $id;
+    <span class="hljs-keyword">public</span> $id;
+    <span class="hljs-keyword">public</span> $foo;
     <span class="hljs-keyword">private</span> $_x;
-    <span class="hljs-keyword">static</span> $published = <span class="hljs-keyword">array</span>();
-    __construct($options) {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> $published = <span class="hljs-keyword">array</span>();
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($options)</span> </span>{
         <span class="hljs-keyword">parent</span>::__construct($options);
         <span class="hljs-keyword">$this</span>-&gt;title = $options[<span class="hljs-string">"title"</span>];
         <span class="hljs-keyword">$this</span>-&gt;publish(<span class="hljs-number">1</span>);
     }
-    <span class="hljs-keyword">private</span> publish($id) {
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">publish</span><span class="hljs-params">($id)</span> </span>{
         array_push(Article::$published, $id);
         <span class="hljs-keyword">parent</span>::dispose();
     }
@@ -1202,7 +1204,22 @@ $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 				<li>encodeURIComponent</li>
 				<li>decodeURIComponent</li>
 				<li>Date<ul>
-						<li>now</li>
+						<li>Date.now</li>
+						<li>Date.prototype.getTime</li>
+						<li>Date.prototype.getDate</li>
+						<li>Date.prototype.getDay</li>
+						<li>Date.prototype.getFullYear</li>
+						<li>Date.prototype.getHours</li>
+						<li>Date.prototype.getMinutes</li>
+						<li>Date.prototype.getMonth</li>
+						<li>Date.prototype.getSeconds</li>
+						<li>Date.prototype.setDate</li>
+						<li>Date.prototype.setFullYear</li>
+						<li>Date.prototype.setHours</li>
+						<li>Date.prototype.setMinutes</li>
+						<li>Date.prototype.setMonth</li>
+						<li>Date.prototype.setSeconds</li>
+						<li>Date.prototype.setTime</li>
 					</ul>
 				</li>
 				<li>Object<ul>
@@ -1334,7 +1351,7 @@ $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/f8f3060/types/index.d.ts#L158">index.d.ts:158</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/fe3fd00/types/index.d.ts#L158">index.d.ts:158</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
