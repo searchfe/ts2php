@@ -1,5 +1,5 @@
 <?php
-namespace test\SwitchStatement;
+namespace test\case_SwitchStatement;
 $b = 2;
 $c = 1;
 switch ($b) {

@@ -1,5 +1,5 @@
 <?php
-namespace test\Alias;
+namespace test\case_Alias;
 $a = "";
 $a .= "123";
 $b = 0;

@@ -1,5 +1,5 @@
 <?php
-namespace test\ComputedPropertyName;
+namespace test\case_ComputedPropertyName;
 $a = "aaa";
 $b = "bbb";
 $c = array(

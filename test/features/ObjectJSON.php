@@ -1,5 +1,5 @@
 <?php
-namespace test\ObjectJSON;
+namespace test\case_ObjectJSON;
 $a = array_merge(array(), array( "a" => 1 ));
 $b = array_keys($a);
 $c = $a;

@@ -1,5 +1,5 @@
 <?php
-namespace test\ArrayApi;
+namespace test\case_ArrayApi;
 $a = count(array(1));
 $b = array(1, "a");
 $c = count($b);

@@ -1,5 +1,5 @@
 <?php
-namespace test\GlobalApi;
+namespace test\case_GlobalApi;
 $a = intval("1.2");
 $b = floatval("1.2");
 $c = \Ts2Php_Helper::typeof($a);
