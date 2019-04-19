@@ -1,5 +1,5 @@
 <?php
-namespace test\WhileStatement;
+namespace test\case_WhileStatement;
 $a = true;
 $b;
 while (!$a) {

@@ -1,5 +1,5 @@
 <?php
-namespace test\import;
+namespace test\case_import;
 require_once("../some-utils");
 use \Other_Utils as Util;
 use \Some_Utils;

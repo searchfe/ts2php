@@ -12,7 +12,7 @@ const {compile} = require('../src/index.ts');
 
 const files = fs.readdirSync(path.resolve(__dirname, './features'));
 const featureNames = files.reduce((res, file) => {
-    const m = file.match(/(.+)\.ts/);
+    const m = file.match(/(.+)\.ts$/);
     if (m) {
         res.push(m[1]);
     }
@@ -39,7 +39,7 @@ describe('features', () => {
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
             const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);
             const res = compile(tsPath, {
-                namespace: `test\\${featureName}`,
+                namespace: `test\\case_${featureName}`,
                 modules: {
                     'vue': {
                         required: true

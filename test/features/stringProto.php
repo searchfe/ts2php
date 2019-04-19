@@ -1,5 +1,5 @@
 <?php
-namespace test\stringProto;
+namespace test\case_stringProto;
 $a = "wwa";
 $b = \Ts2Php_Helper::str_replace_once("a", "b", $a);
 $c = array( "s" => "aaa" );

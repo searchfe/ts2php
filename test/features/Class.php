@@ -1,18 +1,18 @@
 <?php
-namespace test\Class;
+namespace test\case_Class;
 require_once("../some-utils");
 use \Base;
 class Article extends Base {
     public $title;
-    $id;
+    public $id;
     private $_x;
     static $published = array();
-    __construct($options) {
+    function __construct($options) {
         parent::__construct($options);
         $this->title = $options["title"];
         $this->publish(1);
     }
-    private publish($id) {
+    private function publish($id) {
         array_push(Article::$published, $id);
         parent::dispose();
     }

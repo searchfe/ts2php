@@ -757,7 +757,13 @@ export function emitFile(
 
     function emitPropertyDeclaration(node: ts.PropertyDeclaration) {
         // emitDecorators(node, node.decorators);
-        emitModifiers(node, node.modifiers);
+        if (node.modifiers) {
+            emitModifiers(node, node.modifiers);
+        }
+        else {
+            writeKeyword('public');
+            writeSpace();
+        }
         emit(node.name);
         // emit(node.questionToken);
         // emit(node.exclamationToken);
@@ -784,6 +790,8 @@ export function emitFile(
         emitModifiers(node, node.modifiers);
         // emit(node.asteriskToken);
         if (ts.isClassDeclaration(node.parent)) {
+            writeKeyword("function");
+            writeSpace();
             emit(node.name);
         }
         else {
@@ -802,6 +810,8 @@ export function emitFile(
 
     function emitConstructor(node: ts.ConstructorDeclaration) {
         // emitModifiers(node, node.modifiers);
+        writeKeyword("function");
+        writeSpace();
         writeKeyword("__construct");
         emitSignatureAndBody(node, emitSignatureHead);
     }

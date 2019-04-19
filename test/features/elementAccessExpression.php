@@ -1,5 +1,5 @@
 <?php
-namespace test\elementAccessExpression;
+namespace test\case_elementAccessExpression;
 $tplData = array();
 $a = "aaa";
 $tplData[$a] = 123;
