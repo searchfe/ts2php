@@ -36,7 +36,7 @@ $ npm i -g ts2php
 $ ts2php ./a.ts                   # 编译输出到 stdout
 ```
 
-使用配置并输出到文件：
+使用[配置][options]并输出到文件：
 
 ```bash
 $ cat config.js
@@ -487,3 +487,5 @@ $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
 ## Thanks to
 
 Based on [Typescript](https://github.com/Microsoft/TypeScript) compiler
+
+[options]: https://max-team.github.io/ts2php/interfaces/ts2phpoptions.html
