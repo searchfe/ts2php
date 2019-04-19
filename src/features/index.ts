@@ -12,6 +12,7 @@ import NumberPlugin from './number';
 import ArrayPlugin from './array';
 import ImportPlugin from './import';
 import ConsolePlugin from './console';
+import DatePlugin from './date';
 
 export default [
     StringPligin,
@@ -22,5 +23,6 @@ export default [
     NumberPlugin,
     ArrayPlugin,
     ImportPlugin,
-    ConsolePlugin
+    ConsolePlugin,
+    DatePlugin
 ];

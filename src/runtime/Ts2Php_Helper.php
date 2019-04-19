@@ -150,3 +150,139 @@ class Ts2Php_Helper {
     }
 
 }
+
+/**
+ * from https://github.com/utopszkij/ts2php/blob/master/ts2php_core/tsphpx.php#L41
+ *
+ * @class Ts2Php_Date
+ */
+class Ts2Php_Date {
+	private $value = 0;
+	function __construct($v = -1) {
+		if ($v == -1) $v = time();
+		$this->value = intval($v / 1000);
+	}
+ 	// Returns the day of the month (from 1-31)
+	public function getDate() {
+		$result = 0 + date('d', $this->value);
+		return $result;
+	}
+	//Returns the day of the week (from 0-6)
+	public function getDay() {
+		$result = 0 + date('w', $this->value);
+		return $result;
+	}
+ 	// Returns the year
+	public function getFullYear() {
+		$result = 0 + date('Y', $this->vvalue);
+		return $result;
+	}
+	// Returns the hour (from 0-23)
+	public function getHours() {
+		$result = 0 + date('H', $this->value);
+		return $result;
+	}
+	// Returns the minutes (from 0-59)
+	public function getMinutes() {
+		$result = 0 + date('i', $this->value);
+		return $result;
+	}
+	// Returns the month (from 0-11)
+	public function getMonth() {
+		$result = 0 + date('m', $this->value);
+		return $result;
+	}
+	// Returns the seconds (from 0-59)
+	public function getSeconds() {
+		$result = 0 + date('s', $this->value);
+		return $result;
+	}
+	// Returns the number of milliseconds since midnight Jan 1 1970, and a specified date
+	public function getTime() {
+		return $this->value * 1000;
+	}
+	// Returns the number of milliseconds since midnight Jan 1, 1970
+	public static function now() {
+		return time() * 1000;
+	}
+	// Parses a date string and returns the number of milliseconds since January 1, 1970
+	public function parse($s) {
+		return strtotime($s) * 1000;
+	}
+	// Sets the day of the month of a date object
+	public function setDate($x) {
+		if ($x < 10)
+			$x = '0' . $x;
+		else
+			$x = ''.$x;
+		$s = date('Y-m-d H:i:s', $this->value);
+		$s = substr($s,0,8).$x.substr($s,10,9);
+		$this->value = strtotime($s);
+	}
+	// Sets the year of a date object
+	public function setFullYear($x) {
+		if ($x < 10)
+			$x = '0'.$x;
+		else
+			$x = ''.$x;
+		$s = date('Y-m-d H:i:s', $this->value);
+		$s = $x.substr($s,5,15);
+		$this->value = strtotime($s);
+	}
+	// Sets the hour of a date object
+	public function setHours($x) {
+		if ($x < 10)
+			$x = '0'.$x;
+		else
+			$x = ''.$x;
+		$s = date('Y-m-d H:i:s', $this->value);
+		$s = substr($s,0,11).$x.substr($s,13,6);
+		$this->value = strtotime($s);
+	}
+	// Set the minutes of a date object
+	public function setMinutes($x) {
+		if ($x < 10)
+			$x = '0'.$x;
+		else
+			$x = ''.$x;
+		$s = date('Y-m-d H:i:s', $this->value);
+		$s = substr($s,0,14).$x.substr($s,16,3);
+		$this->value = strtotime($s);
+	}
+	// Sets the month of a date object
+	public function setMonth($x) {
+		if ($x < 10)
+			$x = '0'.$x;
+		else
+			$x = ''.$x;
+		$s = date('Y-m-d H:i:s', $this->value);
+		$s = substr($s,0,5).$x.substr($s,7,12);
+		$this->value = strtotime($s);
+	}
+	// Sets the seconds of a date object
+	public function setSeconds($x) {
+		if ($x < 10)
+			$x = '0'.$x;
+		else
+			$x = ''.$x;
+		$s = date('Y-m-d H:i:s', $this->value);
+		$s = substr($s,0,17).$x;
+		$this->value = strtotime($s);
+	}
+	// Sets a date to a specified number of milliseconds after/before January 1, 1970
+	public function setTime($x) {
+		$this->value = round($x / 1000);
+	}
+	// Returns the date portion of a Date object as a string, using locale conventions
+	public function toLocaleDateString() {
+		return date('Y-m-d',$this->value);
+	}
+ 	// Returns the time portion of a Date object as a string, using locale conventions
+	public function toLocaleTimeString() {
+		return date('H:i:s',$this->value);
+	}
+ 	// Converts a Date object to a string, using locale conventions
+	public function toLocaleString() {
+		return date('Y-m-d H:i:s',$this->value);
+	}
+}

@@ -31,7 +31,7 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
-        // if (featureName !== 'import') {
+        // if (featureName !== 'Class') {
         //     continue;
         // }
         it(featureName, async function () {

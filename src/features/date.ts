@@ -3,41 +3,17 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
-import {
-    EmitHint,
-    isPropertyAccessExpression,
-    isIdentifier,
-    isCallExpression
-} from 'typescript';
-
-import method from '../utilities/method';
-
-const staticMap = {
-    now: method('microtime', false, 0)
-};
-
-// const protoMap = {
-//     toFixed: method('round', true, 1)
-// };
+import * as ts from 'typescript';
 
 export default {
 
-    emit(hint, node, {helpers}) {
+    emit(hint, node, {helpers, typeChecker, sourceFile}) {
 
-        const expNode = node.expression;
-        let func;
-
-        if (
-            hint === EmitHint.Expression
-            && isCallExpression(node)
-            && isPropertyAccessExpression(expNode)
-            && isIdentifier(expNode.expression)
-            && expNode.expression.escapedText === 'Date'
-        ) {
-            if (
-                func = staticMap[helpers.getTextOfNode(expNode.name)]
-            ) {
-                return func(node, helpers);
+        if (ts.isIdentifier(node) && node.getText(sourceFile) === 'Date') {
+            const nodeType = typeChecker.getTypeAtLocation(node);
+            const symbol = nodeType.getSymbol();
+            if (symbol && symbol.escapedName === 'DateConstructor') {
+                return helpers.writePunctuation('\\Ts2Php_Date');
             }
         }
 

@@ -1121,27 +1121,37 @@ export function emitFile(
     }
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
-        const symbol = typeChecker.getSymbolAtLocation(node.name);
+
+        const symbol = typeChecker.getSymbolAtLocation(node);
+
         let prefix = '["';
         let suffix = '"]';
-        if ((node.expression.kind === ts.SyntaxKind.ThisKeyword || isClassInstance(node.expression, typeChecker)) && symbol) {
-            prefix = '->';
-            suffix = '';
-        }
-        else if (isClassLike(node.expression, typeChecker) && symbol) {
-            switch (symbol.getFlags()) {
-                case ts.SymbolFlags.Method:
-                    prefix = '::';
-                    suffix = '';
-                    break;
-                case ts.SymbolFlags.Property:
-                    prefix = '::$';
-                    suffix = '';
-                    break;
-                default:
-                    break;
+
+        if (symbol) {
+            if (
+                // $this->func();
+                node.expression.kind === ts.SyntaxKind.ThisKeyword
+                || isClassInstance(node.expression, typeChecker)
+            ) {
+                prefix = '->';
+                suffix = '';
+            }
+            else if (isClassLike(node.expression, typeChecker)) {
+                switch (symbol.getFlags()) {
+                    case ts.SymbolFlags.Method:
+                        prefix = '::';
+                        suffix = '';
+                        break;
+                    case ts.SymbolFlags.Property:
+                        prefix = '::$';
+                        suffix = '';
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
         emitWithHint(ts.EmitHint.Expression, node.expression);
         writePunctuation(prefix);
         emitWithHint(ts.EmitHint.Unspecified, node.name);
@@ -2050,8 +2060,8 @@ export function emitFile(
 
         if (ts.isImportDeclaration(importNode)) {
             const moduleName = getImportModuleName(importNode);
-            node.forEachChild(element => {
-                if (isClassLike(element, typeChecker) || isFunctionLike(element, typeChecker)) {
+            node.forEachChild((element: ts.ImportSpecifier) => {
+                if (isClassLike(element.name, typeChecker) || isFunctionLike(element.name, typeChecker)) {
                     writePunctuation("use");
                     writeSpace();
                     const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;

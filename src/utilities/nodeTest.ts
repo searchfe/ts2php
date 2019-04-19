@@ -139,17 +139,34 @@ export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     return numberLikeType.has(nodeType.getFlags());
 }
 
+const isSymbolClassOrInterface = (symbol: ts.Symbol) =>
+    [ts.SymbolFlags.Class, ts.SymbolFlags.Interface].some(flags => !!(flags & symbol.getFlags()));
 
 export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
-    const nodeSymbol = nodeType.getSymbol();
-    return !nodeType.isClass() && !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Class;
+    const nodeSymbol = typeChecker.getSymbolAtLocation(node);
+    if (!nodeSymbol) {
+        return false;
+    }
+    if (ts.SymbolFlags.Class & nodeSymbol.getFlags()) {
+        return true;
+    }
+    if (!nodeType.symbol) {
+        return false;
+    }
+    return (ts.isImportSpecifier(node.parent) && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()))
+        || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.members.has('prototype' as ts.__String)
+        || (!nodeSymbol.valueDeclaration && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()) && nodeType.symbol.exports.has('prototype' as ts.__String));
 }
 
 export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
-    const nodeSymbol = nodeType.getSymbol();
-    return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Class && nodeType.isClass();
+    const nodeSymbol = typeChecker.getSymbolAtLocation(node);
+    if (!nodeSymbol) {
+        return false;
+    }
+    return (nodeType.isClass() && !(nodeSymbol.getFlags() & ts.SymbolFlags.Class))
+        || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
 }
 
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {

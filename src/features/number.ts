@@ -15,7 +15,6 @@ import {
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
-import {getLastExpression} from '../utilities';
 
 const staticMap = {
     isInteger: method('is_int', false)

@@ -2,7 +2,7 @@
 namespace test\vue;
 $Vue["extend"](array(
     "props" => array(
-        "b" => $String,
+        "b" => String,
         "c" => Object
     ),
     "data" => function () {
