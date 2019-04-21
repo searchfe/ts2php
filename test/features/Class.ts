@@ -1,5 +1,6 @@
 
 import {Base} from '../some-utils';
+import {SomeType} from '../some-types';
 
 class Article extends Base {
 
@@ -27,3 +28,7 @@ const a = new Article({title: 'a'});
 const b = a.base;
 a.dispose();
 console.log(b);
+
+class A implements SomeType {
+    test: string;
+}

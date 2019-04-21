@@ -1838,8 +1838,16 @@ export function emitFile(
             increaseIndent();
         }
 
+
+        node.heritageClauses = ts.createNodeArray(node.heritageClauses.filter(hc => {
+            return hc.token !== ts.SyntaxKind.ImplementsKeyword;
+        }));
+
         // emitTypeParameters(node, node.typeParameters);
-        emitList(node, node.heritageClauses, ListFormat.ClassHeritageClauses);
+
+        if (node.heritageClauses.length > 0) {
+            emitList(node, node.heritageClauses, ListFormat.ClassHeritageClauses);
+        }
 
         writeSpace();
         writePunctuation("{");
