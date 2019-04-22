@@ -14,7 +14,7 @@ import {CompilerState} from './types';
 import {setState} from './state';
 import buildInPlugins from './features/index';
 import {transform} from './transformer';
-import {Ts2phpOptions} from '../types/index';
+import {Ts2phpOptions, ModuleInfo} from '../types/index';
 
 const defaultOptions = {
     showDiagnostics: true,
@@ -111,7 +111,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
     if (sourceFile.resolvedModules) {
         sourceFile.resolvedModules.forEach((item, name) => {
-            let moduleIt = state.modules[name] || {};
+            let moduleIt = state.modules[name] || {} as ModuleInfo;
             state.modules[name] = {
                 name,
                 pathCode: state.getModulePathCode(name, item, moduleIt),
