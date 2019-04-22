@@ -391,8 +391,8 @@ export function emitFile(
                     return emitImportSpecifier(<ts.ImportSpecifier>node);
                 case SyntaxKind.ExportAssignment:
                     return emitExportAssignment(<ts.ExportAssignment>node);
-                // case SyntaxKind.ExportDeclaration:
-                //     return emitExportDeclaration(<ts.ExportDeclaration>node);
+                case SyntaxKind.ExportDeclaration:
+                    return emitExportDeclaration(<ts.ExportDeclaration>node);
                 // case SyntaxKind.NamedExports:
                 //     return emitNamedExports(<NamedExports>node);
                 // case SyntaxKind.ExportSpecifier:
@@ -2047,24 +2047,32 @@ export function emitFile(
         writeSemicolon();
     }
 
-    // function emitExportDeclaration(node: ts.ExportDeclaration) {
-    //     let nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     if (node.exportClause) {
-    //         emit(node.exportClause);
-    //     }
-    //     else {
-    //         nextPos = emitTokenWithComment(SyntaxKind.AsteriskToken, nextPos, writePunctuation, node);
-    //     }
-    //     if (node.moduleSpecifier) {
-    //         writeSpace();
-    //         const fromPos = node.exportClause ? node.exportClause.end : nextPos;
-    //         emitTokenWithComment(SyntaxKind.FromKeyword, fromPos, writeKeyword, node);
-    //         writeSpace();
-    //         emitExpression(node.moduleSpecifier);
-    //     }
-    //     writeSemicolon();
-    // }
+    function emitExportDeclaration(node: ts.ExportDeclaration) {
+        // let nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
+        // writeSpace();
+        // if (node.exportClause) {
+        //     emit(node.exportClause);
+        // }
+        // else {
+        //     nextPos = emitTokenWithComment(SyntaxKind.AsteriskToken, nextPos, writePunctuation, node);
+        // }
+        if (node.moduleSpecifier) {
+            // writeSpace();
+            // const fromPos = node.exportClause ? node.exportClause.end : nextPos;
+            // emitTokenWithComment(SyntaxKind.FromKeyword, fromPos, writeKeyword, node);
+            // writeSpace();
+            // emitExpression(node.moduleSpecifier);
+            const moduleName = getImportModuleName(node);
+            const moduleIt = state.modules[moduleName];
+            if (moduleIt && !moduleIt.required) {
+                writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)})`);
+                writeSemicolon();
+                writeLine();
+                moduleIt.required = true;
+            }
+        }
+        // writeSemicolon();
+    }
 
     // function emitNamespaceExportDeclaration(node: NamespaceExportDeclaration) {
     //     let nextPos = emitTokenWithComment(SyntaxKind.ExportKeyword, node.pos, writeKeyword, node);
@@ -3231,7 +3239,7 @@ export function emitFile(
         return getLiteralText(node, currentSourceFile, neverAsciiEscape);
     }
 
-    function getImportModuleName(node: ts.ImportDeclaration) {
+    function getImportModuleName(node: ts.ImportDeclaration | ts.ExportDeclaration) {
         return node.moduleSpecifier.getText().replace(/'|"/g, '');
     }
 
