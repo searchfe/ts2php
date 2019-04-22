@@ -31,9 +31,6 @@ describe('features', () => {
 
     for (let i = 0; i < featureNames.length; i++) {
         const featureName = featureNames[i];
-        if (featureName !== 'Class') {
-            continue;
-        }
         it(featureName, async function () {
             this.timeout(5000);
             const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));

@@ -14,6 +14,7 @@
     "test": "mocha",
     "coverage": "nyc _mocha",
     "prepublishOnly": "npm test && npm run build",
+    "test:feature": "ts-node ./src/bin/ts2php.ts",
     "doc": "typedoc --out docs --theme minimal --includeDeclarations --excludeNotExported --excludeExternals --mode file ./types/index.d.ts"
   },
   "repository": {
