@@ -19,7 +19,10 @@ import {Ts2phpOptions} from '../types/index';
 const defaultOptions = {
     showDiagnostics: true,
     emitHeader: true,
-    getModulePathCode: name => {
+    getModulePathCode: (name, _, moduleIt) => {
+        if (moduleIt && moduleIt.path) {
+            return JSON.stringify(moduleIt.path);
+        }
         const isRelative = /^\./.test(name);
         const ext = path.extname(name);
         const outPath = ext ? (name.replace(new RegExp(ext + '$'), '') + '.php') : (isRelative ? (name + '.php') : name);
@@ -108,11 +111,12 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
     if (sourceFile.resolvedModules) {
         sourceFile.resolvedModules.forEach((item, name) => {
+            let moduleIt = state.modules[name] || {};
             state.modules[name] = {
                 name,
-                pathCode: state.getModulePathCode(name, item),
-                namespace: state.getModuleNamespace(name, item),
-                ...state.modules[name]
+                pathCode: state.getModulePathCode(name, item, moduleIt),
+                namespace: state.getModuleNamespace(name, item, moduleIt),
+                ...moduleIt
             };
         });
     }

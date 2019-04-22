@@ -1985,7 +1985,7 @@ export function emitFile(
         }
 
         if (moduleIt && !moduleIt.required && validImportMember) {
-            writeBase(`require_once(${moduleIt.pathCode || moduleIt.path || JSON.stringify(moduleName)})`);
+            writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)})`);
             writeSemicolon();
             writeLine();
             moduleIt.required = true;

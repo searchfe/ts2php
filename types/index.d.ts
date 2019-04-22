@@ -48,19 +48,19 @@ export interface ModuleInfo {
     /**
      * 模块引入的 PHP 路径，编译成 require_once("${path}")
      **/
-    path: string;
+    path?: string;
 
     /**
      * 模块引入的 PHP 路径代码，编译成 require_once(${path})
      * 可直接指定，也可以依赖 [[Ts2phpOptions.getModulePathCode]]
      **/
-    pathCode: string;
+    pathCode?: string;
 
     /**
      * 模块所用的命名空间
      * 可直接指定，也可以依赖 [[Ts2phpOptions.getModuleNamespace]]
      **/
-    namespace: string | false;
+    namespace?: string | false;
 
     /**
      * 是否已经被引入，如果是 true，不会输出 require_once
@@ -122,7 +122,7 @@ export interface Ts2phpOptions {
      * @params module 模块相关信息
      * @returns 路径代码
      */
-    getModulePathCode?: (importPath: string, module?: ts.ResolvedModuleFull) => string;
+    getModulePathCode?: (importPath: string, module?: ts.ResolvedModuleFull, moduleIt?: ModuleInfo) => string;
 
     /**
      * 获取外部模块的命名空间
@@ -132,7 +132,7 @@ export interface Ts2phpOptions {
      * @params module 模块相关信息
      * @returns 命名空间
      */
-    getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull) => string;
+    getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull, moduleIt?: ModuleInfo) => string;
 
     /**
      * TypeScript 编译配置
