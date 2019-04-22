@@ -32,3 +32,17 @@ console.log(b);
 class A implements SomeType {
     test: string;
 }
+
+abstract class Animal {
+    name: string;
+    public abstract getName(): string;
+}
+
+class Cat extends Animal {
+    getName() {
+        return this.name;
+    }
+}
+
+const c = new Cat();
+console.log(c.getName());

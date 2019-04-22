@@ -350,6 +350,7 @@ export function emitFile(
                 case SyntaxKind.PublicKeyword:
                 case SyntaxKind.PrivateKeyword:
                 case SyntaxKind.ProtectedKeyword:
+                case SyntaxKind.AbstractKeyword:
                     writeTokenNode(node, writeKeyword);
                     return;
 
@@ -1825,9 +1826,15 @@ export function emitFile(
 
     function emitClassDeclarationOrExpression(node: ts.ClassDeclaration | ts.ClassExpression) {
         // forEach(node.members, generateMemberNames);
-
         // emitDecorators(node, node.decorators);
-        // emitModifiers(node, node.modifiers);
+
+        if (node.modifiers) {
+            node.modifiers = ts.createNodeArray(node.modifiers.filter(m => {
+                return m.kind === ts.SyntaxKind.AbstractKeyword;
+            }));
+        }
+
+        emitModifiers(node, node.modifiers);
         writeKeyword("class");
         if (node.name) {
             writeSpace();
@@ -1839,14 +1846,15 @@ export function emitFile(
             increaseIndent();
         }
 
-
-        node.heritageClauses = ts.createNodeArray(node.heritageClauses.filter(hc => {
-            return hc.token !== ts.SyntaxKind.ImplementsKeyword;
-        }));
+        if (node.heritageClauses) {
+            node.heritageClauses = ts.createNodeArray(node.heritageClauses.filter(hc => {
+                return hc.token !== ts.SyntaxKind.ImplementsKeyword;
+            }));
+        }
 
         // emitTypeParameters(node, node.typeParameters);
 
-        if (node.heritageClauses.length > 0) {
+        if (node.heritageClauses && node.heritageClauses.length > 0) {
             emitList(node, node.heritageClauses, ListFormat.ClassHeritageClauses);
         }
 

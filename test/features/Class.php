@@ -25,3 +25,14 @@ echo $b;
 class A {
     public $test;
 }
+abstract class Animal {
+    public $name;
+    public abstract function getName();
+}
+class Cat extends Animal {
+    function getName() {
+        return $this->name;
+    }
+}
+$c = new Cat();
+echo $c->getName();
