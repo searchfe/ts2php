@@ -1973,7 +1973,7 @@ export function emitFile(
             if (symbolFlags !== ts.SymbolFlags.Interface) {
                 validImportMember = true;
             }
-        }
+        };
 
         if (node.importClause) {
             if (node.importClause.name) {
@@ -1985,7 +1985,7 @@ export function emitFile(
         }
 
         if (moduleIt && !moduleIt.required && validImportMember) {
-            writeBase(`require_once("${moduleIt.path ? moduleIt.path : state.getModulePath(moduleName)}")`);
+            writeBase(`require_once(${moduleIt.pathCode || moduleIt.path || JSON.stringify(moduleName)})`);
             writeSemicolon();
             writeLine();
             moduleIt.required = true;

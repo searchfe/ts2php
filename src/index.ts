@@ -4,6 +4,7 @@
  */
 
 import fs from 'fs-extra';
+import path from 'path';
 import * as ts from 'typescript';
 import hash from 'hash-sum';
 import {Project} from 'ts-morph';
@@ -18,7 +19,13 @@ import {Ts2phpOptions} from '../types/index';
 const defaultOptions = {
     showDiagnostics: true,
     emitHeader: true,
-    getModulePath: name => name,
+    getModulePathCode: name => {
+        const isRelative = /^\./.test(name);
+        const ext = path.extname(name);
+        const outPath = ext ? (name.replace(new RegExp(ext + '$'), '') + '.php') : (isRelative ? (name + '.php') : name);
+        const pathCode = JSON.stringify(outPath);
+        return isRelative ? `realpath(dirname(__FILE__) . '/' . ${pathCode})` : pathCode;
+    },
     getModuleNamespace: () => '\\',
     modules: {},
     customTransformers: []
@@ -103,7 +110,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         sourceFile.resolvedModules.forEach((item, name) => {
             state.modules[name] = {
                 name,
-                path: state.getModulePath(name, item),
+                pathCode: state.getModulePathCode(name, item),
                 namespace: state.getModuleNamespace(name, item),
                 ...state.modules[name]
             };
