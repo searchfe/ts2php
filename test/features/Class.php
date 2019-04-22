@@ -21,7 +21,7 @@ class Article extends Base {
 $a = new Article(array( "title" => "a" ));
 $b = $a->base;
 $a->dispose();
-var_dump($b);
+echo $b;
 class A {
     public $test;
 }

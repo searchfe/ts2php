@@ -6,9 +6,9 @@ for ($i = 0; $i < 10; $i++) {
 }
 $a = array(1, 2, 3);
 foreach ($a as $iterator) {
-    var_dump($iterator);
+    echo $iterator;
 }
 $d = array( "a" => 1, "b" => 2 );
 foreach ($d as $iterator) {
-    var_dump($iterator);
+    echo $iterator;
 }
