@@ -13,10 +13,22 @@ import {
 
 import method from '../utilities/method';
 
+function log(node: CallExpression, {emitExpression, writePunctuation, writeSpace}) {
+    writePunctuation('echo');
+    writeSpace();
+    node.arguments.forEach((elememt, index) => {
+        emitExpression(elememt);
+        if (index < node.arguments.length - 1) {
+            writePunctuation(',');
+            writeSpace();
+        }
+    });
+}
+
 const methods = {
-    log: method('var_dump', false),
+    log,
     info: method('var_dump', false),
-    error: method('echo', false),
+    error: log,
     dir(node: CallExpression, {emitExpression, writePunctuation}) {
         writePunctuation('echo "<script>console.log(" . json_encode(');
         emitExpression(node.arguments[0]);

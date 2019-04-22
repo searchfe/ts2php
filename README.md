@@ -434,9 +434,9 @@ $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
   - JSON.stringify **只接收一个参数**
   - JSON.parse **只接收一个参数**
 - console
-  - console.log **转成var_dump**
+  - console.log
   - console.info **转成var_dump**
-  - console.error **echo，只接收一个参数**
+  - console.error
 - String
   - String.prototype.replace
   - String.prototype.trim

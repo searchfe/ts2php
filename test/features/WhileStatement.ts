@@ -6,3 +6,5 @@ while(!a) {
 do {
     b++;
 } while(!a);
+
+console.log(a, b);

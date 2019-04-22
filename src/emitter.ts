@@ -105,7 +105,8 @@ export function emitFile(
 
         getLiteralTextOfNode,
         getTextOfNode,
-        writePunctuation
+        writePunctuation,
+        writeSpace
     };
 
     const transform = ts.transformNodes(resolver, undefined, {}, [sourceFile], transformers!, /* allowDtsFiles */ false);

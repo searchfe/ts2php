@@ -8,3 +8,4 @@ while (!$a) {
 do {
     $b++;
 } while (!$a);
+echo $a, $b;

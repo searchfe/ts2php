@@ -1,8 +1,9 @@
+/**
+ * @file cli config example
+ * @author cxtom(cxtom2008@gmail.com)
+ */
+
 module.exports = {
     showDiagnostics: true,
-    emitHeader: true,
-    getModulePath: name => name,
-    getModuleNamespace: () => '\\',
-    modules: {},
-    customTransformers: []
+    emitHeader: true
 };
