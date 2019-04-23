@@ -400,6 +400,18 @@ $str = "123";
 $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
 ```
 
+#### `pass by reference when the arg is an object`
+
+```typescript
+function aaa(m: number[]) {
+}
+```
+
+```php
+function aaa(&$m) {
+}
+```
+
 ### Core JavaScript API
 
 - parseInt **只接收一个参数**
