@@ -729,6 +729,14 @@ export function emitFile(
         // emitDecorators(node, node.decorators);
         // emitModifiers(node, node.modifiers);
         // emit(node.dotDotDotToken);
+
+        if (node.parent && node.parent.kind === SyntaxKind.FunctionDeclaration) {
+            const type = typeChecker.getTypeAtLocation(node.name);
+            if (type && type.flags === ts.TypeFlags.Object) {
+                write('&');
+            }
+        }
+
         emitNodeWithWriter(node.name, writeParameter);
         // emit(node.questionToken);
         if (node.parent && node.parent.kind === SyntaxKind.JSDocFunctionType && !node.name) {

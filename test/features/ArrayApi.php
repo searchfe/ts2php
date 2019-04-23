@@ -18,7 +18,7 @@ $t = \Ts2Php_Helper::isPlainArray($a);
 $x = array( "u" => array() );
 $v = count($x["u"]);
 echo "<script>console.log(" . json_encode($x) . ");</script>";
-function run($x) {
+function run(&$x) {
     \Ts2Php_Helper::arraySlice($x["y"], 1);
     array_push($x["y"], 1);
 }
