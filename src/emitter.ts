@@ -2746,7 +2746,7 @@ export function emitFile(
 
     function emitParametersForArrow(parentNode: ts.FunctionTypeNode | ts.ArrowFunction, parameters: ts.NodeArray<ts.ParameterDeclaration>) {
         if (canEmitSimpleArrowHead(parentNode, parameters)) {
-            emitList(parentNode, parameters, ListFormat.Parameters & ~ListFormat.Parenthesis);
+            emitList(parentNode, parameters, (ListFormat.Parameters & ~ListFormat.Parenthesis) | ts.ListFormat.Parenthesis /* always add parenthesis */);
         }
         else {
             emitParameters(parentNode, parameters);
