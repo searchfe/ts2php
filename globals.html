@@ -1202,6 +1202,15 @@ $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 }</code></pre>
 			<pre><code class="language-php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aaa</span><span class="hljs-params">(&amp;$m)</span> </span>{
 }</code></pre>
+			<h4 id="anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></h4>
+			<pre><code class="language-typescript"><span class="hljs-keyword">let</span> b = <span class="hljs-string">'b'</span>;
+<span class="hljs-keyword">let</span> f = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'123'</span> + b;
+}</code></pre>
+			<pre><code class="language-php">$b = <span class="hljs-string">"b"</span>;
+$f = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> <span class="hljs-title">use</span><span class="hljs-params">(&amp;$b)</span>  </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"123"</span> . $b;
+};</code></pre>
 			<h3 id="core-javascript-api">Core JavaScript API</h3>
 			<ul>
 				<li>parseInt <strong>只接收一个参数</strong></li>
@@ -1358,7 +1367,7 @@ $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/9064bcf/types/index.d.ts#L162">index.d.ts:162</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/796bae1/types/index.d.ts#L162">index.d.ts:162</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
