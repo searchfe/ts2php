@@ -412,6 +412,22 @@ function aaa(&$m) {
 }
 ```
 
+#### `anonymous function inherit variables`
+
+```typescript
+let b = 'b';
+let f = function () {
+    return '123' + b;
+}
+```
+
+```php
+$b = "b";
+$f = function () use(&$b)  {
+    return "123" . $b;
+};
+```
+
 ### Core JavaScript API
 
 - parseInt **只接收一个参数**
