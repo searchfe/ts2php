@@ -1197,6 +1197,11 @@ $bbb = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 $ccc = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-string">"c"</span> );
 $str = <span class="hljs-string">"123"</span>;
 $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; strlen($str), <span class="hljs-string">"b"</span> =&gt; strlen($str) + <span class="hljs-number">1</span> );</code></pre>
+			<h4 id="pass-by-reference-when-the-arg-is-an-object"><code>pass by reference when the arg is an object</code></h4>
+			<pre><code class="language-typescript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aaa</span>(<span class="hljs-params">m: <span class="hljs-built_in">number</span>[]</span>) </span>{
+}</code></pre>
+			<pre><code class="language-php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aaa</span><span class="hljs-params">(&amp;$m)</span> </span>{
+}</code></pre>
 			<h3 id="core-javascript-api">Core JavaScript API</h3>
 			<ul>
 				<li>parseInt <strong>只接收一个参数</strong></li>
@@ -1354,7 +1359,7 @@ $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/c69c3e6/types/index.d.ts#L162">index.d.ts:162</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/9d8e4c4/types/index.d.ts#L162">index.d.ts:162</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
