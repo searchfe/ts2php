@@ -1,6 +1,6 @@
 {
   "name": "ts2php",
-  "version": "0.3.1",
+  "version": "0.5.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
