@@ -14,7 +14,7 @@ const g = b.filter(function (value, index) {
 });
 const t = Array.isArray(a);
 
-const x = {u: []};
+const x = {u: []} as {u: string[]};
 const v = x.u.length;
 
 console.dir(x);

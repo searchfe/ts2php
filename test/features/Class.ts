@@ -10,7 +10,7 @@ class Article extends Base {
 
     private _x: number;
 
-    static published = [];
+    static published = [] as number[];
 
     constructor(options: {title: string}) {
         super(options);
@@ -18,7 +18,7 @@ class Article extends Base {
         this.publish(1);
     }
 
-    private publish(id) {
+    private publish(id: number) {
         Article.published.push(id);
         super.dispose();
     }

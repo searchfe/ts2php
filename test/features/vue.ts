@@ -14,5 +14,14 @@ export default Vue.extend({
             a: this.b + 1,
             d: this.c.names.join(',')
         };
+    },
+    created() {
+        const e = this.b.length;
+        const g = this.f.toFixed(2);
+    },
+    computed: {
+        f(): number {
+            return this.c.names.indexOf("a");
+        }
     }
 });

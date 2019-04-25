@@ -10,5 +10,14 @@ $Vue["extend"](array(
             "a" => $this->b . 1,
             "d" => join(",", $this->c["names"])
         );
-    }
+    },
+    "created" => function () {
+        $e = strlen($this->b);
+        $g = round($this->f, 2);
+    },
+    "computed" => array(
+        "f" => function () {
+            return array_search("a", $this->c["names"]);
+        }
+    )
 ));

@@ -99,7 +99,7 @@ export default {
             && helpers.getTextOfNode(node.name) === 'length'
         ) {
             helpers.writePunctuation('strlen(');
-            helpers.emit(expNode);
+            helpers.emitExpression(expNode);
             helpers.writePunctuation(')');
             return;
         }

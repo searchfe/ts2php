@@ -139,9 +139,6 @@ export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     return numberLikeType.has(nodeType.getFlags());
 }
 
-const isSymbolClassOrInterface = (symbol: ts.Symbol) =>
-    [ts.SymbolFlags.Class, ts.SymbolFlags.Interface].some(flags => !!(flags & symbol.getFlags()));
-
 export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = typeChecker.getSymbolAtLocation(node);

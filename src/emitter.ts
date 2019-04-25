@@ -4,6 +4,8 @@
  */
 
 import * as ts from 'typescript';
+import {createWrappedNode} from 'ts-morph';
+import * as tsMorph from 'ts-morph';
 
 import {
     SyntaxKind,
@@ -729,6 +731,14 @@ export function emitFile(
         // emitDecorators(node, node.decorators);
         // emitModifiers(node, node.modifiers);
         // emit(node.dotDotDotToken);
+
+        if (node.parent && node.parent.kind === SyntaxKind.FunctionDeclaration) {
+            const type = typeChecker.getTypeAtLocation(node.name);
+            if (type && type.flags === ts.TypeFlags.Object) {
+                write('&');
+            }
+        }
+
         emitNodeWithWriter(node.name, writeParameter);
         // emit(node.questionToken);
         if (node.parent && node.parent.kind === SyntaxKind.JSDocFunctionType && !node.name) {
@@ -1716,6 +1726,7 @@ export function emitFile(
                 // generateNames(node.body);
 
                 emitSignatureHead(node);
+                emitInheritedVariables(node);
                 emitBlockFunctionBody(body);
                 popNameGenerationScope(node);
 
@@ -1725,6 +1736,7 @@ export function emitFile(
             }
             else {
                 emitSignatureHead(node);
+                emitInheritedVariables(node);
                 writePunctuation("{");
                 writeLine();
                 writeKeyword("return");
@@ -1740,6 +1752,40 @@ export function emitFile(
             writeSemicolon();
         }
 
+    }
+
+    function emitInheritedVariables(node: ts.FunctionLikeDeclaration) {
+        if (node.kind === ts.SyntaxKind.ArrowFunction || node.kind === ts.SyntaxKind.FunctionExpression) {
+            const wrappedNode = createWrappedNode(node, {typeChecker});
+            const identifiers = wrappedNode.getDescendantsOfKind(ts.SyntaxKind.Identifier);
+            const inheritedVariables: tsMorph.Identifier[] = [];
+            const nodeStart = node.getStart();
+            const nodeEnd = node.getEnd();
+
+            identifiers.forEach(item => {
+                const symbolOfIdentifier = item.getSymbol().compilerSymbol;
+                const d = symbolOfIdentifier.getDeclarations();
+                const inherite = d.find(item => item.getStart() < nodeStart || item.getEnd() > nodeEnd);
+                if (inherite) {
+                    inheritedVariables.push(item);
+                }
+            });
+            
+            if (inheritedVariables.length > 0) {
+                writeSpace();
+                write('use');
+                writePunctuation('(')
+                inheritedVariables.forEach((item, index) => {
+                    const text = item.getText();
+                    write(`&$${text}`);
+                    if (index !== inheritedVariables.length - 1) {
+                        write(', ');
+                    }
+                });
+                writePunctuation(')')
+                writeSpace();
+            }
+        }
     }
 
     function emitSignatureHead(node: ts.FunctionDeclaration | ts.FunctionExpression | ts.MethodDeclaration | ts.AccessorDeclaration | ts.ConstructorDeclaration) {
@@ -2738,7 +2784,7 @@ export function emitFile(
 
     function emitParametersForArrow(parentNode: ts.FunctionTypeNode | ts.ArrowFunction, parameters: ts.NodeArray<ts.ParameterDeclaration>) {
         if (canEmitSimpleArrowHead(parentNode, parameters)) {
-            emitList(parentNode, parameters, ListFormat.Parameters & ~ListFormat.Parenthesis);
+            emitList(parentNode, parameters, (ListFormat.Parameters & ~ListFormat.Parenthesis) | ts.ListFormat.Parenthesis /* always add parenthesis */);
         }
         else {
             emitParameters(parentNode, parameters);

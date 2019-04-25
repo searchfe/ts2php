@@ -41,12 +41,7 @@ $ ts2php ./a.ts                   # 编译输出到 stdout
 ```bash
 $ cat config.js
 module.exports = {
-  showDiagnostics: true,
-  emitHeader: true,
-  getModulePath: name => name,
-  getModuleNamespace: () => '\\',
-  modules: {},
-  customTransformers: []
+  emitHeader: false
 };
 $ ts2php -c config.js src/ -o output/
 ```
@@ -398,6 +393,34 @@ $bbb = array( "a" => 0, "b" => 1, "c" => 2 );
 $ccc = array( "a" => "a", "b" => "b", "c" => "c" );
 $str = "123";
 $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
+```
+
+#### `pass by reference when the arg is an object`
+
+```typescript
+function aaa(m: number[]) {
+}
+```
+
+```php
+function aaa(&$m) {
+}
+```
+
+#### `anonymous function inherit variables`
+
+```typescript
+let b = 'b';
+let f = function () {
+    return '123' + b;
+}
+```
+
+```php
+$b = "b";
+$f = function () use(&$b)  {
+    return "123" . $b;
+};
 ```
 
 ### Core JavaScript API

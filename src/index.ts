@@ -42,6 +42,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
             scrict: true,
             transpileOnly: false,
             module: ts.ModuleKind.CommonJS,
+            noImplicitThis: true,
+            noImplicitAny: true,
             ...options.compilerOptions
         }
     });
