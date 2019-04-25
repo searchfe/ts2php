@@ -948,12 +948,7 @@ $ ts2php ./a.ts                   <span class="hljs-comment"># 编译输出到 s
 			<p>使用<a href="https://max-team.github.io/ts2php/interfaces/ts2phpoptions.html">配置</a>并输出到文件：</p>
 			<pre><code class="language-bash">$ cat config.js
 module.exports = {
-  showDiagnostics: <span class="hljs-literal">true</span>,
-  emitHeader: <span class="hljs-literal">true</span>,
-  getModulePath: name =&gt; name,
-  getModuleNamespace: () =&gt; <span class="hljs-string">'\\'</span>,
-  modules: {},
-  customTransformers: []
+  emitHeader: <span class="hljs-literal">false</span>
 };
 $ ts2php -c config.js src/ -o output/</code></pre>
 			<p>更多选项：</p>
@@ -1367,7 +1362,7 @@ $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <spa
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/6d4b616/types/index.d.ts#L162">index.d.ts:162</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/bb5b1fe/types/index.d.ts#L162">index.d.ts:162</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
