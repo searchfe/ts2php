@@ -34,6 +34,7 @@ const defaultOptions = {
     customTransformers: []
 };
 
+const s = 'abcdefghijklmnopqrstuvwxyz';
 const getRandomString = n => Array(n)
     .join()
     .split(',')
