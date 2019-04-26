@@ -6,8 +6,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 import * as ts from 'typescript';
-import hash from 'hash-sum';
 import {Project} from 'ts-morph';
+import {upperFirst} from 'lodash';
 
 import * as emitter from './emitter';
 import {CompilerState} from './types';
@@ -33,6 +33,14 @@ const defaultOptions = {
     modules: {},
     customTransformers: []
 };
+
+const getRandomString = n => Array(n)
+    .join()
+    .split(',')
+    .map(function() {
+        return s.charAt(Math.floor(Math.random() * s.length));
+    }).join('');
+
 
 export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
@@ -99,7 +107,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         moduleDefaultImports: {},
         namespace: (options && options.namespace)
             || (options && options.getNamespace && options.getNamespace())
-            || hash(filePath),
+            || upperFirst(getRandomString(5)),
         plugins
     });
 
