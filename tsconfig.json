@@ -9,7 +9,6 @@
     "outDir": "dist",
     "rootDir": "./src",
     "esModuleInterop": true,
-    "noImplicitThis": true,
     "moduleResolution": "node"
   }
 }
