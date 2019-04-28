@@ -1,3 +1,6 @@
+let a = {
+    b: '123456'
+};
 let b = 'b';
 let c = 'c';
 let d = 'd';
@@ -11,8 +14,17 @@ let arr2 = arr.map(function (item) {
     return item + b;
 });
 
-let a = () => '123' + b;
+let fa = () => '123' + b;
 
 let f = function () {
-    return '123' + b;
+    return '123' + a.b.length;
+}
+
+let obj = {
+    a: function () {
+        return '123' + b;
+    },
+    b() {
+        return '123' + b;
+    }
 }

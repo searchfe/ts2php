@@ -1755,7 +1755,11 @@ export function emitFile(
     }
 
     function emitInheritedVariables(node: ts.FunctionLikeDeclaration) {
-        if (node.kind === ts.SyntaxKind.ArrowFunction || node.kind === ts.SyntaxKind.FunctionExpression) {
+        if (
+            node.kind === ts.SyntaxKind.ArrowFunction
+            || node.kind === ts.SyntaxKind.FunctionExpression
+            || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent))
+        ) {
             const wrappedNode = createWrappedNode(node, {typeChecker});
             const identifiers = wrappedNode.getDescendantsOfKind(ts.SyntaxKind.Identifier);
             const inheritedVariables: tsMorph.Identifier[] = [];
@@ -1763,6 +1767,13 @@ export function emitFile(
             const nodeEnd = node.getEnd();
 
             identifiers.forEach(item => {
+                if (
+                    item.getParent().getKind() === ts.SyntaxKind.PropertyAccessExpression
+                    && (item.getParent().compilerNode as ts.PropertyAccessExpression).name === item.compilerNode
+                ) {
+                    return;
+                }
+
                 const symbolOfIdentifier = item.getSymbol().compilerSymbol;
                 const d = symbolOfIdentifier.getDeclarations();
                 const inherite = d.find(item => item.getStart() < nodeStart || item.getEnd() > nodeEnd);
