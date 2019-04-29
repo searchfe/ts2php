@@ -69,13 +69,17 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      ["@semantic-release/changelog", {
-        "changelogFile": "CHANGELOG.md",
-        "changelogTitle": "# Changelog"
-      }],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md",
+          "changelogTitle": "# Changelog"
+        }
+      ],
       "@semantic-release/npm",
       "@semantic-release/git"
-    ]
+    ],
+    "branch": "master"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
@@ -83,7 +87,7 @@
     "@semantic-release/changelog": "^3.0.2",
     "@semantic-release/commit-analyzer": "^6.1.0",
     "@semantic-release/git": "^7.0.8",
-    "@semantic-release/npm": "^5.1.4",
+    "@semantic-release/npm": "^5.1.7",
     "@semantic-release/release-notes-generator": "^7.1.4",
     "@types/fs-extra": "^5.0.5",
     "@types/lodash": "^4.14.123",

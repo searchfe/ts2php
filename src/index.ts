@@ -49,10 +49,10 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         compilerOptions: {
             target: ts.ScriptTarget.ES2016,
             scrict: true,
-            transpileOnly: false,
             module: ts.ModuleKind.CommonJS,
             noImplicitThis: true,
             noImplicitAny: true,
+            alwaysStrict: true,
             ...options.compilerOptions
         },
         addFilesFromTsConfig: false,

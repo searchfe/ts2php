@@ -3,7 +3,7 @@
  * @author meixuguang
  */
 
-import ts from 'typescript';
+import * as ts from 'typescript';
 
 export function transform(context: ts.TransformationContext) {
 

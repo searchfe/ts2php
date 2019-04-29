@@ -3,12 +3,14 @@
     "src/**/*.ts"
   ],
   "compilerOptions": {
+    "declaration": false,
     "target": "es6",
     "module": "commonjs",
-    "lib": ["es2015"],
+    "lib": ["es2016", "es2017"],
     "outDir": "dist",
     "rootDir": "./src",
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "removeComments": false
   }
 }
