@@ -4,3 +4,6 @@ arr.map(item => {
 });
 
 let a = (b: string) => '123';
+
+let v = '123';
+let b = () => v;

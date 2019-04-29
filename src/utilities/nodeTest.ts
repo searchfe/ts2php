@@ -27,7 +27,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.ComputedPropertyName,
     SyntaxKind.ImportSpecifier,
     SyntaxKind.PropertyDeclaration,
-    SyntaxKind.EnumDeclaration
+    SyntaxKind.EnumDeclaration,
+    SyntaxKind.ArrowFunction
 ]);
 
 /**
