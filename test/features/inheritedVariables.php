@@ -24,6 +24,7 @@ $obj = array(
         return "123" . $b;
     },
     "b" => function () use(&$b)  {
-        return "123" . $b;
+        $a = $b;
+        return "123" . $b . $a;
     }
 );
