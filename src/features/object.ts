@@ -10,17 +10,12 @@ import {
     isCallExpression,
     isBinaryExpression,
     SyntaxKind,
-    isStringLiteral,
-    TypeFlags,
     createCall,
     createIdentifier
 } from 'typescript';
 
 import method from '../utilities/method';
-import {
-    isClassLike,
-    isClassInstance
-} from '../utilities/nodeTest';
+import {isClassInstance} from '../utilities/nodeTest';
 
 const staticMap = {
     assign: method('array_merge', false),

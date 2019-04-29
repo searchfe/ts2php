@@ -1342,6 +1342,9 @@ export function emitFile(
         ) {
             writePunctuation(".=");
         }
+        else if (node.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
+            writePunctuation("?:");
+        }
         else {
             writeTokenNode(node.operatorToken, writeOperator, node.left, node.right);
         }
