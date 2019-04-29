@@ -21,6 +21,11 @@ let f = function () {
 }
 
 let obj = {
+    /**
+     * aaa
+     *
+     * @ssr
+     */
     a: function () {
         return '123' + b;
     },
