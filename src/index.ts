@@ -54,7 +54,9 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
             noImplicitThis: true,
             noImplicitAny: true,
             ...options.compilerOptions
-        }
+        },
+        addFilesFromTsConfig: false,
+        skipFileDependencyResolution: true
     });
 
     let sourceFile;
@@ -76,6 +78,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         };
     }
 
+    project.resolveSourceFileDependencies();
     const program = project.getProgram().compilerObject;
 
     const finalOptions = {
