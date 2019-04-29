@@ -1764,7 +1764,8 @@ export function emitFile(
             || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent))
         ) {
             const wrappedNode = createWrappedNode(node, {typeChecker});
-            const identifiers = wrappedNode.getDescendantsOfKind(ts.SyntaxKind.Identifier);
+            const body = wrappedNode.getBody();
+            const identifiers = body.getKind() === ts.SyntaxKind.Identifier ? [body as tsMorph.Identifier] : body.getDescendantsOfKind(ts.SyntaxKind.Identifier);
             const inheritedVariables: tsMorph.Identifier[] = [];
             const nodeStart = node.getStart();
             const nodeEnd = node.getEnd();
