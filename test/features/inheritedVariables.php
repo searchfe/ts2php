@@ -17,7 +17,7 @@ $fa = function () use(&$b) {
 return "123" . $b;
 };
 $f = function () use(&$a)  {
-    return "123" . strlen($a["b"]);
+    return "123" . mb_strlen($a["b"], "utf8");
 };
 $obj = array(
     "a" => function () use(&$b)  {

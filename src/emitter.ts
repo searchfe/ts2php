@@ -1781,7 +1781,7 @@ export function emitFile(
                     inheritedVariables.push(item);
                 }
             });
-            
+
             if (inheritedVariables.length > 0) {
                 writeSpace();
                 write('use');

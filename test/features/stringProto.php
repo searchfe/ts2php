@@ -12,4 +12,6 @@ $i = explode(" ", $a);
 $j = preg_split("/\\0/", $a);
 $k = 2;
 $l = substr($a, 1, $k);
-$m = strlen($a);
+$m = mb_strlen($a, "utf8");
+$n = "a啊哈哈";
+echo mb_substr($n, 1, 1, "utf8");

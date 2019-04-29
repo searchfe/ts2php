@@ -12,7 +12,7 @@ $Vue["extend"](array(
         );
     },
     "created" => function () {
-        $e = strlen($this->b);
+        $e = mb_strlen($this->b, "utf8");
         $g = round($this->f, 2);
     },
     "computed" => array(

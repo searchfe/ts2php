@@ -13,11 +13,15 @@ import {
     EmitHint,
     isPropertyAccessExpression,
     isCallExpression,
-    isRegularExpressionLiteral
+    isRegularExpressionLiteral,
+    isElementAccessExpression,
+    createCall,
+    createIdentifier,
+    createStringLiteral
 } from 'typescript';
 
 import {
-    isStringLike,
+    isStringLike, isNumberLike,
 } from '../utilities/nodeTest';
 
 import method from '../utilities/method';
@@ -98,9 +102,37 @@ export default {
             && isStringLike(expNode, state.typeChecker)
             && helpers.getTextOfNode(node.name) === 'length'
         ) {
-            helpers.writePunctuation('strlen(');
-            helpers.emitExpression(expNode);
-            helpers.writePunctuation(')');
+            helpers.emitExpression(
+                createCall(
+                    createIdentifier('mb_strlen'),
+                    [],
+                    [
+                        expNode,
+                        createStringLiteral('utf8')
+                    ]
+                )
+            );
+            return;
+        }
+
+        if (
+            hint === EmitHint.Expression
+            && isElementAccessExpression(node)
+            && isStringLike(expNode, state.typeChecker)
+            && isNumberLike(node.argumentExpression, state.typeChecker)
+        ) {
+            helpers.emitExpression(
+                createCall(
+                    createIdentifier('mb_substr'),
+                    [],
+                    [
+                        expNode,
+                        node.argumentExpression,
+                        createNumericLiteral('1'),
+                        createStringLiteral('utf8')
+                    ]
+                )
+            );
             return;
         }
 
