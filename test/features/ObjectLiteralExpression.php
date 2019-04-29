@@ -9,3 +9,4 @@ $a = array(
     "b" => $b,
     "a-b" => $b
 );
+array_key_exists("b", $a);

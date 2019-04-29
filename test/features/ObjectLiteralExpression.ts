@@ -8,3 +8,5 @@ const a = {
     b,
     'a-b': b
 };
+
+const c = 'b' in a;

@@ -7,10 +7,20 @@ import {
     EmitHint,
     isPropertyAccessExpression,
     isIdentifier,
-    isCallExpression
+    isCallExpression,
+    isBinaryExpression,
+    SyntaxKind,
+    isStringLiteral,
+    TypeFlags,
+    createCall,
+    createIdentifier
 } from 'typescript';
 
 import method from '../utilities/method';
+import {
+    isClassLike,
+    isClassInstance
+} from '../utilities/nodeTest';
 
 const staticMap = {
     assign: method('array_merge', false),
@@ -23,7 +33,7 @@ const staticMap = {
 
 export default {
 
-    emit(hint, node, {helpers}) {
+    emit(hint, node, {helpers, typeChecker}) {
 
         const expNode = node.expression;
         let func;
@@ -38,6 +48,36 @@ export default {
         ) {
             return func(node, helpers);
         }
+
+        if (
+            hint === EmitHint.Expression
+            && isBinaryExpression(node)
+            && node.operatorToken.kind === SyntaxKind.InKeyword
+        ) {
+            if (isClassInstance(node.right, typeChecker)) {
+                return helpers.emitExpression(
+                    createCall(
+                        createIdentifier('property_exists'),
+                        [],
+                        [
+                            node.right,
+                            node.left
+                        ]
+                    )
+                );
+            }
+            return helpers.emitExpression(
+                createCall(
+                    createIdentifier('array_key_exists'),
+                    [],
+                    [
+                        node.left,
+                        node.right
+                    ]
+                )
+            );
+        }
+
 
         return false;
     }
