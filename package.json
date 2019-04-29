@@ -1,6 +1,6 @@
 {
   "name": "ts2php",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
@@ -69,13 +69,7 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      [
-        "@semantic-release/changelog",
-        {
-          "changelogFile": "CHANGELOG.md",
-          "changelogTitle": "# Changelog"
-        }
-      ],
+      "@semantic-release/changelog",
       "@semantic-release/npm",
       "@semantic-release/git"
     ],
