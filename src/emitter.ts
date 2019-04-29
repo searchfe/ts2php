@@ -1770,6 +1770,7 @@ export function emitFile(
             const nodeStart = node.getStart();
             const nodeEnd = node.getEnd();
 
+            let names = {};
             identifiers.forEach(item => {
                 if (
                     item.getParent().getKind() === ts.SyntaxKind.PropertyAccessExpression
@@ -1777,12 +1778,19 @@ export function emitFile(
                 ) {
                     return;
                 }
-
-                const symbolOfIdentifier = item.getSymbol().compilerSymbol;
+                const nodeSymbol = item.getSymbol();
+                if (!nodeSymbol) {
+                    return;
+                }
+                const symbolOfIdentifier = nodeSymbol.compilerSymbol;
                 const d = symbolOfIdentifier.getDeclarations();
                 const inherite = d.find(item => item.getStart() < nodeStart || item.getEnd() > nodeEnd);
                 if (inherite) {
-                    inheritedVariables.push(item);
+                    const text = item.getText();
+                    if (!names[text]) {
+                        names[text] = 1;
+                        inheritedVariables.push(item);
+                    }
                 }
             });
 

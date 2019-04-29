@@ -30,6 +30,10 @@ let obj = {
         return '123' + b;
     },
     b() {
-        return '123' + b;
+        /**
+         * @ssr
+         */
+        const a = b;
+        return '123' + b + a;
     }
 }
