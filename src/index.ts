@@ -13,7 +13,7 @@ import * as emitter from './emitter';
 import {CompilerState} from './types';
 import {setState} from './state';
 import buildInPlugins from './features/index';
-import {transform, transformSpreadArguments} from './transformer';
+import {transform} from './transformer';
 import {Ts2phpOptions, ModuleInfo} from '../types/index';
 
 const defaultOptions = {

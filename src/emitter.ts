@@ -63,7 +63,6 @@ import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
 import {getNodeId} from './checker';
-import {transformSpreadArguments} from './transformer';
 
 let currentSourceFile: SourceFile;
 
