@@ -13,7 +13,7 @@ import * as emitter from './emitter';
 import {CompilerState} from './types';
 import {setState} from './state';
 import buildInPlugins from './features/index';
-import {transform} from './transformer';
+import {transform, transformSpreadArguments} from './transformer';
 import {Ts2phpOptions, ModuleInfo} from '../types/index';
 
 const defaultOptions = {
@@ -53,6 +53,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
             noImplicitThis: true,
             noImplicitAny: true,
             alwaysStrict: true,
+            transpileOnly: false,
             ...options.compilerOptions
         },
         addFilesFromTsConfig: false,
@@ -62,11 +63,11 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
     let sourceFile;
 
     if (!options.source && fs.existsSync(filePath)) {
-        sourceFile = project.addExistingSourceFile(filePath).compilerNode;
+        sourceFile = project.addExistingSourceFile(filePath);
     }
     else if (options.source) {
         filePath = /\.ts$/.test(filePath) ? filePath : (filePath + '.ts');
-        sourceFile = project.createSourceFile(filePath, options.source, {overwrite: true}).compilerNode;
+        sourceFile = project.createSourceFile(filePath, options.source, {overwrite: true});
     }
     else {
         return {
@@ -78,6 +79,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         };
     }
 
+
     project.resolveSourceFileDependencies();
     const program = project.getProgram().compilerObject;
 
@@ -85,6 +87,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         ...defaultOptions,
         ...options
     };
+
+    const typeChecker = program.getTypeChecker();
 
     let diagnostics = project.getPreEmitDiagnostics();
     if (finalOptions.showDiagnostics) {
@@ -98,8 +102,6 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
             };
         }
     }
-
-    const typeChecker = program.getTypeChecker();
 
     const plugins = (finalOptions && finalOptions.plugins) ? [...buildInPlugins, ...finalOptions.plugins] : buildInPlugins;
 
@@ -117,14 +119,18 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
     setState(state);
 
-    if (state.modules) {
-        for (let name of Object.keys(state.modules)) {
-            state.modules[name].name = name;
-        }
-    }
+    const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [
+        transform,
+        ...(options.customTransformers || [])
+    ];
 
-    if (sourceFile.resolvedModules) {
-        sourceFile.resolvedModules.forEach((item, name) => {
+    let sourceFileNode = sourceFile.compilerNode;
+
+    const emitResolver = program.getDiagnosticsProducingTypeChecker()
+        .getEmitResolver(sourceFileNode, undefined);
+
+    if (sourceFileNode.resolvedModules) {
+        sourceFileNode.resolvedModules.forEach((item, name) => {
             let moduleIt = state.modules[name] || {} as ModuleInfo;
             state.modules[name] = {
                 name,
@@ -135,16 +141,10 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         });
     }
 
-    const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [
-        transform,
-        ...(options.customTransformers || [])
-    ];
-
-    const emitResolver = program.getDiagnosticsProducingTypeChecker()
-        .getEmitResolver(sourceFile, undefined);
+    const code = emitter.emitFile(sourceFileNode, state, emitResolver, transformers);
 
     return {
-        phpCode: emitter.emitFile(sourceFile, state, emitResolver, transformers),
+        phpCode: code,
         errors: state.errors
-    }
+    };
 }

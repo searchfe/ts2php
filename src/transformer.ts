@@ -130,14 +130,187 @@ export function transform(context: ts.TransformationContext) {
      * @param node The node to visit.
      */
     function visitTypeScript(node: ts.Node): ts.VisitResult<ts.Node> {
+
+        node = ts.visitEachChild(node, visitTypeScript, context);
+
         switch (node.kind) {
             case ts.SyntaxKind.EnumDeclaration:
                 // TypeScript enum declarations do not exist in ES6 and must be rewritten.
                 return visitEnumDeclaration(<ts.EnumDeclaration>node);
 
+            case ts.SyntaxKind.FunctionDeclaration:
+                return visitFunctionDeclaration(<ts.FunctionDeclaration>node);
+
+            case ts.SyntaxKind.FunctionExpression:
+                return visitFunctionExpression(<ts.FunctionExpression>node);
+
+            case ts.SyntaxKind.MethodDeclaration:
+                return visitMethodDeclaration(<ts.MethodDeclaration>node);
+
+            case ts.SyntaxKind.CallExpression:
+                return visitCallExpression(<ts.CallExpression>node);
+
             default:
                 return node;
         }
+
+    }
+
+    function visitCallExpression(node: ts.CallExpression) {
+
+        const index = node.arguments.findIndex(node => ts.isSpreadElement(node))
+
+        if (index < 0 || !ts.isIdentifier(node.expression)) {
+            return node;
+        }
+
+        const spread = node.arguments[index] as ts.SpreadElement;
+        const spreadName = ts.createIdentifier(spread.expression.getText());
+
+        let argument: ts.CallExpression | ts.Identifier = spreadName;
+
+        if (index > 0) {
+
+            const argus = node.arguments.map(node => node);
+            const leadingArgu = ts.createArrayLiteral(argus.slice(0, index));
+
+            const suffix = argus.slice(index + 1);
+
+            let newArgus = [
+                leadingArgu,
+                spreadName,
+            ];
+
+            if (suffix.length) {
+                newArgus.push(ts.createArrayLiteral(suffix));
+            }
+
+            argument = ts.createCall(
+                ts.createIdentifier('array_merge'),
+                [],
+                newArgus
+            );
+        }
+
+        const name = node.expression.getText() as string;
+
+        const returnNode = ts.updateCall(
+            node,
+            ts.createIdentifier('call_user_func_array'),
+            [],
+            [
+                ts.createStringLiteral(name),
+                argument
+            ]
+        );
+
+        if (index > 0) {
+            spreadName.parent = argument;
+        }
+        else {
+            spreadName.parent = returnNode;
+        }
+
+        return returnNode;
+    }
+
+    function visitFunctionDeclaration(node: ts.FunctionDeclaration) {
+
+        if (!node.parameters.some(node => node.dotDotDotToken)) {
+            return node;
+        }
+
+        const body = transformFunctionBody(node);
+
+        return ts.updateFunctionDeclaration(
+            node,
+            /*decoraters*/ undefined,
+            /*modifiers*/ undefined,
+            node.asteriskToken,
+            node.name,
+            /*typeParameters*/ undefined,
+            node.parameters,
+            /*type*/ undefined,
+            body
+        );
+    }
+
+    function visitFunctionExpression(node: ts.FunctionExpression) {
+
+        if (!node.parameters.some(node => node.dotDotDotToken)) {
+            return node;
+        }
+
+        const body = transformFunctionBody(node);
+
+        return ts.updateFunctionExpression(
+            node,
+            /*modifiers*/ undefined,
+            node.asteriskToken,
+            node.name,
+            /*typeParameters*/ undefined,
+            node.parameters,
+            /*type*/ undefined,
+            body
+        );
+    }
+
+    function visitMethodDeclaration(node: ts.MethodDeclaration) {
+
+        if (!node.parameters.some(node => node.dotDotDotToken)) {
+            return node;
+        }
+
+        const body = transformFunctionBody(node);
+
+        return ts.updateMethod(
+            node,
+            /*decoraters*/ undefined,
+            /*modifiers*/ undefined,
+            node.asteriskToken,
+            node.name,
+            node.questionToken,
+            /*typeParameters*/ undefined,
+            node.parameters,
+            /*type*/ undefined,
+            body
+        );
+    }
+
+
+    function transformFunctionBody(node: ts.FunctionDeclaration | ts.MethodDeclaration | ts.FunctionExpression) {
+
+        const parameterIndex = node.parameters.findIndex(node => !!node.dotDotDotToken);
+
+        if (parameterIndex > 0) {
+            return node.body;
+        }
+
+        const parameter = node.parameters[parameterIndex];
+        const declarationName = parameter.name.kind === ts.SyntaxKind.Identifier ? ts.getMutableClone(parameter.name) : ts.createTempVariable(/*recordTempVariable*/ undefined);
+        node.parameters = ts.createNodeArray(node.parameters.filter(node => !node.dotDotDotToken));
+        const statement = ts.createVariableStatement(
+            /*modifiers*/ undefined,
+            ts.createVariableDeclarationList([
+                ts.createVariableDeclaration(
+                    declarationName,
+                    /*type*/ undefined,
+                    ts.createCall(
+                        ts.createIdentifier('func_get_args'),
+                        [],
+                        []
+                    )
+                )
+            ])
+        );
+
+        return ts.createBlock(
+            [
+                statement,
+                ...node.body.statements
+            ],
+            true
+        );
     }
 
     /**
@@ -237,3 +410,5 @@ export function transform(context: ts.TransformationContext) {
     }
 
 }
+
+

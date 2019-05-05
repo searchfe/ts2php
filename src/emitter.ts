@@ -63,6 +63,7 @@ import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
 import {getNodeId} from './checker';
+import {transformSpreadArguments} from './transformer';
 
 let currentSourceFile: SourceFile;
 
@@ -547,7 +548,7 @@ export function emitFile(
                 // case SyntaxKind.YieldExpression:
                 //     return emitYieldExpression(<YieldExpression>node);
                 // case SyntaxKind.SpreadElement:
-                //     return emitSpreadExpression(<SpreadElement>node);
+                //     return emitSpreadExpression(<ts.SpreadElement>node);
                 case SyntaxKind.ClassExpression:
                     return emitClassExpression(<ts.ClassExpression>node);
                 // case SyntaxKind.OmittedExpression:
@@ -1385,7 +1386,7 @@ export function emitFile(
     //     emitExpressionWithLeadingSpace(node.expression);
     // }
 
-    // function emitSpreadExpression(node: SpreadElement) {
+    // function emitSpreadExpression(node: ts.SpreadElement) {
     //     writePunctuation("...");
     //     emitExpression(node.expression);
     // }
