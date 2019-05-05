@@ -4,7 +4,7 @@ let b = {
 };
 let c = '123';
 
-function aaa(m: number[], n: {[name: string]: number}, k: string) {
+function aaa(m: number[], n: {[name: string]: number}, k: string, d?: () => string) {
     m.push(4);
     n.b = 2;
     k += '4';

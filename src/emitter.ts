@@ -732,9 +732,10 @@ export function emitFile(
         // emitModifiers(node, node.modifiers);
         // emit(node.dotDotDotToken);
 
-        if (node.parent && node.parent.kind === SyntaxKind.FunctionDeclaration) {
+        if (node.parent && [SyntaxKind.FunctionDeclaration, SyntaxKind.MethodDeclaration].includes(node.parent.kind)) {
             const type = typeChecker.getTypeAtLocation(node.name);
-            if (type && type.flags === ts.TypeFlags.Object) {
+            const symbol = type.getSymbol();
+            if (type && type.flags === ts.TypeFlags.Object && symbol && !symbol.members.has('__call' as ts.__String)) {
                 write('&');
             }
         }
