@@ -1206,6 +1206,16 @@ $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> <span class="hljs-title">use</span><span class="hljs-params">(&amp;$b)</span>  </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-string">"123"</span> . $b;
 };</code></pre>
+			<h4 id="reset-function-arguments"><code>reset function arguments</code></h4>
+			<pre><code class="language-typescript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">funcA</span>(<span class="hljs-params">...args: <span class="hljs-built_in">string</span>[]</span>) </span>{
+}</code></pre>
+			<p>output</p>
+			<pre><code class="language-php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">funcA</span><span class="hljs-params">()</span> </span>{
+    $args = func_get_args();
+}</code></pre>
+			<blockquote>
+				<p>注：箭头函数暂不支持，并且只能用于所有参数都用 <code>...</code> 来加载的情况</p>
+			</blockquote>
 			<h3 id="core-javascript-api">Core JavaScript API</h3>
 			<ul>
 				<li>parseInt <strong>只接收一个参数</strong></li>
@@ -1362,7 +1372,7 @@ $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <spa
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/56c32f4/types/index.d.ts#L162">index.d.ts:162</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/714c418/types/index.d.ts#L162">index.d.ts:162</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
