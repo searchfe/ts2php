@@ -423,6 +423,24 @@ $f = function () use(&$b)  {
 };
 ```
 
+
+#### `reset function arguments`
+
+```typescript
+function funcA(...args: string[]) {
+}
+```
+
+output
+
+```php
+function funcA() {
+    $args = func_get_args();
+}
+```
+
+> 注：箭头函数暂不支持，并且只能用于所有参数都用 `...` 来加载的情况
+
 ### Core JavaScript API
 
 - parseInt **只接收一个参数**
