@@ -10,7 +10,6 @@ import JSONPlugin from './json';
 import GlobalPlugin from './global';
 import NumberPlugin from './number';
 import ArrayPlugin from './array';
-import ImportPlugin from './import';
 import ConsolePlugin from './console';
 import DatePlugin from './date';
 
@@ -22,7 +21,6 @@ export default [
     GlobalPlugin,
     NumberPlugin,
     ArrayPlugin,
-    ImportPlugin,
     ConsolePlugin,
     DatePlugin
 ];

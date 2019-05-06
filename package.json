@@ -80,13 +80,12 @@
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
-    "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.0",
     "rimraf": "^2.6.3",
-    "semantic-release": "^15.13.3",
     "source-map-support": "^0.5.12",
     "sync-files": "^1.0.3",
-    "ts-node": "^7.0.1",
+    "ts-node": "^8.1.0",
     "typedoc": "^0.14.2",
     "vue": "^2.6.10"
   }
