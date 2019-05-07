@@ -278,17 +278,17 @@ const {
     c: y = 1
 } = tplData;
 
-const c = tplData.a;
+let a = [1, 2, 3];
+const [, e, f] = a;
 ```
 
 output
 
 ```php
 $tplData = array( "a" => 1 );
-$difftime = isset($tplData["difftime"]) ? $tplData["difftime"] : 8;
-$a = $tplData["a"];
-$y = isset($tplData["c"]) ? $tplData["c"] : 1;
-$c = $tplData["a"];
+$difftime = isset($tplData["difftime"]) ? $tplData["difftime"] : 8; $a = $tplData["a"]; $y = isset($tplData["c"]) ? $tplData["c"] : 1;
+$a = array(1, 2, 3);
+$e = $a[1]; $f = $a[2];
 ```
 
 #### `es2015 template string`
