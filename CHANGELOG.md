@@ -1,3 +1,13 @@
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/max-team/ts2php/compare/v0.8.1...v0.9.0) (2019-05-07)
+
+
+### Features
+
+* support array destructing, close [#34](https://github.com/max-team/ts2php/issues/34) ([f94f8a8](https://github.com/max-team/ts2php/commit/f94f8a8))
+
+
+
 <a name="0.8.1"></a>
 ## [0.8.1](https://github.com/max-team/ts2php/compare/v0.7.0...v0.8.1) (2019-05-05)
 
