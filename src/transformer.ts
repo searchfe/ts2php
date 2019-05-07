@@ -107,21 +107,7 @@ export function transform(context: ts.TransformationContext) {
      * @param node The node to visit.
      */
     function sourceElementVisitor(node: ts.Node): ts.VisitResult<ts.Node> {
-        return saveStateAndInvoke(node, visitorWorker);
-    }
-
-    /**
-     * Visits and possibly transforms any node.
-     *
-     * @param node The node to visit.
-     */
-    function visitorWorker(node: ts.Node): ts.VisitResult<ts.Node> {
-        if (node.transformFlags & ts.TransformFlags.TypeScript) {
-            // This node is explicitly marked as TypeScript, so we should transform the node.
-            return visitTypeScript(node);
-        }
-
-        return node;
+        return saveStateAndInvoke(node, visitTypeScript);
     }
 
     /**
@@ -150,10 +136,79 @@ export function transform(context: ts.TransformationContext) {
             case ts.SyntaxKind.CallExpression:
                 return visitCallExpression(<ts.CallExpression>node);
 
+            case ts.SyntaxKind.VariableDeclarationList:
+                return visitVariableDeclarationList(<ts.VariableDeclarationList>node);
+
             default:
                 return node;
         }
 
+    }
+
+    function visitVariableDeclarationList(node: ts.VariableDeclarationList) {
+
+        const pendingMap = new Map();
+
+        node.declarations.forEach((declaration, index) => {
+
+            const nameNode = declaration.name;
+
+            if (!ts.isObjectBindingPattern(nameNode) && !ts.isArrayBindingPattern(nameNode)) {
+                return;
+            }
+
+            const initializer = declaration.initializer;
+            const pendingList = [] as ts.VariableDeclaration[];
+            const isArray = ts.isArrayBindingPattern(nameNode);
+
+            nameNode.elements.forEach((child, index) => {
+
+                if (!ts.isBindingElement(child)) {
+                    return;
+                }
+
+                const accessName = child.propertyName || child.name;
+
+                const access = ts.createElementAccess(
+                    initializer,
+                    isArray ? index : ts.createStringLiteral(accessName.getText())
+                );
+
+                const variable = ts.createVariableDeclaration(
+                    child.name, undefined,
+                    child.initializer
+                        ? ts.createConditional(
+                            ts.createCall(ts.createIdentifier('isset'), [], [access]),
+                            access,
+                            child.initializer
+                        )
+                        : access
+                );
+
+                pendingList.push(variable);
+            });
+
+            pendingMap.set(index, pendingList);
+
+        });
+
+        if (!pendingMap.size) {
+            return node;
+        }
+
+        let newDeclarations = [];
+        let start = 0
+
+        pendingMap.forEach((declarations, index) => {
+            newDeclarations = [
+                ...newDeclarations,
+                ...node.declarations.slice(start, index - start),
+                ...declarations
+            ];
+            start = index + 1;
+        });
+
+        return ts.updateVariableDeclarationList(node, newDeclarations);
     }
 
     function visitCallExpression(node: ts.CallExpression) {
@@ -406,7 +461,7 @@ export function transform(context: ts.TransformationContext) {
      * @param node The node to visit.
      */
     function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
-        return saveStateAndInvoke(node, visitorWorker);
+        return saveStateAndInvoke(node, visitTypeScript);
     }
 
 }

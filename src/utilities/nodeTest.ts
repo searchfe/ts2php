@@ -28,7 +28,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.ImportSpecifier,
     SyntaxKind.PropertyDeclaration,
     SyntaxKind.EnumDeclaration,
-    SyntaxKind.ArrowFunction
+    SyntaxKind.ArrowFunction,
+    SyntaxKind.BindingElement
 ]);
 
 /**
@@ -99,7 +100,8 @@ const newLineArrayBrackets = ["array(", ")"];
 const arrayBracketsMap = {
     [ts.ListFormat.ObjectLiteralExpressionProperties]: baseArrayBrackets,
     [ts.ListFormat.ObjectLiteralExpressionProperties | ts.ListFormat.PreferNewLine]: newLineArrayBrackets,
-    [ts.ListFormat.ArrayLiteralExpressionElements]: baseArrayBrackets
+    [ts.ListFormat.ArrayLiteralExpressionElements]: baseArrayBrackets,
+    [ts.ListFormat.ArrayLiteralExpressionElements | ts.ListFormat.PreferNewLine]: newLineArrayBrackets
 };
 /**
  * 判断是否需要转换成 array()

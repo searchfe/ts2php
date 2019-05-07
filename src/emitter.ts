@@ -290,10 +290,10 @@ export function emitFile(
                 // // Binding patterns
                 // case SyntaxKind.ObjectBindingPattern:
                 //     return emitObjectBindingPattern(<ts.ObjectBindingPattern>node);
-                // case SyntaxKind.ArrayBindingPattern:
-                //     return emitArrayBindingPattern(<ArrayBindingPattern>node);
-                // case SyntaxKind.BindingElement:
-                //     return emitBindingElement(<BindingElement>node);
+                case SyntaxKind.ArrayBindingPattern:
+                    return emitArrayBindingPattern(<ts.ArrayBindingPattern>node);
+                case SyntaxKind.BindingElement:
+                    return emitBindingElement(<ts.BindingElement>node);
 
                 // Misc
                 case SyntaxKind.TemplateSpan:
@@ -544,8 +544,8 @@ export function emitFile(
                 //     return emitSpreadExpression(<ts.SpreadElement>node);
                 case SyntaxKind.ClassExpression:
                     return emitClassExpression(<ts.ClassExpression>node);
-                // case SyntaxKind.OmittedExpression:
-                //     return;
+                case SyntaxKind.OmittedExpression:
+                    return;
                 case SyntaxKind.AsExpression:
                     return emitAsExpression(<ts.AsExpression>node);
                 // case SyntaxKind.NonNullExpression:
@@ -1097,22 +1097,22 @@ export function emitFile(
     //     writePunctuation("}");
     // }
 
-    // function emitArrayBindingPattern(node: ArrayBindingPattern) {
-    //     writePunctuation("[");
-    //     emitList(node, node.elements, ListFormat.ArrayBindingPatternElements);
-    //     writePunctuation("]");
-    // }
+    function emitArrayBindingPattern(node: ts.ArrayBindingPattern) {
+        writePunctuation("list(");
+        emitList(node, node.elements, ListFormat.ArrayBindingPatternElements);
+        writePunctuation(")");
+    }
 
-    // function emitBindingElement(node: BindingElement) {
-    //     emit(node.dotDotDotToken);
-    //     if (node.propertyName) {
-    //         emit(node.propertyName);
-    //         writePunctuation(":");
-    //         writeSpace();
-    //     }
-    //     emit(node.name);
-    //     emitInitializer(node.initializer, node.name.end, node);
-    // }
+    function emitBindingElement(node: ts.BindingElement) {
+        // emit(node.dotDotDotToken);
+        // if (node.propertyName) {
+        //     emit(node.propertyName);
+        //     writePunctuation(":");
+        //     writeSpace();
+        // }
+        emit(node.name);
+        // emitInitializer(node.initializer, node.name.end, node);
+    }
 
     // //
     // // Expressions
@@ -1645,47 +1645,9 @@ export function emitFile(
     // //
 
     function emitVariableDeclaration(node: ts.VariableDeclaration) {
-        if (ts.isObjectBindingPattern(node.name)) {
-            const count = node.name.elements.length;
-            let initializer = node.initializer;
-            forEach(node.name.elements, (element, index) => {
-
-                if (ts.isIdentifier(element.name)) {
-
-                    const nameNode = element.name;
-                    const access = ts.createPropertyAccess(
-                        initializer,
-                        element.propertyName ? getTextOfNode(element.propertyName) : nameNode
-                    );
-
-                    writeBase("$");
-                    emit(nameNode);
-                    writeBase(" = ");
-
-                    if (element.initializer) {
-                        writeBase('isset(');
-                    }
-
-                    emitExpression(access);
-
-                    if (element.initializer && ts.isLiteralExpression(element.initializer)) {
-                        writeBase(') ? ');
-                        emitExpression(access);
-                        writeBase(' : ');
-                        emitLiteral(element.initializer);
-                    }
-                }
-                if (index < count - 1) {
-                    writeSemicolon();
-                    writeLine();
-                }
-            });
-        }
-        else {
-            emit(node.name);
-            // emitTypeAnnotation(node.type);
-            emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
-        }
+        emit(node.name);
+        // emitTypeAnnotation(node.type);
+        emitInitializer(node.initializer, node.type ? node.type.end : node.name.end, node);
     }
 
     function emitVariableDeclarationList(node: ts.VariableDeclarationList) {
@@ -2822,6 +2784,12 @@ export function emitFile(
     }
 
     function writeDelimiter(format: ts.ListFormat) {
+
+        if (format === ts.ListFormat.VariableDeclarationList) {
+            writePunctuation(";");
+            return;
+        }
+
         switch (format & ts.ListFormat.DelimitersMask) {
             case ts.ListFormat.None:
                 break;
@@ -2871,7 +2839,7 @@ export function emitFile(
         else {
             // Write the opening line terminator or leading whitespace.
             const mayEmitInterveningComments = (format & ts.ListFormat.NoInterveningComments) === 0;
-            let shouldEmitInterveningComments = mayEmitInterveningComments;
+            // let shouldEmitInterveningComments = mayEmitInterveningComments;
             if (shouldWriteLeadingLineTerminator(parentNode, children!, format)) { // TODO: GH#18217
                 writeLine();
                 // shouldEmitInterveningComments = false;
@@ -2887,7 +2855,7 @@ export function emitFile(
 
             // Emit each child.
             let previousSibling: ts.Node | undefined;
-            let shouldDecreaseIndentAfterEmit = false;
+            // let shouldDecreaseIndentAfterEmit = false;
             for (let i = 0; i < count; i++) {
                 const child = children![start + i];
 
@@ -2912,7 +2880,7 @@ export function emitFile(
                     // Write either a line terminator or whitespace to separate the elements.
                     if (shouldWriteSeparatingLineTerminator(previousSibling, child, format)) {
                         writeLine();
-                        shouldEmitInterveningComments = false;
+                        // shouldEmitInterveningComments = false;
                     }
                     else if (previousSibling && format & ts.ListFormat.SpaceBetweenSiblings) {
                         writeSpace();

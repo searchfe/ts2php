@@ -2,9 +2,10 @@
 namespace test\case_ArrayLiteralExpression;
 $b = 4;
 $a = array(1, 2, 3, $b);
-$c = [
+$c = array(
     1,
     2,
     3,
     $b
-];
+);
+$e = $a[1]; $f = $a[2];

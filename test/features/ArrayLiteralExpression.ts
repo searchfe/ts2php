@@ -6,3 +6,5 @@ let c = [
     3,
     b
 ];
+
+const [, e, f] = a;
