@@ -9,3 +9,6 @@ function funcB(...args: string[]) {
     let f = d.includes('1');
     funcA('a', ...args, c);
 }
+
+function funcC(a: string, ...args: string[]) {
+}

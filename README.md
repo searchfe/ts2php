@@ -429,6 +429,8 @@ $f = function () use(&$b)  {
 ```typescript
 function funcA(...args: string[]) {
 }
+function funcC(a: string, ...args: string[]) {
+}
 ```
 
 output
@@ -437,9 +439,12 @@ output
 function funcA() {
     $args = func_get_args();
 }
+function funcC() {
+    $a = func_get_arg(0); $args = array_slice(func_get_args(), 1);
+}
 ```
 
-> 注：箭头函数暂不支持，并且只能用于所有参数都用 `...` 来加载的情况
+> 注：箭头函数暂不支持
 
 ### Core JavaScript API
 

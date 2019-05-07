@@ -79,7 +79,6 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         };
     }
 
-
     project.resolveSourceFileDependencies();
     const program = project.getProgram().compilerObject;
 
@@ -145,6 +144,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
     return {
         phpCode: code,
-        errors: state.errors
+        errors: state.errors,
+        sourceFile: state.sourceFile
     };
 }

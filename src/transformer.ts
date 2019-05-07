@@ -337,26 +337,71 @@ export function transform(context: ts.TransformationContext) {
 
         const parameterIndex = node.parameters.findIndex(node => !!node.dotDotDotToken);
 
-        if (parameterIndex > 0) {
+        if (parameterIndex < 0) {
             return node.body;
         }
 
         const parameter = node.parameters[parameterIndex];
-        const declarationName = parameter.name.kind === ts.SyntaxKind.Identifier ? ts.getMutableClone(parameter.name) : ts.createTempVariable(/*recordTempVariable*/ undefined);
-        node.parameters = ts.createNodeArray(node.parameters.filter(node => !node.dotDotDotToken));
-        const statement = ts.createVariableStatement(
-            /*modifiers*/ undefined,
-            ts.createVariableDeclarationList([
+        const declarationName = parameter.name.kind === ts.SyntaxKind.Identifier
+            ? ts.getMutableClone(parameter.name)
+            : ts.createTempVariable(/*recordTempVariable*/ undefined);
+
+        const parameters = [...node.parameters];
+        node.parameters = ts.createNodeArray([]);
+
+        let variableDeclarationList: ts.VariableDeclarationList;
+
+        if (parameterIndex === 0) {
+            variableDeclarationList = ts.createVariableDeclarationList([
                 ts.createVariableDeclaration(
                     declarationName,
-                    /*type*/ undefined,
+                    undefined,
                     ts.createCall(
                         ts.createIdentifier('func_get_args'),
                         [],
                         []
                     )
                 )
-            ])
+            ]);
+        }
+        else {
+            let list = parameters
+                .slice(0, parameters.length - 1)
+                .map((parameter, index) =>
+                    ts.createVariableDeclaration(
+                        parameter.name,
+                        undefined,
+                        ts.createCall(
+                            ts.createIdentifier('func_get_arg'),
+                            [],
+                            [ts.createNumericLiteral(`${index}`)]
+                        )
+                    )
+                );
+            list.push(
+                ts.createVariableDeclaration(
+                    declarationName,
+                    undefined,
+                    ts.createCall(
+                        ts.createIdentifier('array_slice'),
+                        undefined,
+                        [
+                            ts.createCall(
+                                ts.createIdentifier('func_get_args'),
+                                undefined,
+                                []
+                            ),
+                            ts.createNumericLiteral(`${parameterIndex}`)
+                        ]
+                    )
+                )
+            );
+            variableDeclarationList = ts.createVariableDeclarationList(list);
+        }
+
+        const statement = ts.createVariableStatement(
+            undefined,
+            variableDeclarationList
         );
 
         return ts.createBlock(
