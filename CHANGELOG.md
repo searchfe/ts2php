@@ -1,3 +1,28 @@
+<a name="0.9.2"></a>
+## [0.9.2](https://github.com/max-team/ts2php/compare/v0.9.1...v0.9.2) (2019-05-09)
+
+
+### Bug Fixes
+
+* declare module ([5f9a83e](https://github.com/max-team/ts2php/commit/5f9a83e))
+
+
+
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/max-team/ts2php/compare/v0.9.0...v0.9.1) (2019-05-09)
+
+
+### Bug Fixes
+
+* types has no default export error ([bf28851](https://github.com/max-team/ts2php/commit/bf28851))
+
+
+### Features
+
+* rest arguments support ([7ff1b23](https://github.com/max-team/ts2php/commit/7ff1b23))
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/max-team/ts2php/compare/v0.8.1...v0.9.0) (2019-05-07)
 

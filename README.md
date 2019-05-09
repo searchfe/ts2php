@@ -9,6 +9,32 @@ TypeScript 转 PHP
 [![npm package](https://img.shields.io/npm/v/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 [![npm downloads](http://img.shields.io/npm/dm/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 
+- [ts2php](#ts2php)
+  - [Usage](#usage)
+    - [compiler](#compiler)
+    - [runtime](#runtime)
+    - [CLI](#cli)
+  - [Features](#features)
+    - [Javascript Syntax](#javascript-syntax)
+      - [`for`/`for of`/`for in`](#forfor-offor-in)
+      - [`if`/`else if`/`else`](#ifelse-ifelse)
+      - [`swtich`](#swtich)
+      - [`while`/`do while`](#whiledo-while)
+      - [`Class`](#class)
+      - [`typeof`](#typeof)
+      - [`delete`](#delete)
+      - [`es2015 destructuring`](#es2015-destructuring)
+      - [`es2015 template string`](#es2015-template-string)
+      - [`es2015 object computed property`](#es2015-object-computed-property)
+      - [`es2015 object shorthand property`](#es2015-object-shorthand-property)
+      - [`es2015 object method`](#es2015-object-method)
+      - [`enum`](#enum)
+      - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
+      - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
+      - [`reset function arguments`](#reset-function-arguments)
+    - [Core JavaScript API](#core-javascript-api)
+  - [Thanks to](#thanks-to)
+
 ## Usage
 
 ### compiler
@@ -181,7 +207,7 @@ do {
 } while (!$a);
 ```
 
-#### `Class`/
+#### `Class`
 
 ```javascript
 import {Base} from '../some-utils';
@@ -267,7 +293,7 @@ $e = array( "a" => 1, "b" => 2 );
 unset($e["a"]);
 ```
 
-#### `es2015 object destructuring`
+#### `es2015 destructuring`
 
 ```javascript
 const tplData: {a: number, difftime?: number, c?: 1} = {a: 1};
