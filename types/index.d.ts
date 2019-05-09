@@ -1,5 +1,5 @@
 
-import ts from 'typescript';
+import * as ts from 'typescript';
 
 declare function date(x: string, t?: number): string;
 
