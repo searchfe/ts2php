@@ -931,6 +931,41 @@ img { max-width: 100%; }
 				<a href="https://travis-ci.org/max-team/ts2php"><img src="https://travis-ci.org/max-team/ts2php.svg?branch=master" alt="Build Status"></a>
 				<a href="https://www.npmjs.org/package/ts2php"><img src="https://img.shields.io/npm/v/ts2php.svg" alt="npm package"></a>
 			<a href="https://www.npmjs.org/package/ts2php"><img src="http://img.shields.io/npm/dm/ts2php.svg" alt="npm downloads"></a></p>
+			<ul>
+				<li><a href="#ts2php">ts2php</a><ul>
+						<li><a href="#usage">Usage</a><ul>
+								<li><a href="#compiler">compiler</a></li>
+								<li><a href="#runtime">runtime</a></li>
+								<li><a href="#cli">CLI</a></li>
+							</ul>
+						</li>
+						<li><a href="#features">Features</a><ul>
+								<li><a href="#javascript-syntax">Javascript Syntax</a><ul>
+										<li><a href="#forfor-offor-in"><code>for</code>/<code>for of</code>/<code>for in</code></a></li>
+										<li><a href="#ifelse-ifelse"><code>if</code>/<code>else if</code>/<code>else</code></a></li>
+										<li><a href="#swtich"><code>swtich</code></a></li>
+										<li><a href="#whiledo-while"><code>while</code>/<code>do while</code></a></li>
+										<li><a href="#class"><code>Class</code></a></li>
+										<li><a href="#typeof"><code>typeof</code></a></li>
+										<li><a href="#delete"><code>delete</code></a></li>
+										<li><a href="#es2015-destructuring"><code>es2015 destructuring</code></a></li>
+										<li><a href="#es2015-template-string"><code>es2015 template string</code></a></li>
+										<li><a href="#es2015-object-computed-property"><code>es2015 object computed property</code></a></li>
+										<li><a href="#es2015-object-shorthand-property"><code>es2015 object shorthand property</code></a></li>
+										<li><a href="#es2015-object-method"><code>es2015 object method</code></a></li>
+										<li><a href="#enum"><code>enum</code></a></li>
+										<li><a href="#pass-by-reference-when-the-arg-is-an-object"><code>pass by reference when the arg is an object</code></a></li>
+										<li><a href="#anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></a></li>
+										<li><a href="#reset-function-arguments"><code>reset function arguments</code></a></li>
+									</ul>
+								</li>
+								<li><a href="#core-javascript-api">Core JavaScript API</a></li>
+							</ul>
+						</li>
+						<li><a href="#thanks-to">Thanks to</a></li>
+					</ul>
+				</li>
+			</ul>
 			<h2 id="usage">Usage</h2>
 			<h3 id="compiler">compiler</h3>
 			<pre><code class="language-javascript"><span class="hljs-keyword">import</span> {compile} <span class="hljs-keyword">from</span> <span class="hljs-string">'ts2php'</span>;
@@ -1048,7 +1083,7 @@ $b;
 <span class="hljs-keyword">do</span> {
     $b++;
 } <span class="hljs-keyword">while</span> (!$a);</code></pre>
-			<h4 id="class-"><code>Class</code>/</h4>
+			<h4 id="class"><code>Class</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">import</span> {Base} <span class="hljs-keyword">from</span> <span class="hljs-string">'../some-utils'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Article</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Base</span> </span>{
@@ -1111,7 +1146,7 @@ $a-&gt;dispose();</code></pre>
 			<p>output</p>
 			<pre><code class="language-php">$e = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">2</span> );
 <span class="hljs-keyword">unset</span>($e[<span class="hljs-string">"a"</span>]);</code></pre>
-			<h4 id="es2015-object-destructuring"><code>es2015 object destructuring</code></h4>
+			<h4 id="es2015-destructuring"><code>es2015 destructuring</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">const</span> tplData: {<span class="hljs-attr">a</span>: number, difftime?: number, c?: <span class="hljs-number">1</span>} = {<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>};
 
 <span class="hljs-keyword">const</span> {
@@ -1378,7 +1413,7 @@ $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <spa
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/0476ef1/types/index.d.ts#L123">index.d.ts:123</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/cd19734/types/index.d.ts#L123">index.d.ts:123</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
