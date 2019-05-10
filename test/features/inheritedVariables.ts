@@ -17,6 +17,7 @@ let arr2 = arr.map(function (item) {
 let fa = () => '123' + b;
 
 let f = function () {
+    console.log(123);
     return '123' + a.b.length;
 }
 
