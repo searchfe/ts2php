@@ -1735,13 +1735,14 @@ export function emitFile(
                 ) {
                     return;
                 }
+                const currentSourceFile = item.getSourceFile();
                 const nodeSymbol = item.getSymbol();
                 if (!nodeSymbol) {
                     return;
                 }
                 const symbolOfIdentifier = nodeSymbol.compilerSymbol;
                 const d = symbolOfIdentifier.getDeclarations();
-                const inherite = d.find(item => item.getStart() < nodeStart || item.getEnd() > nodeEnd);
+                const inherite = d.find(item => (item.getStart() < nodeStart || item.getEnd() > nodeEnd) && item.getSourceFile().fileName === currentSourceFile.compilerNode.fileName);
                 if (inherite) {
                     const text = item.getText();
                     if (!names[text]) {
