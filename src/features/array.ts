@@ -22,7 +22,7 @@ const map = {
     splice: method('array_splice', true),
     map: method('array_map', false, 1, true),
     forEach: method('array_walk', true, 1),
-    indexOf: method('array_search', false, 1, true),
+    indexOf: method('\\Ts2Php_Helper::array_pos', false, 1, true),
     join: method('join', false, 1, true),
     filter: method('array_filter', true, 1),
     slice: method('\\Ts2Php_Helper::arraySlice', true, 2)

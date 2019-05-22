@@ -109,7 +109,7 @@ class Ts2Php_Helper {
     }
 
     /**
-     * replace once helper for string.prototype.slice
+     * replace once helper for Array.prototype.slice
      * @param $origin {string}
      * @param $start {string}
      * @param $end {string}
@@ -117,6 +117,17 @@ class Ts2Php_Helper {
      */
     static public function arraySlice($origin, $start, $end) {
         return array_slice($origin, $start, $end - $start + 1);
+    }
+
+    /**
+     * Array.prototype.indexOf
+     * @param $haystack {string}
+     * @param $needle {string}
+     * @return {number}
+     */
+    static public function array_pos($needle, $haystack) {
+        $pos = array_search($needle, $haystack);
+        return $pos === false ? -1 : $pos;
     }
 
 

@@ -17,7 +17,7 @@ $Vue["extend"](array(
     },
     "computed" => array(
         "f" => function () {
-            return array_search("a", $this->c["names"]);
+            return \Ts2Php_Helper::array_pos("a", $this->c["names"]);
         }
     )
 ));
