@@ -948,11 +948,11 @@ img { max-width: 100%; }
 										<li><a href="#class"><code>Class</code></a></li>
 										<li><a href="#typeof"><code>typeof</code></a></li>
 										<li><a href="#delete"><code>delete</code></a></li>
-										<li><a href="#es2015-destructuring"><code>es2015 destructuring</code></a></li>
-										<li><a href="#es2015-template-string"><code>es2015 template string</code></a></li>
-										<li><a href="#es2015-object-computed-property"><code>es2015 object computed property</code></a></li>
-										<li><a href="#es2015-object-shorthand-property"><code>es2015 object shorthand property</code></a></li>
-										<li><a href="#es2015-object-method"><code>es2015 object method</code></a></li>
+										<li><a href="#destructuring"><code>destructuring</code></a></li>
+										<li><a href="#template-string"><code>template string</code></a></li>
+										<li><a href="#object-computed-property"><code>object computed property</code></a></li>
+										<li><a href="#object-shorthand-property"><code>object shorthand property</code></a></li>
+										<li><a href="#object-method"><code>object method</code></a></li>
 										<li><a href="#enum"><code>enum</code></a></li>
 										<li><a href="#pass-by-reference-when-the-arg-is-an-object"><code>pass by reference when the arg is an object</code></a></li>
 										<li><a href="#anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></a></li>
@@ -1146,7 +1146,7 @@ $a-&gt;dispose();</code></pre>
 			<p>output</p>
 			<pre><code class="language-php">$e = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">2</span> );
 <span class="hljs-keyword">unset</span>($e[<span class="hljs-string">"a"</span>]);</code></pre>
-			<h4 id="es2015-destructuring"><code>es2015 destructuring</code></h4>
+			<h4 id="destructuring"><code>destructuring</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">const</span> tplData: {<span class="hljs-attr">a</span>: number, difftime?: number, c?: <span class="hljs-number">1</span>} = {<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>};
 
 <span class="hljs-keyword">const</span> {
@@ -1162,13 +1162,13 @@ $a-&gt;dispose();</code></pre>
 $difftime = <span class="hljs-keyword">isset</span>($tplData[<span class="hljs-string">"difftime"</span>]) ? $tplData[<span class="hljs-string">"difftime"</span>] : <span class="hljs-number">8</span>; $a = $tplData[<span class="hljs-string">"a"</span>]; $y = <span class="hljs-keyword">isset</span>($tplData[<span class="hljs-string">"c"</span>]) ? $tplData[<span class="hljs-string">"c"</span>] : <span class="hljs-number">1</span>;
 $a = <span class="hljs-keyword">array</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
 $e = $a[<span class="hljs-number">1</span>]; $f = $a[<span class="hljs-number">2</span>];</code></pre>
-			<h4 id="es2015-template-string"><code>es2015 template string</code></h4>
+			<h4 id="template-string"><code>template string</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">const</span> b = <span class="hljs-string">'123'</span>;
 <span class="hljs-keyword">const</span> c = <span class="hljs-string">`0<span class="hljs-subst">${b}</span>45'6'"789"`</span>;</code></pre>
 			<p>output</p>
 			<pre><code class="language-php">$b = <span class="hljs-string">"123"</span>;
 $c = <span class="hljs-string">"0"</span> . $b . <span class="hljs-string">"45'6'\"789\""</span>;</code></pre>
-			<h4 id="es2015-object-computed-property"><code>es2015 object computed property</code></h4>
+			<h4 id="object-computed-property"><code>object computed property</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">let</span> a = <span class="hljs-string">'aaa'</span>;
 <span class="hljs-keyword">let</span> b = <span class="hljs-string">'bbb'</span>;
 <span class="hljs-keyword">let</span> c = {
@@ -1182,7 +1182,7 @@ $c = <span class="hljs-keyword">array</span>(
     ($a . $b) =&gt; <span class="hljs-number">123</span>,
     ($b) =&gt; <span class="hljs-number">456</span>
 );</code></pre>
-			<h4 id="es2015-object-shorthand-property"><code>es2015 object shorthand property</code></h4>
+			<h4 id="object-shorthand-property"><code>object shorthand property</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">let</span> b = <span class="hljs-number">2</span>;
 <span class="hljs-keyword">let</span> c = <span class="hljs-number">1</span>;
 <span class="hljs-keyword">const</span> a = {
@@ -1196,7 +1196,7 @@ $a = <span class="hljs-keyword">array</span>(
     <span class="hljs-string">"b"</span> =&gt; $b,
     <span class="hljs-string">"c"</span> =&gt; $c
 );</code></pre>
-			<h4 id="es2015-object-method"><code>es2015 object method</code></h4>
+			<h4 id="object-method"><code>object method</code></h4>
 			<pre><code class="language-javascript"><span class="hljs-keyword">const</span> a = {
     b() {
         <span class="hljs-keyword">return</span> <span class="hljs-string">"111"</span>;
@@ -1412,7 +1412,7 @@ $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <spa
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/d990f2e/types/index.d.ts#L123">index.d.ts:123</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/d8c8256/types/index.d.ts#L123">index.d.ts:123</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
