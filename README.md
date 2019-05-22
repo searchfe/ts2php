@@ -23,11 +23,11 @@ TypeScript 转 PHP
       - [`Class`](#class)
       - [`typeof`](#typeof)
       - [`delete`](#delete)
-      - [`es2015 destructuring`](#es2015-destructuring)
-      - [`es2015 template string`](#es2015-template-string)
-      - [`es2015 object computed property`](#es2015-object-computed-property)
-      - [`es2015 object shorthand property`](#es2015-object-shorthand-property)
-      - [`es2015 object method`](#es2015-object-method)
+      - [`destructuring`](#destructuring)
+      - [`template string`](#template-string)
+      - [`object computed property`](#object-computed-property)
+      - [`object shorthand property`](#object-shorthand-property)
+      - [`object method`](#object-method)
       - [`enum`](#enum)
       - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
@@ -293,7 +293,7 @@ $e = array( "a" => 1, "b" => 2 );
 unset($e["a"]);
 ```
 
-#### `es2015 destructuring`
+#### `destructuring`
 
 ```javascript
 const tplData: {a: number, difftime?: number, c?: 1} = {a: 1};
@@ -317,7 +317,7 @@ $a = array(1, 2, 3);
 $e = $a[1]; $f = $a[2];
 ```
 
-#### `es2015 template string`
+#### `template string`
 
 ```javascript
 const b = '123';
@@ -331,7 +331,7 @@ $b = "123";
 $c = "0" . $b . "45'6'\"789\"";
 ```
 
-#### `es2015 object computed property`
+#### `object computed property`
 
 ```javascript
 let a = 'aaa';
@@ -353,7 +353,7 @@ $c = array(
 );
 ```
 
-#### `es2015 object shorthand property`
+#### `object shorthand property`
 
 ```javascript
 let b = 2;
@@ -375,7 +375,7 @@ $a = array(
 );
 ```
 
-#### `es2015 object method`
+#### `object method`
 
 ```javascript
 const a = {

@@ -1,9 +1,25 @@
-<a name="0.9.2"></a>
-## [0.9.2](https://github.com/max-team/ts2php/compare/v0.9.1...v0.9.2) (2019-05-09)
+<a name="0.9.4"></a>
+## [0.9.4](https://github.com/max-team/ts2php/compare/v0.9.3...v0.9.4) (2019-05-22)
 
 
 ### Bug Fixes
 
+* node.parent undefined error ([fd47c1f](https://github.com/max-team/ts2php/commit/fd47c1f))
+
+
+### Features
+
+* support isNaN ([3d20979](https://github.com/max-team/ts2php/commit/3d20979))
+
+
+
+<a name="0.9.3"></a>
+## [0.9.3](https://github.com/max-team/ts2php/compare/v0.9.1...v0.9.3) (2019-05-10)
+
+
+### Bug Fixes
+
+* [#37](https://github.com/max-team/ts2php/issues/37) ([12a51a4](https://github.com/max-team/ts2php/commit/12a51a4))
 * declare module ([5f9a83e](https://github.com/max-team/ts2php/commit/5f9a83e))
 
 
