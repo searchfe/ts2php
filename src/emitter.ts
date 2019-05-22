@@ -800,7 +800,7 @@ export function emitFile(
         // emitDecorators(node, node.decorators);
         emitModifiers(node, node.modifiers);
         // emit(node.asteriskToken);
-        if (ts.isClassDeclaration(node.parent)) {
+        if (ts.isClassDeclaration(node.parent || node.original.parent)) {
             writeKeyword("function");
             writeSpace();
             emit(node.name);
@@ -1718,7 +1718,7 @@ export function emitFile(
         if (
             node.kind === ts.SyntaxKind.ArrowFunction
             || node.kind === ts.SyntaxKind.FunctionExpression
-            || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent))
+            || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent || node.original.parent))
         ) {
             const wrappedNode = createWrappedNode(node, {typeChecker});
             const body = wrappedNode.getBody();
