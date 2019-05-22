@@ -16,7 +16,8 @@ const map = {
     parseInt: method('intval', false, 1),
     parseFloat: method('floatval', false, 1),
     encodeURIComponent: method('rawurlencode', false, 1),
-    decodeURIComponent: method('rawurldecode', false, 1)
+    decodeURIComponent: method('rawurldecode', false, 1),
+    isNaN: method('is_nan', false, 1),
 };
 
 const identifierMap = new Map([
