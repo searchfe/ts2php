@@ -31,7 +31,7 @@ TypeScript 转 PHP
       - [`enum`](#enum)
       - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
-      - [`reset function arguments`](#reset-function-arguments)
+      - [`rest function arguments`](#rest-function-arguments)
     - [Core JavaScript API](#core-javascript-api)
   - [Thanks to](#thanks-to)
 
@@ -450,7 +450,7 @@ $f = function () use(&$b)  {
 ```
 
 
-#### `reset function arguments`
+#### `rest function arguments`
 
 ```typescript
 function funcA(...args: string[]) {
