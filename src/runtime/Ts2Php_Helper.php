@@ -170,7 +170,9 @@ class Ts2Php_Helper {
 class Ts2Php_Date {
 	private $value = 0;
 	function __construct($v = -1) {
-		if ($v == -1) $v = time();
+		if ($v == -1) {
+            $v = time();
+        }
 		$this->value = intval($v / 1000);
 	}
  	// Returns the day of the month (from 1-31)
@@ -222,60 +224,72 @@ class Ts2Php_Date {
 	}
 	// Sets the day of the month of a date object
 	public function setDate($x) {
-		if ($x < 10)
-			$x = '0' . $x;
-		else
-			$x = ''.$x;
+		if ($x < 10) {
+            $x = '0' . $x;
+        }
+		else {
+            $x = ''.$x;
+        }
 		$s = date('Y-m-d H:i:s', $this->value);
 		$s = substr($s,0,8).$x.substr($s,10,9);
 		$this->value = strtotime($s);
 	}
 	// Sets the year of a date object
 	public function setFullYear($x) {
-		if ($x < 10)
-			$x = '0'.$x;
-		else
-			$x = ''.$x;
+		if ($x < 10) {
+            $x = '0'.$x;
+        }
+		else {
+            $x = ''.$x;
+        }
 		$s = date('Y-m-d H:i:s', $this->value);
 		$s = $x.substr($s,5,15);
 		$this->value = strtotime($s);
 	}
 	// Sets the hour of a date object
 	public function setHours($x) {
-		if ($x < 10)
-			$x = '0'.$x;
-		else
-			$x = ''.$x;
+		if ($x < 10) {
+            $x = '0'.$x;
+        }
+		else {
+            $x = ''.$x;
+        }
 		$s = date('Y-m-d H:i:s', $this->value);
 		$s = substr($s,0,11).$x.substr($s,13,6);
 		$this->value = strtotime($s);
 	}
 	// Set the minutes of a date object
 	public function setMinutes($x) {
-		if ($x < 10)
-			$x = '0'.$x;
-		else
-			$x = ''.$x;
+		if ($x < 10) {
+            $x = '0'.$x;
+        }
+		else {
+            $x = ''.$x;
+        }
 		$s = date('Y-m-d H:i:s', $this->value);
 		$s = substr($s,0,14).$x.substr($s,16,3);
 		$this->value = strtotime($s);
 	}
 	// Sets the month of a date object
 	public function setMonth($x) {
-		if ($x < 10)
-			$x = '0'.$x;
-		else
-			$x = ''.$x;
+		if ($x < 10) {
+            $x = '0'.$x;
+        }
+		else {
+            $x = ''.$x;
+        }
 		$s = date('Y-m-d H:i:s', $this->value);
 		$s = substr($s,0,5).$x.substr($s,7,12);
 		$this->value = strtotime($s);
 	}
 	// Sets the seconds of a date object
 	public function setSeconds($x) {
-		if ($x < 10)
-			$x = '0'.$x;
-		else
-			$x = ''.$x;
+		if ($x < 10) {
+            $x = '0'.$x;
+        }
+		else {
+            $x = ''.$x;
+        }
 		$s = date('Y-m-d H:i:s', $this->value);
 		$s = substr($s,0,17).$x;
 		$this->value = strtotime($s);

@@ -1,3 +1,13 @@
+<a name="0.9.5"></a>
+## [0.9.5](https://github.com/max-team/ts2php/compare/v0.9.4...v0.9.5) (2019-05-27)
+
+
+### Bug Fixes
+
+* array.prototype.indexOf returns false ([#41](https://github.com/max-team/ts2php/issues/41)) ([d990f2e](https://github.com/max-team/ts2php/commit/d990f2e))
+
+
+
 <a name="0.9.4"></a>
 ## [0.9.4](https://github.com/max-team/ts2php/compare/v0.9.3...v0.9.4) (2019-05-22)
 
