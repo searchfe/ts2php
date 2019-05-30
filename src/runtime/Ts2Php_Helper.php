@@ -116,7 +116,8 @@ class Ts2Php_Helper {
      * @return {string}
      */
     static public function arraySlice($origin, $start, $end) {
-        return array_slice($origin, $start, $end - $start + 1);
+        $end = isset($end) ? $end : count($origin);
+        return array_slice($origin, $start, $end - $start);
     }
 
     /**
