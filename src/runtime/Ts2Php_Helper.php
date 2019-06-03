@@ -205,7 +205,7 @@ class Ts2Php_Date {
 	}
 	// Returns the month (from 0-11)
 	public function getMonth() {
-		$result = 0 + date('m', $this->value);
+		$result = 0 + date('m', $this->value) - 1;
 		return $result;
 	}
 	// Returns the seconds (from 0-59)
@@ -239,14 +239,9 @@ class Ts2Php_Date {
 	}
 	// Sets the year of a date object
 	public function setFullYear($x) {
-		if ($x < 10) {
-            $x = '0'.$x;
-        }
-		else {
-            $x = ''.$x;
-        }
+        $x = ''.$x;
 		$s = date('Y-m-d H:i:s', $this->value);
-		$s = $x.substr($s,5,15);
+        $s = $x . substr($s,4,15);
 		$this->value = strtotime($s);
 	}
 	// Sets the hour of a date object
@@ -275,6 +270,7 @@ class Ts2Php_Date {
 	}
 	// Sets the month of a date object
 	public function setMonth($x) {
+        $x += 1;
 		if ($x < 10) {
             $x = '0'.$x;
         }

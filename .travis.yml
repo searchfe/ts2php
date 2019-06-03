@@ -19,10 +19,12 @@ before_install:
 install:
   - npm install
   - cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts
+  - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
 
 script:
   - npm test
   - npm run doc
+  - npm run test:runtime
 
 deploy:
   provider: pages
