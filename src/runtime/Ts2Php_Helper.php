@@ -12,7 +12,7 @@ class Ts2Php_Helper {
      * @param $arr mixed
      * @return bool
      */
-    public static function isPlainArray(&$arr) {
+    public static function isPlainArray($arr) {
         if (is_array($arr)) {
             $i = 0;
             foreach ($arr as $k => $v) {
@@ -41,10 +41,10 @@ class Ts2Php_Helper {
     }
 
     /**
-     * replace once helper for string.prototype.slice
+     * slice helper for string.prototype.slice
      * @param $origin {string}
-     * @param $start {string}
-     * @param $end {string}
+     * @param $start {number}
+     * @param $end {number}
      * @return {string}
      */
     static public function str_slice($origin, $start, $end) {
@@ -58,8 +58,8 @@ class Ts2Php_Helper {
      * @param $postion {number}
      * @return {boolean}
      */
-    static public function startsWith($haystack, $needle, $postion = 0){
-        return strncmp($haystack, $needle, strlen($needle)) === $postion;
+    static public function startsWith($origin, $substr, $postion = 0){
+        return strncmp($substr, $origin, strlen($substr)) === $postion;
     }
 
     /**
@@ -69,9 +69,11 @@ class Ts2Php_Helper {
      * @param $postion {number}
      * @return {boolean}
      */
-    static public function endsWith($haystack, $needle, $postion){
-        $postion = isset($postion) ? $postion : (strlen($haystack) - 1);
-        return $needle === '' || substr_compare($haystack, $needle, 1 - $postion) === 0;
+    static public function endsWith($haystack, $needle, $postion = null){
+        $left = isset($postion) ? strlen($haystack) - $postion : 0;
+        $postion = $left + (strlen($needle));
+
+        return $needle === '' || substr_compare($haystack, $needle, -$postion) === $left;
     }
 
     /**
@@ -115,7 +117,7 @@ class Ts2Php_Helper {
      * @param $end {string}
      * @return {string}
      */
-    static public function arraySlice($origin, $start, $end) {
+    static public function arraySlice($origin, $start, $end = null) {
         $end = isset($end) ? $end : count($origin);
         return array_slice($origin, $start, $end - $start);
     }
@@ -174,11 +176,11 @@ class Ts2Php_Date {
 		if ($v == -1) {
             $v = time();
         }
-		$this->value = intval($v / 1000);
+        $this->value = intval($v / 1000);
 	}
  	// Returns the day of the month (from 1-31)
 	public function getDate() {
-		$result = 0 + date('d', $this->value);
+        $result = 0 + date('d', $this->value);
 		return $result;
 	}
 	//Returns the day of the week (from 0-6)
@@ -188,7 +190,7 @@ class Ts2Php_Date {
 	}
  	// Returns the year
 	public function getFullYear() {
-		$result = 0 + date('Y', $this->vvalue);
+		$result = 0 + date('Y', $this->value);
 		return $result;
 	}
 	// Returns the hour (from 0-23)
