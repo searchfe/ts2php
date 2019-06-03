@@ -79,3 +79,5 @@ coverage
 
 /example
 /docs
+
+phpunit
