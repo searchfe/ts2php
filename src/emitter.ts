@@ -110,7 +110,11 @@ export function emitFile(
     state.sourceFile = (transform.transformed[0] as SourceFile);
 
     if (state.emitHeader) {
-        writer.write(`<?php\nnamespace ${state.namespace};\n`);
+        let header = '<?php\n';
+        if (state.namespace && state.namespace !== '\\') {
+            header += `namespace ${state.namespace};\n`;
+        }
+        writer.write(header);
     }
 
     state.sourceFile.forEachChild((node: ts.Node) => {
