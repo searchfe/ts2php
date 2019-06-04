@@ -7,7 +7,11 @@ import {
     EmitHint,
     isCallExpression,
     isPropertyAccessExpression,
-    isIdentifier
+    isIdentifier,
+    isBinaryExpression,
+    SyntaxKind,
+    createCall,
+    createIdentifier
 } from 'typescript';
 
 import method from '../utilities/method';
@@ -57,6 +61,23 @@ export default {
             if (identifierMap.has(text)) {
                 return helpers.writePunctuation(identifierMap.get(text));
             }
+        }
+
+        if (
+            isBinaryExpression(node)
+            && node.operatorToken.kind === SyntaxKind.EqualsEqualsEqualsToken
+            && node.right.originalKeywordKind === SyntaxKind.UndefinedKeyword
+        ) {
+            helpers.writePunctuation('!');
+            return helpers.emitExpression(createCall(createIdentifier('isset'), [], [node.left]));
+        }
+
+        if (
+            isBinaryExpression(node)
+            && node.operatorToken.kind === SyntaxKind.ExclamationEqualsEqualsToken
+            && node.right.originalKeywordKind === SyntaxKind.UndefinedKeyword
+        ) {
+            return helpers.emitExpression(createCall(createIdentifier('isset'), [], [node.left]));
         }
 
         return false;

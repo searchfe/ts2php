@@ -1148,6 +1148,7 @@ declare namespace ts {
     type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
     interface Expression extends Node {
         _expressionBrand: any;
+        originalKeywordKind?: SyntaxKind
     }
     interface OmittedExpression extends Expression {
         kind: SyntaxKind.OmittedExpression;
