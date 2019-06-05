@@ -1,3 +1,18 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/max-team/ts2php/compare/v0.9.8...v0.10.0) (2019-06-05)
+
+
+### Bug Fixes
+
+* revert function parameter reference to avoid fatal error ([a9e201b](https://github.com/max-team/ts2php/commit/a9e201b))
+
+
+### Features
+
+* support x === undefined & x !== undefined ([f5d71ae](https://github.com/max-team/ts2php/commit/f5d71ae))
+
+
+
 <a name="0.9.8"></a>
 ## [0.9.8](https://github.com/max-team/ts2php/compare/v0.9.7...v0.9.8) (2019-06-04)
 
