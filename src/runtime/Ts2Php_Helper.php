@@ -133,6 +133,42 @@ class Ts2Php_Helper {
         return $pos === false ? -1 : $pos;
     }
 
+    /**
+     * encodeURI
+     * @param $uri {string}
+     * @return {string}
+     */
+    static public function encodeURI($uri) {
+
+        // http://php.net/manual/en/function.rawurlencode.php
+        // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
+        $unescaped = array(
+            '%2D' => '-',
+            '%5F' => '_',
+            '%2E' => '.',
+            '%21' => '!',
+            '%7E' => '~',
+            '%2A' => '*',
+            '%27' => "'",
+            '%28' => '(',
+            '%29' => ')',
+            '%3B' => ';',
+            '%2C' => ',',
+            '%2F' => '/',
+            '%3F' => '?',
+            '%3A' => ':',
+            '%40' => '@',
+            '%26' => '&',
+            '%3D' => '=',
+            '%2B' => '+',
+            '%24' => '$',
+            '%23' => '#',
+        );
+
+        return strtr(rawurlencode($uri), $unescaped);
+
+    }
+
 
     /**
      * get type of $var

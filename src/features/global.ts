@@ -22,6 +22,7 @@ const map = {
     encodeURIComponent: method('rawurlencode', false, 1),
     decodeURIComponent: method('rawurldecode', false, 1),
     isNaN: method('is_nan', false, 1),
+    encodeURI: method('\\Ts2Php_Helper::encodeURI', false, 1),
 };
 
 const identifierMap = new Map([

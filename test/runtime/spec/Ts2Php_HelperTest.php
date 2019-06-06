@@ -142,6 +142,34 @@ final class Ts2Php_HelperTest extends TestCase {
         );
     }
 
+    public function testencodeURI() {
+
+        $this->assertEquals(
+            Ts2Php_Helper::encodeURI('https://mozilla.org/?x=шеллы'),
+            'https://mozilla.org/?x=%D1%88%D0%B5%D0%BB%D0%BB%D1%8B'
+        );
+
+        $set1 = ";,/?:@&=+$#";  // Reserved Characters
+        $set2 = "-_.!~*'()";   // Unreserved Marks
+        $set3 = "ABC abc 123"; // Alphanumeric Characters + Space
+
+        $this->assertEquals(
+            Ts2Php_Helper::encodeURI($set1),
+            ';,/?:@&=+$#'
+        );
+
+        $this->assertEquals(
+            Ts2Php_Helper::encodeURI($set2),
+            '-_.!~*\'()'
+        );
+
+        $this->assertEquals(
+            Ts2Php_Helper::encodeURI($set3),
+            'ABC%20abc%20123'
+        );
+
+    }
+
     public function testTypeof() {
         $this->assertEquals(
             Ts2Php_Helper::typeof('123123'),
