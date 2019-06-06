@@ -478,6 +478,7 @@ function funcC() {
 - parseFloat
 - encodeURIComponent
 - decodeURIComponent
+- encodeURI
 - __dirname
 - __filename
 - Date
