@@ -27,7 +27,7 @@ const defaultOptions = {
         const ext = path.extname(name);
         const outPath = ext ? (name.replace(new RegExp(ext + '$'), '') + '.php') : (isRelative ? (name + '.php') : name);
         const pathCode = JSON.stringify(outPath);
-        return isRelative ? `realpath(dirname(__FILE__) . '/' . ${pathCode})` : pathCode;
+        return isRelative ? `dirname(__FILE__) . '/' . ${pathCode}` : pathCode;
     },
     getModuleNamespace: () => '\\',
     modules: {},
