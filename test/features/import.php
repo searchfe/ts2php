@@ -1,6 +1,6 @@
 <?php
 namespace test\case_import;
-require_once(realpath(dirname(__FILE__) . '/' . "../some-utils.php"));
+require_once(dirname(__FILE__) . '/' . "../some-utils.php");
 use \Other_Utils as Util;
 use \Some_Utils;
 use \func;
