@@ -1222,7 +1222,29 @@ export function emitFile(
         ) {
             writeBase("$");
         }
-        emitWithHint(ts.EmitHint.Expression, node.expression);
+
+        let writeNamespace = false;
+        if (ts.isIdentifier(node.expression)) {
+            const symbol = typeChecker.getSymbolAtLocation(node.expression);
+
+            if (symbol) {
+                const declarations = symbol.getDeclarations();
+
+                if (declarations.length && ts.isImportSpecifier(declarations[0])) {
+                    const specifier = declarations[0] as ts.ImportSpecifier;
+                    const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
+                    const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
+                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
+                    namespace && writeBase(namespace);
+                    writeNamespace = true;
+                    emitExpression(specifier.propertyName || specifier.name)
+                }
+            }
+
+        }
+        if (!writeNamespace) {
+            emitWithHint(ts.EmitHint.Expression, node.expression);
+        }
         // emitTypeArguments(node, node.typeArguments);
         emitExpressionList(node, node.arguments, ts.ListFormat.CallExpressionArguments);
     }
@@ -2131,7 +2153,7 @@ export function emitFile(
         if (ts.isImportDeclaration(importNode)) {
             const moduleName = getImportModuleName(importNode);
             node.forEachChild((element: ts.ImportSpecifier) => {
-                if (isClassLike(element.name, typeChecker) || isFunctionLike(element.name, typeChecker)) {
+                if (isClassLike(element.name, typeChecker)) {
                     writePunctuation("use");
                     writeSpace();
                     const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
