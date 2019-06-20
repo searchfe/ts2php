@@ -10,4 +10,4 @@ function aaa(m: number[], n: {[name: string]: number}, k: string, d?: () => stri
     k += '4';
 }
 
-aaa(a, b, c);
+aaa(a as number[], b, c);
