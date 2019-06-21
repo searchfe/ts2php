@@ -1,3 +1,48 @@
+<a name="0.10.4"></a>
+## [0.10.4](https://github.com/max-team/ts2php/compare/v0.10.3...v0.10.4) (2019-06-21)
+
+
+### Bug Fixes
+
+* $ in string ([b82a011](https://github.com/max-team/ts2php/commit/b82a011))
+
+
+### Features
+
+* support array.prototype.some & array.prototype.every ([a199acb](https://github.com/max-team/ts2php/commit/a199acb))
+
+
+
+<a name="0.10.3"></a>
+## [0.10.3](https://github.com/max-team/ts2php/compare/v0.10.2...v0.10.3) (2019-06-20)
+
+
+### Bug Fixes
+
+* add $ in as expression ([bcee61f](https://github.com/max-team/ts2php/commit/bcee61f))
+
+
+
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/max-team/ts2php/compare/v0.10.1...v0.10.2) (2019-06-19)
+
+
+### Bug Fixes
+
+* import function namespace ([b325de1](https://github.com/max-team/ts2php/commit/b325de1))
+
+
+
+<a name="0.10.1"></a>
+## [0.10.1](https://github.com/max-team/ts2php/compare/v0.10.0...v0.10.1) (2019-06-18)
+
+
+### Features
+
+* support encodeURI ([877965b](https://github.com/max-team/ts2php/commit/877965b))
+
+
+
 <a name="0.10.0"></a>
 # [0.10.0](https://github.com/max-team/ts2php/compare/v0.9.8...v0.10.0) (2019-06-05)
 
