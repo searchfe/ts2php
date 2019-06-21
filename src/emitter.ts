@@ -659,7 +659,8 @@ export function emitFile(
     // SyntaxKind.TemplateMiddle
     // SyntaxKind.TemplateTail
     function emitLiteral(node: ts.LiteralLikeNode) {
-        const text = getLiteralTextOfNode(node, true);
+        let text = getLiteralTextOfNode(node, true);
+        text = text.replace(/(\\)?\$/g, '\\$');
         // Quick info expects all literals to be called with writeStringLiteral, as there's no specific type for numberLiterals
         writeStringLiteral(text);
     }
@@ -2338,6 +2339,9 @@ export function emitFile(
         if (ts.isLiteralExpression(node.name)) {
             emitLiteral(node.name);
         }
+        else if (ts.isIdentifier(node.name)) {
+            emit(node.name);
+        }
         else {
             emit(node.name);
         }
@@ -3244,7 +3248,6 @@ export function emitFile(
         //     return idText(node);
         // }
         if (isIdentifier(node)) {
-            const name = (<ts.Identifier>node).escapedText as string;
             let head = '';
             let tail = '';
 
@@ -3265,7 +3268,7 @@ export function emitFile(
             //     head = className + '::' + head;
             // }
 
-            return head + idText(<ts.Identifier>node) + tail;
+            return head + idText(<ts.Identifier>node).replace(/(\\)?\$/g, '\\$') + tail;
         }
 
         if (isImportSpecifier(node)) {

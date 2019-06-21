@@ -10,3 +10,7 @@ $a = array(
     "a-b" => $b
 );
 $c = array_key_exists("b", $a);
+$d = array(
+    "\$a" => "a",
+    "b" => "\$b"
+);

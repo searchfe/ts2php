@@ -10,3 +10,8 @@ const a = {
 };
 
 const c = 'b' in a;
+
+const d = {
+    $a: "a",
+    b: "$b"
+};
