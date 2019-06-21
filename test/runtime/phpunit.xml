@@ -1,12 +1,7 @@
 <phpunit colors="true">
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <!-- <directory suffix=".php">/path/to/files</directory> -->
             <file>../../src/runtime/Ts2Php_Helper.php</file>
-            <!-- <exclude>
-                <directory suffix=".php">/path/to/files</directory>
-                <file>/path/to/file</file>
-            </exclude> -->
         </whitelist>
     </filter>
 </phpunit>

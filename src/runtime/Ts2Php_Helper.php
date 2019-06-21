@@ -134,6 +134,38 @@ class Ts2Php_Helper {
     }
 
     /**
+     * Array.prototype.some
+     *
+     * @param $array {array}
+     * @param $fn {callable}
+     * @return {boolean}
+     */
+    static function array_some(array $array, callable $fn) {
+        foreach ($array as $index => $value) {
+            if($fn($value, $index)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Array.prototype.every
+     *
+     * @param $array {array}
+     * @param $fn {callable}
+     * @return {boolean}
+     */
+    static function array_every(array $array, callable $fn) {
+        foreach ($array as $index => $value) {
+            if(!$fn($value, $index)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * encodeURI
      * @param $uri {string}
      * @return {string}
@@ -168,7 +200,6 @@ class Ts2Php_Helper {
         return strtr(rawurlencode($uri), $unescaped);
 
     }
-
 
     /**
      * get type of $var

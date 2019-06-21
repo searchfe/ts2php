@@ -197,4 +197,34 @@ final class Ts2Php_HelperTest extends TestCase {
             'object'
         );
     }
+
+    public function testEverySome() {
+        $array = array(0, 1, 2, 3, 4);
+        $this->assertTrue(
+            \Ts2Php_Helper::array_every($array, function ($item, $index) {
+                return $item === $index;
+            })
+        );
+        $this->assertTrue(
+            \Ts2Php_Helper::array_some($array, function ($item, $index) {
+                echo $index;
+                return $item === $index;
+            })
+        );
+        $this->assertFalse(
+            \Ts2Php_Helper::array_every($array, function ($item, $index) {
+                return $item < 3;
+            })
+        );
+        $this->assertTrue(
+            \Ts2Php_Helper::array_some($array, function ($item, $index) {
+                return $item > 3;
+            })
+        );
+        $this->assertFalse(
+            \Ts2Php_Helper::array_some($array, function ($item, $index) {
+                return $item > 4;
+            })
+        );
+    }
 }

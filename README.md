@@ -10,17 +10,17 @@ TypeScript 转 PHP
 [![npm downloads](http://img.shields.io/npm/dm/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 
 - [ts2php](#ts2php)
-  - [Usage](#usage)
+  - [Usage](#Usage)
     - [compiler](#compiler)
     - [runtime](#runtime)
-    - [CLI](#cli)
-  - [Features](#features)
-    - [Javascript Syntax](#javascript-syntax)
+    - [CLI](#CLI)
+  - [Features](#Features)
+    - [Javascript Syntax](#Javascript-Syntax)
       - [`for`/`for of`/`for in`](#forfor-offor-in)
       - [`if`/`else if`/`else`](#ifelse-ifelse)
       - [`swtich`](#swtich)
       - [`while`/`do while`](#whiledo-while)
-      - [`Class`](#class)
+      - [`Class`](#Class)
       - [`typeof`](#typeof)
       - [`delete`](#delete)
       - [`destructuring`](#destructuring)
@@ -32,8 +32,8 @@ TypeScript 转 PHP
       - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
       - [`rest function arguments`](#rest-function-arguments)
-    - [Core JavaScript API](#core-javascript-api)
-  - [Thanks to](#thanks-to)
+    - [Core JavaScript API](#Core-JavaScript-API)
+  - [Thanks to](#Thanks-to)
 
 ## Usage
 
@@ -539,9 +539,11 @@ function funcC() {
   - Array.prototype.splice
   - Array.prototype.reverse
   - Array.prototype.map **回调函数只接收第一个参数**
-  - Array.prototype.forEach **回调函数只接收第一个参数**
+  - Array.prototype.forEach
   - Array.prototype.indexOf
   - Array.prototype.join
+  - Array.prototype.some
+  - Array.prototype.every
 - Number
   - Number.isInterger
   - Number.prototype.toFixed
