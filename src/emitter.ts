@@ -3248,27 +3248,21 @@ export function emitFile(
         //     return idText(node);
         // }
         if (isIdentifier(node)) {
-            let head = '';
-            let tail = '';
+
+            const text = idText(<ts.Identifier>node);
 
             // 需要加 $
             if (shouldAddDollar(node, state)) {
-                head = '$' + head;
+                return '$' + text;
             }
 
             // 需要加双引号
             if (shouldAddDoubleQuote(node)) {
-                head = '"' + head;
-                tail += '"';
+                return '"' + text.replace(/(\\)?\$/g, '\\$') + '"';
             }
 
-            // 是从模块中引入的
-            // if (state.moduleNamedImports[name]) {
-            //     const className = state.moduleNamedImports[name].className;
-            //     head = className + '::' + head;
-            // }
+            return text;
 
-            return head + idText(<ts.Identifier>node).replace(/(\\)?\$/g, '\\$') + tail;
         }
 
         if (isImportSpecifier(node)) {
