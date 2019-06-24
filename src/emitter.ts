@@ -42,7 +42,6 @@ import {
     isSupportedPropertyModifier,
     isStringLike,
     isClassLike,
-    isFunctionLike,
     isClassInstance
 } from './utilities/nodeTest';
 
@@ -50,8 +49,7 @@ import {
     some,
     cast,
     lastOrUndefined,
-    singleOrUndefined,
-    forEach
+    singleOrUndefined
 } from './core';
 
 import {tokenToString} from './scanner';
@@ -97,7 +95,6 @@ export function emitFile(
         emitWithHint,
         emitExpression,
         emitExpressionList,
-        emitArrayLiteralExpression,
 
         getLiteralTextOfNode,
         getTextOfNode,
@@ -1552,6 +1549,10 @@ export function emitFile(
         writeKeyword('as');
         writeSpace();
         emitForBinding(node.initializer);
+        writeSpace();
+        writeKeyword('=>');
+        writeSpace();
+        writeBase('$__ts2php_item');
         emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression.end, writePunctuation, node);
         emitEmbeddedStatement(node, node.statement);
     }
@@ -3472,9 +3473,9 @@ export function emitFile(
     /**
      * Returns a value indicating whether a name is unique globally or within the current file.
      */
-    function isFileLevelUniqueName(name: string) {
-        return currentSourceFile ? utilities.isFileLevelUniqueName(currentSourceFile, name) : true;
-    }
+    // function isFileLevelUniqueName(name: string) {
+    //     return currentSourceFile ? utilities.isFileLevelUniqueName(currentSourceFile, name) : true;
+    // }
 
     /**
      * Returns a value indicating whether a name is unique within a container.

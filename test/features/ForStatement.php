@@ -9,6 +9,6 @@ foreach ($a as $iterator) {
     echo $iterator;
 }
 $d = array( "a" => 1, "b" => 2 );
-foreach ($d as $iterator) {
+foreach ($d as $iterator => $__ts2php_item) {
     echo $iterator;
 }
