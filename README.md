@@ -503,6 +503,7 @@ function funcC() {
   - Object.keys
   - Object.values
   - Object.freeze
+  - Object.prototype.hasOwnProperty
 - JSON
   - JSON.stringify **只接收一个参数**
   - JSON.parse **只接收一个参数**

@@ -10,5 +10,7 @@ foreach ($a as $iterator) {
 }
 $d = array( "a" => 1, "b" => 2 );
 foreach ($d as $iterator => $__ts2php_item) {
-    echo $iterator;
+    if (array_key_exists($iterator, $d)) {
+        echo $iterator;
+    }
 }

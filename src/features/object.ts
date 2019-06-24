@@ -26,6 +26,23 @@ const staticMap = {
     }
 };
 
+function emitPropertyExists(objNode, propNode, typeChecker, emitExpression) {
+    if (isClassInstance(objNode, typeChecker)) {
+        return emitExpression(
+            createCall(createIdentifier('property_exists'), [], [
+                objNode,
+                propNode
+            ])
+        );
+    }
+    return emitExpression(
+        createCall(createIdentifier('array_key_exists'), [], [
+            propNode,
+            objNode
+        ])
+    );
+}
+
 export default {
 
     emit(hint, node, {helpers, typeChecker}) {
@@ -49,30 +66,17 @@ export default {
             && isBinaryExpression(node)
             && node.operatorToken.kind === SyntaxKind.InKeyword
         ) {
-            if (isClassInstance(node.right, typeChecker)) {
-                return helpers.emitExpression(
-                    createCall(
-                        createIdentifier('property_exists'),
-                        [],
-                        [
-                            node.right,
-                            node.left
-                        ]
-                    )
-                );
-            }
-            return helpers.emitExpression(
-                createCall(
-                    createIdentifier('array_key_exists'),
-                    [],
-                    [
-                        node.left,
-                        node.right
-                    ]
-                )
-            );
+            return emitPropertyExists(node.right, node.left, typeChecker, helpers.emitExpression);
         }
 
+        if (
+            isCallExpression(node)
+            && isPropertyAccessExpression(expNode)
+            && isIdentifier(expNode.name)
+            && helpers.getTextOfNode(expNode.name) === 'hasOwnProperty'
+        ) {
+            return emitPropertyExists(expNode.expression, node.arguments[0], typeChecker, helpers.emitExpression);
+        }
 
         return false;
     }

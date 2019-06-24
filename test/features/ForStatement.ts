@@ -10,5 +10,7 @@ for (const iterator of a) {
 
 const d = {a: 1, b: 2};
 for (const iterator in d) {
-    console.log(iterator);
+    if (d.hasOwnProperty(iterator)) {
+        console.log(iterator);
+    }
 }
