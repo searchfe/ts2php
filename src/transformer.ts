@@ -139,10 +139,49 @@ export function transform(context: ts.TransformationContext) {
             case ts.SyntaxKind.VariableDeclarationList:
                 return visitVariableDeclarationList(<ts.VariableDeclarationList>node);
 
+            case ts.SyntaxKind.ObjectLiteralExpression:
+                return visitObjectLiteralExpression(<ts.ObjectLiteralExpression>node);
+
             default:
                 return node;
         }
 
+    }
+
+    function visitObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
+
+        if (!node.properties.some(node => ts.isSpreadAssignment(node))) {
+            return node;
+        }
+
+        const parameters = [ts.createObjectLiteral([], false)];
+        let tmpObjectProperties = [];
+
+        for (const prop of node.properties) {
+            if (ts.isSpreadAssignment(prop)) {
+                if (tmpObjectProperties.length > 0) {
+                    parameters.push(ts.createObjectLiteral(tmpObjectProperties, true));
+                    tmpObjectProperties = [];
+                }
+                parameters.push(prop.expression as ts.ObjectLiteralExpression);
+            }
+            else {
+                tmpObjectProperties.push(prop);
+            }
+        }
+
+        if (tmpObjectProperties.length > 0) {
+            parameters.push(ts.createObjectLiteral(tmpObjectProperties, true));
+        }
+
+        return ts.createCall(
+            ts.createPropertyAccess(
+                ts.createIdentifier('Object'),
+                ts.createIdentifier('assign')
+            ),
+            undefined,
+            parameters
+        );
     }
 
     function visitVariableDeclarationList(node: ts.VariableDeclarationList) {

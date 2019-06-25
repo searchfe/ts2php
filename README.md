@@ -32,6 +32,7 @@ TypeScript 转 PHP
       - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
       - [`rest function arguments`](#rest-function-arguments)
+      - [`Object Spread`](#Object-Spread)
     - [Core JavaScript API](#Core-JavaScript-API)
   - [Thanks to](#Thanks-to)
 
@@ -468,6 +469,28 @@ function funcA() {
 function funcC() {
     $a = func_get_arg(0); $args = array_slice(func_get_args(), 1);
 }
+```
+
+#### `Object Spread`
+
+```typescript
+const e = {
+    f: 1,
+    ...a,
+    w: 2,
+    c: 3
+};
+```
+
+output
+
+```php
+$e = array_merge(array(), array(
+    "f" => 1
+), $a, array(
+    "w" => 2,
+    "c" => 3
+));
 ```
 
 > 注：箭头函数暂不支持

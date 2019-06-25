@@ -14,3 +14,9 @@ $d = array(
     "\$a" => "a",
     "b" => "\$b"
 );
+$e = array_merge(array(), array(
+    "f" => 1
+), $a, array(
+    "w" => 2,
+    "c" => 3
+));
