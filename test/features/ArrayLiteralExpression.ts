@@ -8,3 +8,5 @@ let c = [
 ];
 
 const [, e, f] = a;
+
+const g = [...a, 'a', 'b', ...c, 1];

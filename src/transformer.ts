@@ -142,46 +142,68 @@ export function transform(context: ts.TransformationContext) {
             case ts.SyntaxKind.ObjectLiteralExpression:
                 return visitObjectLiteralExpression(<ts.ObjectLiteralExpression>node);
 
+            case ts.SyntaxKind.ArrayLiteralExpression:
+                return visitArrayLiteralExpression(<ts.ArrayLiteralExpression>node);
+
             default:
                 return node;
         }
 
     }
 
-    function visitObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
+    function transformSpread(
+        nodeList: ts.NodeArray<ts.ObjectLiteralElementLike | ts.Expression>,
+        type: 'array' | 'object'
+    ) {
 
-        if (!node.properties.some(node => ts.isSpreadAssignment(node))) {
-            return node;
-        }
+        const createNode = children => type === 'object'
+            ? ts.createObjectLiteral(children, true)
+            : ts.createArrayLiteral(children, true);
 
-        const parameters = [ts.createObjectLiteral([], false)];
-        let tmpObjectProperties = [];
+        const isSpread = node => type === 'object'
+            ? ts.isSpreadAssignment(node)
+            : ts.isSpreadElement(node);
 
-        for (const prop of node.properties) {
-            if (ts.isSpreadAssignment(prop)) {
-                if (tmpObjectProperties.length > 0) {
-                    parameters.push(ts.createObjectLiteral(tmpObjectProperties, true));
-                    tmpObjectProperties = [];
+        const parameters = [createNode([])];
+        let children = [];
+
+        for (const prop of nodeList) {
+            if (isSpread(prop)) {
+                if (children.length > 0) {
+                    parameters.push(createNode(children));
+                    children = [];
                 }
-                parameters.push(prop.expression as ts.ObjectLiteralExpression);
+                // @ts-ignore
+                parameters.push(prop.expression);
             }
             else {
-                tmpObjectProperties.push(prop);
+                children.push(prop);
             }
         }
 
-        if (tmpObjectProperties.length > 0) {
-            parameters.push(ts.createObjectLiteral(tmpObjectProperties, true));
+        if (children.length > 0) {
+            parameters.push(createNode(children));
         }
 
         return ts.createCall(
-            ts.createPropertyAccess(
-                ts.createIdentifier('Object'),
-                ts.createIdentifier('assign')
-            ),
+            ts.createIdentifier('array_merge'),
             undefined,
             parameters
         );
+    }
+
+    function visitArrayLiteralExpression(node: ts.ArrayLiteralExpression) {
+        if (!node.elements.some(node => ts.isSpreadElement(node))) {
+            return node;
+        }
+        return transformSpread(node.elements, 'array');
+    }
+
+    function visitObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
+        if (!node.properties.some(node => ts.isSpreadAssignment(node))) {
+            return node;
+        }
+        return transformSpread(node.properties, 'object');
     }
 
     function visitVariableDeclarationList(node: ts.VariableDeclarationList) {

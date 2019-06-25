@@ -32,7 +32,8 @@ const shouldAddDollerParentList = new Set([
     SyntaxKind.BindingElement,
     SyntaxKind.WhileStatement,
     SyntaxKind.AsExpression,
-    SyntaxKind.SpreadAssignment
+    SyntaxKind.SpreadAssignment,
+    SyntaxKind.SpreadElement
 ]);
 
 /**

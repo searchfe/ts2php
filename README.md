@@ -32,7 +32,7 @@ TypeScript 转 PHP
       - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
       - [`rest function arguments`](#rest-function-arguments)
-      - [`Object Spread`](#Object-Spread)
+      - [`spread`](#spread)
     - [Core JavaScript API](#Core-JavaScript-API)
   - [Thanks to](#Thanks-to)
 
@@ -471,7 +471,7 @@ function funcC() {
 }
 ```
 
-#### `Object Spread`
+#### `spread`
 
 ```typescript
 const e = {
@@ -480,6 +480,7 @@ const e = {
     w: 2,
     c: 3
 };
+const g = [...a, 'a', 'b', ...c, 1];
 ```
 
 output
@@ -490,6 +491,11 @@ $e = array_merge(array(), array(
 ), $a, array(
     "w" => 2,
     "c" => 3
+));
+$g = array_merge(array(), $a, array(
+    "a", "b"
+), $c, array(
+    1
 ));
 ```
 

@@ -9,3 +9,8 @@ $c = array(
     $b
 );
 $e = $a[1]; $f = $a[2];
+$g = array_merge(array(), $a, array(
+    "a", "b"
+), $c, array(
+    1
+));
