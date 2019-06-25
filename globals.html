@@ -957,7 +957,7 @@ img { max-width: 100%; }
 										<li><a href="#pass-by-reference-when-the-arg-is-an-object"><code>pass by reference when the arg is an object</code></a></li>
 										<li><a href="#anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></a></li>
 										<li><a href="#rest-function-arguments"><code>rest function arguments</code></a></li>
-										<li><a href="#Object-Spread"><code>Object Spread</code></a></li>
+										<li><a href="#spread"><code>spread</code></a></li>
 									</ul>
 								</li>
 								<li><a href="#Core-JavaScript-API">Core JavaScript API</a></li>
@@ -1254,19 +1254,25 @@ $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <spa
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">funcC</span><span class="hljs-params">()</span> </span>{
     $a = func_get_arg(<span class="hljs-number">0</span>); $args = array_slice(func_get_args(), <span class="hljs-number">1</span>);
 }</code></pre>
-			<h4 id="object-spread"><code>Object Spread</code></h4>
+			<h4 id="spread"><code>spread</code></h4>
 			<pre><code class="language-typescript"><span class="hljs-keyword">const</span> e = {
     f: <span class="hljs-number">1</span>,
     ...a,
     w: <span class="hljs-number">2</span>,
     c: <span class="hljs-number">3</span>
-};</code></pre>
+};
+<span class="hljs-keyword">const</span> g = [...a, <span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, ...c, <span class="hljs-number">1</span>];</code></pre>
 			<p>output</p>
 			<pre><code class="language-php">$e = array_merge(<span class="hljs-keyword">array</span>(), <span class="hljs-keyword">array</span>(
     <span class="hljs-string">"f"</span> =&gt; <span class="hljs-number">1</span>
 ), $a, <span class="hljs-keyword">array</span>(
     <span class="hljs-string">"w"</span> =&gt; <span class="hljs-number">2</span>,
     <span class="hljs-string">"c"</span> =&gt; <span class="hljs-number">3</span>
+));
+$g = array_merge(<span class="hljs-keyword">array</span>(), $a, <span class="hljs-keyword">array</span>(
+    <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>
+), $c, <span class="hljs-keyword">array</span>(
+    <span class="hljs-number">1</span>
 ));</code></pre>
 			<blockquote>
 				<p>注：箭头函数暂不支持</p>
@@ -1431,7 +1437,7 @@ $f = <span class="hljs-function"><span class="hljs-keyword">function</span> <spa
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/68f5607/types/index.d.ts#L123">index.d.ts:123</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/0961ea8/types/index.d.ts#L123">index.d.ts:123</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
