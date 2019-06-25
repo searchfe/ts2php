@@ -1,3 +1,29 @@
+<a name="0.10.6"></a>
+## [0.10.6](https://github.com/max-team/ts2php/compare/v0.10.5...v0.10.6) (2019-06-25)
+
+
+### Bug Fixes
+
+* forinstatement compile error ([70ab3b8](https://github.com/max-team/ts2php/commit/70ab3b8))
+
+
+### Features
+
+* support object spread ([48e914e](https://github.com/max-team/ts2php/commit/48e914e))
+* support Object.prototype.hasOwnProperty ([76a9cf1](https://github.com/max-team/ts2php/commit/76a9cf1))
+
+
+
+<a name="0.10.5"></a>
+## [0.10.5](https://github.com/max-team/ts2php/compare/v0.10.4...v0.10.5) (2019-06-21)
+
+
+### Bug Fixes
+
+* idenfier emit error ([8492792](https://github.com/max-team/ts2php/commit/8492792))
+
+
+
 <a name="0.10.4"></a>
 ## [0.10.4](https://github.com/max-team/ts2php/compare/v0.10.3...v0.10.4) (2019-06-21)
 
