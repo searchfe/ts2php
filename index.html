@@ -954,7 +954,6 @@ img { max-width: 100%; }
 										<li><a href="#object-shorthand-property"><code>object shorthand property</code></a></li>
 										<li><a href="#object-method"><code>object method</code></a></li>
 										<li><a href="#enum"><code>enum</code></a></li>
-										<li><a href="#pass-by-reference-when-the-arg-is-an-object"><code>pass by reference when the arg is an object</code></a></li>
 										<li><a href="#anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></a></li>
 										<li><a href="#rest-function-arguments"><code>rest function arguments</code></a></li>
 										<li><a href="#spread"><code>spread</code></a></li>
@@ -1228,11 +1227,6 @@ $bbb = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</s
 $ccc = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-string">"c"</span> );
 $str = <span class="hljs-string">"123"</span>;
 $ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; strlen($str), <span class="hljs-string">"b"</span> =&gt; strlen($str) + <span class="hljs-number">1</span> );</code></pre>
-			<h4 id="pass-by-reference-when-the-arg-is-an-object"><code>pass by reference when the arg is an object</code></h4>
-			<pre><code class="language-typescript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aaa</span>(<span class="hljs-params">m: <span class="hljs-built_in">number</span>[]</span>) </span>{
-}</code></pre>
-			<pre><code class="language-php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aaa</span><span class="hljs-params">(&amp;$m)</span> </span>{
-}</code></pre>
 			<h4 id="anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></h4>
 			<pre><code class="language-typescript"><span class="hljs-keyword">let</span> b = <span class="hljs-string">'b'</span>;
 <span class="hljs-keyword">let</span> f = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
@@ -1438,7 +1432,7 @@ $g = array_merge(<span class="hljs-keyword">array</span>(), $a, <span class="hlj
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/180897b/types/index.d.ts#L123">index.d.ts:123</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/a6ea75c/types/index.d.ts#L123">index.d.ts:123</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
