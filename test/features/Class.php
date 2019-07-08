@@ -30,9 +30,14 @@ abstract class Animal {
     public abstract function getName();
 }
 class Cat extends Animal {
+    function __construct($a) {
+        parent::__construct();
+        $this->name = $a;
+    }
     function getName() {
         return $this->name;
     }
 }
-$c = new Cat();
+$n = "cat";
+$c = new Cat($n);
 echo $c->getName();

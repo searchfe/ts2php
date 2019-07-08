@@ -60,7 +60,7 @@ export function shouldAddDollar(node: Node, state: CompilerState): boolean {
     // 函数参数
     if (
         node.parent
-        && ts.isCallExpression(node.parent)
+        && (ts.isCallExpression(node.parent) || ts.isNewExpression(node.parent))
         && node.parent.arguments.indexOf(currentNode) >= 0
     ) {
         return true;

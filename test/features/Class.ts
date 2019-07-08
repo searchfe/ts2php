@@ -39,10 +39,16 @@ abstract class Animal {
 }
 
 class Cat extends Animal {
+    constructor(a: string) {
+        super();
+        this.name = a;
+    }
     getName() {
         return this.name;
     }
 }
 
-const c = new Cat();
+const n = 'cat';
+
+const c = new Cat(n);
 console.log(c.getName());
