@@ -29,7 +29,6 @@ TypeScript 转 PHP
       - [`object shorthand property`](#object-shorthand-property)
       - [`object method`](#object-method)
       - [`enum`](#enum)
-      - [`pass by reference when the arg is an object`](#pass-by-reference-when-the-arg-is-an-object)
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
       - [`rest function arguments`](#rest-function-arguments)
       - [`spread`](#spread)
@@ -420,18 +419,6 @@ $bbb = array( "a" => 0, "b" => 1, "c" => 2 );
 $ccc = array( "a" => "a", "b" => "b", "c" => "c" );
 $str = "123";
 $ddd = array( "a" => strlen($str), "b" => strlen($str) + 1 );
-```
-
-#### `pass by reference when the arg is an object`
-
-```typescript
-function aaa(m: number[]) {
-}
-```
-
-```php
-function aaa(&$m) {
-}
 ```
 
 #### `anonymous function inherit variables`
