@@ -1,3 +1,23 @@
+<a name="0.10.8"></a>
+## [0.10.8](https://github.com/max-team/ts2php/compare/v0.10.7...v0.10.8) (2019-07-08)
+
+
+### Bug Fixes
+
+* miss dollar in new expression arguments ([8c904aa](https://github.com/max-team/ts2php/commit/8c904aa))
+
+
+
+<a name="0.10.7"></a>
+## [0.10.7](https://github.com/max-team/ts2php/compare/v0.10.6...v0.10.7) (2019-06-25)
+
+
+### Features
+
+* support array spread ([0961ea8](https://github.com/max-team/ts2php/commit/0961ea8))
+
+
+
 <a name="0.10.6"></a>
 ## [0.10.6](https://github.com/max-team/ts2php/compare/v0.10.5...v0.10.6) (2019-06-25)
 
