@@ -11,3 +11,8 @@ $tplData["title"] = \func() . "aa";
 $a = array(
     "test" => "hello"
 );
+require_once(dirname(__FILE__) . '/' . "./Class.php");
+$c = "isset";
+require_once(dirname(__FILE__) . '/' . ("./" . $c) . '.php');
+require_once(dirname(__FILE__) . '/' . "./Class.php");
+$y = 1;;

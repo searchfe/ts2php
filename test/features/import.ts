@@ -20,3 +20,14 @@ tplData.title = func1() + 'aa';
 const a = {
     test: 'hello'
 } as SomeType;
+
+import('./Class');
+
+const c = 'isset';
+
+import('./' + c);
+
+import('./Class').then(function () {
+    const y = 1;
+});
+

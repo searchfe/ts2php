@@ -11,10 +11,15 @@ import {
     isBinaryExpression,
     SyntaxKind,
     createCall,
-    createIdentifier
+    createIdentifier,
+    updateCall,
+    FunctionExpression,
+    isFunctionExpression,
+    isStringLiteral
 } from 'typescript';
 
 import method from '../utilities/method';
+import { getLiteralText } from '../utilities';
 
 const map = {
     parseInt: method('intval', false, 1),
@@ -30,9 +35,11 @@ const identifierMap = new Map([
     ['___filename', '__FILE__']
 ]);
 
+const isDynamicImport = node => isCallExpression(node) && node.expression.kind === SyntaxKind.ImportKeyword;
+
 export default {
 
-    emit(hint, node, {helpers, typeChecker}) {
+    emit(hint, node, {helpers, modules, sourceFile}) {
 
         const expNode = node.expression;
         let func;
@@ -79,6 +86,33 @@ export default {
             && node.right.originalKeywordKind === SyntaxKind.UndefinedKeyword
         ) {
             return helpers.emitExpression(createCall(createIdentifier('isset'), [], [node.left]));
+        }
+
+        if (isDynamicImport(node)) {
+            const argu = node.arguments[0];
+            if (isStringLiteral(argu)) {
+                const moduleName = argu.text;
+                const moduleIt = modules[moduleName];
+                return helpers.writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)})`);
+            }
+            helpers.writeBase(`require_once(dirname(__FILE__) . '/' . (`);
+            helpers.emitExpression(argu);
+            return helpers.writeBase(') . \'.php\')');
+        }
+
+        if (
+            isCallExpression(node)
+            && isPropertyAccessExpression(expNode)
+            && isDynamicImport(expNode.expression)
+            && isIdentifier(expNode.name)
+            && expNode.name.escapedText === 'then'
+            && isFunctionExpression(node.arguments[0])
+        ) {
+            helpers.emitExpression(expNode.expression);
+            helpers.writeBase(';\n');
+            const func = node.arguments[0] as FunctionExpression;
+            func.body.forEachChild(statement => helpers.emit(statement));
+            return;
         }
 
         return false;
