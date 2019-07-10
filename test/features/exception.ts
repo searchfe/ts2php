@@ -3,7 +3,7 @@ try {
     throw 'error!';
 }
 catch (e) {
-    console.log('error');
+    console.log('error' + e.message);
 }
 
 const a = 'hard';
