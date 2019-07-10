@@ -1,3 +1,19 @@
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/max-team/ts2php/compare/v0.10.8...v0.11.0) (2019-07-10)
+
+
+### Bug Fixes
+
+* typescript version conflict ([67aad23](https://github.com/max-team/ts2php/commit/67aad23))
+
+
+### Features
+
+* support dynamic import ([7f8c4ed](https://github.com/max-team/ts2php/commit/7f8c4ed))
+* update typescript to 3.5 ([74c2398](https://github.com/max-team/ts2php/commit/74c2398))
+
+
+
 <a name="0.10.8"></a>
 ## [0.10.8](https://github.com/max-team/ts2php/compare/v0.10.7...v0.10.8) (2019-07-08)
 
