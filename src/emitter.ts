@@ -337,8 +337,8 @@ export function emitFile(
                     return emitSwitchStatement(<ts.SwitchStatement>node);
                 // case SyntaxKind.LabeledStatement:
                 //     return emitLabeledStatement(<LabeledStatement>node);
-                // case SyntaxKind.ThrowStatement:
-                //     return emitThrowStatement(<ThrowStatement>node);
+                case SyntaxKind.ThrowStatement:
+                    return emitThrowStatement(<ts.ThrowStatement>node);
                 // case SyntaxKind.TryStatement:
                 //     return emitTryStatement(<TryStatement>node);
                 // case SyntaxKind.DebuggerStatement:
@@ -1643,11 +1643,17 @@ export function emitFile(
     //     emit(node.statement);
     // }
 
-    // function emitThrowStatement(node: ThrowStatement) {
-    //     emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
-    //     emitExpressionWithLeadingSpace(node.expression);
-    //     writeSemicolon();
-    // }
+    function emitThrowStatement(node: ts.ThrowStatement) {
+        // 只支持字符串
+        if (!isStringLike(node.expression, typeChecker)) {
+            return;
+        }
+        emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
+        emitExpressionWithLeadingSpace(
+            ts.createNew(ts.createIdentifier('\\Exception'), null, [node.expression])
+        );
+        writeSemicolon();
+    }
 
     // function emitTryStatement(node: TryStatement) {
     //     emitTokenWithComment(SyntaxKind.TryKeyword, node.pos, writeKeyword, node);
