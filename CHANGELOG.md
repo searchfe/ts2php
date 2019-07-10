@@ -1,3 +1,15 @@
+<a name="0.11.1"></a>
+## [0.11.1](https://github.com/max-team/ts2php/compare/v0.11.0...v0.11.1) (2019-07-10)
+
+
+### Features
+
+* support error property ([e5fd213](https://github.com/max-team/ts2php/commit/e5fd213))
+* support throw [#24](https://github.com/max-team/ts2php/issues/24) ([176f862](https://github.com/max-team/ts2php/commit/176f862))
+* support try catch [#24](https://github.com/max-team/ts2php/issues/24) ([533d704](https://github.com/max-team/ts2php/commit/533d704))
+
+
+
 <a name="0.11.0"></a>
 # [0.11.0](https://github.com/max-team/ts2php/compare/v0.10.8...v0.11.0) (2019-07-10)
 
