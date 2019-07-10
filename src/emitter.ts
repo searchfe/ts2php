@@ -339,8 +339,8 @@ export function emitFile(
                 //     return emitLabeledStatement(<LabeledStatement>node);
                 case SyntaxKind.ThrowStatement:
                     return emitThrowStatement(<ts.ThrowStatement>node);
-                // case SyntaxKind.TryStatement:
-                //     return emitTryStatement(<TryStatement>node);
+                case SyntaxKind.TryStatement:
+                    return emitTryStatement(<ts.TryStatement>node);
                 // case SyntaxKind.DebuggerStatement:
                 //     return emitDebuggerStatement(<DebuggerStatement>node);
 
@@ -428,8 +428,8 @@ export function emitFile(
                     return emitDefaultClause(<ts.DefaultClause>node);
                 case SyntaxKind.HeritageClause:
                     return emitHeritageClause(<ts.HeritageClause>node);
-                // case SyntaxKind.CatchClause:
-                //     return emitCatchClause(<CatchClause>node);
+                case SyntaxKind.CatchClause:
+                    return emitCatchClause(<ts.CatchClause>node);
 
                 // // Property assignments
                 case SyntaxKind.PropertyAssignment:
@@ -1655,21 +1655,21 @@ export function emitFile(
         writeSemicolon();
     }
 
-    // function emitTryStatement(node: TryStatement) {
-    //     emitTokenWithComment(SyntaxKind.TryKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     emit(node.tryBlock);
-    //     if (node.catchClause) {
-    //         writeLineOrSpace(node);
-    //         emit(node.catchClause);
-    //     }
-    //     if (node.finallyBlock) {
-    //         writeLineOrSpace(node);
-    //         emitTokenWithComment(SyntaxKind.FinallyKeyword, (node.catchClause || node.tryBlock).end, writeKeyword, node);
-    //         writeSpace();
-    //         emit(node.finallyBlock);
-    //     }
-    // }
+    function emitTryStatement(node: ts.TryStatement) {
+        emitTokenWithComment(SyntaxKind.TryKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        emit(node.tryBlock);
+        if (node.catchClause) {
+            writeLineOrSpace(node);
+            emit(node.catchClause);
+        }
+        if (node.finallyBlock) {
+            writeLineOrSpace(node);
+            emitTokenWithComment(SyntaxKind.FinallyKeyword, (node.catchClause || node.tryBlock).end, writeKeyword, node);
+            writeSpace();
+            emit(node.finallyBlock);
+        }
+    }
 
     // function emitDebuggerStatement(node: DebuggerStatement) {
     //     writeToken(SyntaxKind.DebuggerKeyword, node.pos, writeKeyword);
@@ -2328,17 +2328,18 @@ export function emitFile(
         emitList(node, node.types, ListFormat.HeritageClauseTypes);
     }
 
-    // function emitCatchClause(node: CatchClause) {
-    //     const openParenPos = emitTokenWithComment(SyntaxKind.CatchKeyword, node.pos, writeKeyword, node);
-    //     writeSpace();
-    //     if (node.variableDeclaration) {
-    //         emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
-    //         emit(node.variableDeclaration);
-    //         emitTokenWithComment(SyntaxKind.CloseParenToken, node.variableDeclaration.end, writePunctuation, node);
-    //         writeSpace();
-    //     }
-    //     emit(node.block);
-    // }
+    function emitCatchClause(node: ts.CatchClause) {
+        const openParenPos = emitTokenWithComment(SyntaxKind.CatchKeyword, node.pos, writeKeyword, node);
+        writeSpace();
+        if (node.variableDeclaration) {
+            emitTokenWithComment(SyntaxKind.OpenParenToken, openParenPos, writePunctuation, node);
+            emitIdentifier(ts.createIdentifier('\\Exception'));
+            emitWithLeadingSpace(node.variableDeclaration);
+            emitTokenWithComment(SyntaxKind.CloseParenToken, node.variableDeclaration.end, writePunctuation, node);
+            writeSpace();
+        }
+        emit(node.block);
+    }
 
     // //
     // // Property assignments

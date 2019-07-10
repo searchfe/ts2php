@@ -1,5 +1,10 @@
 
-throw 'error!';
+try {
+    throw 'error!';
+}
+catch (e) {
+    console.log('error');
+}
 
 const a = 'hard';
 

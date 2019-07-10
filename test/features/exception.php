@@ -1,6 +1,11 @@
 <?php
 namespace test\case_exception;
-throw new \Exception("error!");
+try {
+    throw new \Exception("error!");
+}
+catch (\Exception $e) {
+    echo "error";
+}
 $a = "hard";
 throw new \Exception("a " . $a . " error!");
 throw new \Exception($a . "!");
