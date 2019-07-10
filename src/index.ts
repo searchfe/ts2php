@@ -5,8 +5,7 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import * as ts from 'typescript';
-import {Project} from 'ts-morph';
+import {Project, ts} from 'ts-morph';
 import {upperFirst} from 'lodash';
 
 import * as emitter from './emitter';
