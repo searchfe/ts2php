@@ -66,7 +66,7 @@ const map = {
     slice: method('\\Ts2Php_Helper::str_slice', true, 2),
     indexOf: method('\\Ts2Php_Helper::str_pos', true, 1),
     substr: method('substr', true, 2),
-    substring: method('substr', true, 2),
+    substring: method('\\Ts2Php_Helper::str_slice', true, 2),
     repeat: method('str_repeat', true, 1),
     startsWith: method('\\Ts2Php_Helper::startsWith', true, 2),
     endsWith: method('\\Ts2Php_Helper::endsWith', true, 2),
