@@ -1,3 +1,24 @@
+<a name="0.11.3"></a>
+## [0.11.3](https://github.com/max-team/ts2php/compare/v0.11.2...v0.11.3) (2019-07-22)
+
+
+### Bug Fixes
+
+* compiler error ([0cc9d52](https://github.com/max-team/ts2php/commit/0cc9d52))
+
+
+
+<a name="0.11.2"></a>
+## [0.11.2](https://github.com/max-team/ts2php/compare/v0.11.1...v0.11.2) (2019-07-22)
+
+
+### Bug Fixes
+
+* str slice runtime not match ([260f170](https://github.com/max-team/ts2php/commit/260f170))
+* substring mirror wrong ([9ae2b85](https://github.com/max-team/ts2php/commit/9ae2b85))
+
+
+
 <a name="0.11.1"></a>
 ## [0.11.1](https://github.com/max-team/ts2php/compare/v0.11.0...v0.11.1) (2019-07-10)
 
