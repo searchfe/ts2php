@@ -7,6 +7,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import {Project, ts} from 'ts-morph';
 import {upperFirst} from 'lodash';
+import {satisfies} from 'semver';
 
 import * as emitter from './emitter';
 import {CompilerState} from './types';
@@ -44,6 +45,10 @@ const getRandomString = n => Array(n)
 
 export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
+    if (!satisfies(ts.version, '~3.5.0')) {
+        throw new TypeError('[ts2php] TypeScript version ' + ts.version + ' is not valid! Please install typescript@~3.5.0!');
+    }
+
     const project = new Project({
         compilerOptions: {
             target: ts.ScriptTarget.ES2016,
@@ -52,7 +57,6 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
             noImplicitThis: true,
             noImplicitAny: true,
             alwaysStrict: true,
-            transpileOnly: false,
             ...options.compilerOptions
         },
         addFilesFromTsConfig: false,

@@ -28,7 +28,7 @@ export default {
             && map[getTextOfNode(node.name)]
         ) {
             const symbol = typeChecker.getSymbolAtLocation(node.expression);
-            const declaration = symbol.valueDeclaration;
+            const declaration = symbol && symbol.valueDeclaration;
             if (declaration && ts.isCatchClause(declaration.parent)) {
                 emitExpression(node.expression);
                 return writeBase(`->${map[getTextOfNode(node.name)]}()`);
