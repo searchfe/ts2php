@@ -40,6 +40,11 @@ final class Ts2Php_HelperTest extends TestCase {
     public function testStr_slice() {
         $this->assertEquals(
             Ts2Php_Helper::str_slice('abcdefghi', 5, 8),
+            'fgh'
+        );
+
+        $this->assertEquals(
+            Ts2Php_Helper::str_slice('abcdefghi', 5),
             'fghi'
         );
     }

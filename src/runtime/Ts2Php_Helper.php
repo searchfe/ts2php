@@ -47,8 +47,9 @@ class Ts2Php_Helper {
      * @param $end {number}
      * @return {string}
      */
-    static public function str_slice($origin, $start, $end) {
-        return substr($origin, $start, $end - $start + 1);
+    static public function str_slice($origin, $start, $end = null) {
+        $end = isset($end) ? $end : mb_strlen($origin, 'utf8');
+        return substr($origin, $start, $end - $start);
     }
 
     /**
