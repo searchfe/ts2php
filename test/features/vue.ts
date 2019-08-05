@@ -12,7 +12,7 @@ export default Vue.extend({
     data() {
         return {
             a: this.b + 1,
-            d: this.c.names.join(',')
+            d: this.c.names.map(a => a.length)
         };
     },
     created() {

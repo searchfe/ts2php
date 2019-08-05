@@ -38,3 +38,9 @@ declare const PHP_URL_PASS = 5;
 declare const PHP_URL_PATH = 6;
 declare const PHP_URL_QUERY = 7;
 declare const PHP_URL_FRAGMENT = 8;
+
+declare function htmlspecialchars(str: string, flags: number): string;
+
+declare const ENT_COMPAT = 2;
+declare const ENT_NOQUOTES = 0;
+declare const ENT_QUOTES = 3;

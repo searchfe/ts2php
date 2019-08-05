@@ -45,8 +45,8 @@ const getRandomString = n => Array(n)
 
 export function compile(filePath: string, options: Ts2phpOptions = {}) {
 
-    if (!satisfies(ts.version, '~3.5.0')) {
-        throw new TypeError('[ts2php] TypeScript version ' + ts.version + ' is not valid! Please install typescript@~3.5.0!');
+    if (!satisfies(ts.version, '~3.4.0')) {
+        throw new TypeError('[ts2php] TypeScript version ' + ts.version + ' is not valid! Please install typescript@~3.4.0!');
     }
 
     const project = new Project({

@@ -8,7 +8,9 @@ $Vue["extend"](array(
     "data" => function () {
         return array(
             "a" => $this->b . 1,
-            "d" => join(",", $this->c["names"])
+            "d" => array_map(function ($a){
+            return mb_strlen($a, "utf8");
+            }, $this->c["names"])
         );
     },
     "created" => function () {
