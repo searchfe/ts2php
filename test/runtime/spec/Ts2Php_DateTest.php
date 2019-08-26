@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 final class Ts2Php_DateTest extends TestCase {
-    private $time = 1559290432004;
+    private $time = 1559290432004; // 2019-05-31 08:13:52
     
     public function testGetDate() {
         $date = new Ts2Php_Date($this->time);
@@ -116,6 +116,25 @@ final class Ts2Php_DateTest extends TestCase {
             $date->getFullYear(),
             2005
         );
+        $this->assertEquals(
+            $date->getMonth(),
+            4
+        );
+
+        $date->setFullYear(2001, 7, 8);
+
+        $this->assertEquals(
+            $date->getFullYear(),
+            2001
+        );
+        $this->assertEquals(
+            $date->getMonth(),
+            6
+        );
+        $this->assertEquals(
+            $date->getDate(),
+            8
+        );
     }
 
     public function testSetHours() {
@@ -126,12 +145,26 @@ final class Ts2Php_DateTest extends TestCase {
             $date->getHours(),
             13
         );
+        $this->assertEquals(
+            $date->getMinutes(),
+            13
+        );
 
         $date->setHours(9);
 
         $this->assertEquals(
             $date->getHours(),
             9
+        );
+
+        $date->setHours(9, 8, 7);
+        $this->assertEquals(
+            $date->getMinutes(),
+            8
+        );
+        $this->assertEquals(
+            $date->getSeconds(),
+            7
         );
     }
 
@@ -153,12 +186,16 @@ final class Ts2Php_DateTest extends TestCase {
     }
 
     public function testSetMonth() {
-        $date = new Ts2Php_Date('2019-01-02');
-        $date->setMonth(5);
+        $date = new Ts2Php_Date($this->time);
+        $date->setMonth(4);
 
         $this->assertEquals(
             $date->getMonth(),
-            5
+            4
+        );
+        $this->assertEquals(
+            $date->getDate(),
+            31
         );
 
         $date->setMonth(11);
@@ -166,6 +203,17 @@ final class Ts2Php_DateTest extends TestCase {
         $this->assertEquals(
             $date->getMonth(),
             11
+        );
+
+        $date->setMonth(3, 9);
+
+        $this->assertEquals(
+            $date->getMonth(),
+            3
+        );
+        $this->assertEquals(
+            $date->getDate(),
+            9
         );
     }
 
@@ -199,9 +247,9 @@ final class Ts2Php_DateTest extends TestCase {
     public function testConstruct() {
         $date = new Ts2Php_Date();
 
-        $this->assertNotEquals(
+        $this->assertEquals(
             $date->getTime(),
-            0
+            time() * 1000
         );
     }
 }
