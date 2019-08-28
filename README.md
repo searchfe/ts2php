@@ -10,17 +10,17 @@ TypeScript 转 PHP
 [![npm downloads](http://img.shields.io/npm/dm/ts2php.svg)](https://www.npmjs.org/package/ts2php)
 
 - [ts2php](#ts2php)
-  - [Usage](#Usage)
+  - [Usage](#usage)
     - [compiler](#compiler)
     - [runtime](#runtime)
-    - [CLI](#CLI)
-  - [Features](#Features)
-    - [Javascript Syntax](#Javascript-Syntax)
+    - [CLI](#cli)
+  - [Features](#features)
+    - [Javascript Syntax](#javascript-syntax)
       - [`for`/`for of`/`for in`](#forfor-offor-in)
       - [`if`/`else if`/`else`](#ifelse-ifelse)
       - [`swtich`](#swtich)
       - [`while`/`do while`](#whiledo-while)
-      - [`Class`](#Class)
+      - [`Class`](#class)
       - [`typeof`](#typeof)
       - [`delete`](#delete)
       - [`destructuring`](#destructuring)
@@ -32,8 +32,8 @@ TypeScript 转 PHP
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
       - [`rest function arguments`](#rest-function-arguments)
       - [`spread`](#spread)
-    - [Core JavaScript API](#Core-JavaScript-API)
-  - [Thanks to](#Thanks-to)
+    - [Core JavaScript API](#core-javascript-api)
+  - [Thanks to](#thanks-to)
 
 ## Usage
 
@@ -536,7 +536,6 @@ $g = array_merge(array(), $a, array(
   - String.prototype.toLowerCase
   - String.prototype.split
   - String.prototype.indexOf
-  - String.prototype.substr
   - String.prototype.substring
   - String.prototype.repeat
   - String.prototype.startsWidth
