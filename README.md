@@ -600,3 +600,5 @@ $g = array_merge(array(), $a, array(
 Based on [Typescript](https://github.com/Microsoft/TypeScript) compiler
 
 [options]: https://max-team.github.io/ts2php/interfaces/ts2phpoptions.html
+
+pr test
