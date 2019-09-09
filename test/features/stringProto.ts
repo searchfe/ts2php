@@ -10,7 +10,7 @@ let h = a.indexOf('a');
 let i = a.split(" ");
 let j = a.split(/\0/);
 let k = 2;
-let l = a.substr(1, k);
+let l = a.slice(1, k);
 let m = a.length;
 let n = "a啊哈哈";
 console.log(n[1]);
