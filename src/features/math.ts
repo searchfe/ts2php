@@ -39,7 +39,7 @@ let map = {
     max: 'max',
     min: 'min',
     pow: 'pow',
-    random: 'rand',
+    random: '\\Ts2Php_Helper::random',
     round: 'round',
     // sign: 'sign',
     sin: 'sin',

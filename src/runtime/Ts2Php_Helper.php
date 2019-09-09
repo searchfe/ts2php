@@ -231,6 +231,14 @@ class Ts2Php_Helper {
         }
     }
 
+    /**
+     * get type of $var
+     * @return {float}
+     */
+    static public function random() {
+        return (float)rand() / (float)getrandmax();
+    }
+
 }
 
 /**
@@ -388,7 +396,7 @@ class Ts2Php_Date {
     public function toLocaleString() {
         return date('Y-m-d H:i:s',$this->value);
     }
-    
+
     private function padTime($time) {
         if (!is_numeric($time)) {
             return $time;
