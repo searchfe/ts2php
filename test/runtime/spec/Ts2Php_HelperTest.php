@@ -232,4 +232,10 @@ final class Ts2Php_HelperTest extends TestCase {
             })
         );
     }
+
+    public function testRandom() {
+        $result = \Ts2Php_Helper::random();
+        $this->assertTrue($result > 0);
+        $this->assertTrue($result < 1);
+    }
 }
