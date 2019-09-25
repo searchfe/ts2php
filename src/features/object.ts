@@ -58,7 +58,7 @@ export default {
             && expNode.expression.escapedText === 'Object'
             && (func = staticMap[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, helperClass);
+            return func(node, helpers, {helperClass});
         }
 
         if (

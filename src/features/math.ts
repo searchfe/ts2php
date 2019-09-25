@@ -70,7 +70,7 @@ export default {
             && expNode.expression.escapedText === 'Math'
             && (func = map[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, helperClass);
+            return func(node, helpers, {helperClass});
         }
 
         return false;

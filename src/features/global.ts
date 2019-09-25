@@ -49,7 +49,7 @@ export default {
             && isCallExpression(node)
             && (func = map[expNode.escapedText])
         ) {
-            return func(node, helpers, helperClass);
+            return func(node, helpers, {helperClass});
         }
 
         if (

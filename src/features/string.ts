@@ -24,10 +24,10 @@ import {
     isStringLike, isNumberLike,
 } from '../utilities/nodeTest';
 
-import method from '../utilities/method';
+import method, {formatMethodName} from '../utilities/method';
 import {CompilerState} from '../types';
 
-function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}) {
+function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}, {helperClass}) {
 
     const expNode = node.expression as PropertyAccessExpression;
 
@@ -42,7 +42,7 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
         }
     }
 
-    writePunctuation(method);
+    writePunctuation(formatMethodName(method, helperClass));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
@@ -52,7 +52,7 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     const pattern = node.arguments[0];
     const method = isStringLike(pattern, state.typeChecker) ? 'explode' : 'preg_split';
     let nodeList = [node.arguments[0], expNode.expression];
-    writePunctuation(method);
+    writePunctuation(formatMethodName(method, state.helperClass));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
@@ -90,7 +90,7 @@ export default {
         ) {
             const func = map[helpers.getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers, state.helperClass);
+                return func(node, helpers, state);
             }
         }
 

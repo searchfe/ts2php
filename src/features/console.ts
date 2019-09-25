@@ -51,7 +51,7 @@ export default {
             && expNode.expression.escapedText === 'console'
             && (func = methods[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, helperClass);
+            return func(node, helpers, {helperClass});
         }
 
         return false;

@@ -11,7 +11,7 @@ import {
 } from 'typescript';
 
 export default function (method: string, self: boolean = true, end?: number, selfLast?: boolean) {
-    return (node: CallExpression, {emitExpressionList, writePunctuation}, helperClass) => {
+    return (node: CallExpression, {emitExpressionList, writePunctuation}, {helperClass}) => {
         let expNode = node.expression as PropertyAccessExpression;
         let nodeList = self ? [expNode.expression || expNode] : [];
         let postList = selfLast ? [expNode.expression || expNode] : [];

@@ -54,7 +54,7 @@ export default {
         ) {
             const func = map[getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers, helperClass);
+                return func(node, helpers, {helperClass});
             }
         }
 
@@ -67,7 +67,7 @@ export default {
         ) {
             const func = api[getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers, helperClass);
+                return func(node, helpers, {helperClass});
             }
         }
 

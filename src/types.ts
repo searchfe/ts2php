@@ -6,6 +6,5 @@ export interface CompilerState extends Ts2phpOptions {
     errors: ErrorInfo[],
     typeChecker: ts.TypeChecker,
     helpers: {},
-    helperClass: string,
     sourceFile?: ts.SourceFile
 }

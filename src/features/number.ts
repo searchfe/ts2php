@@ -42,14 +42,14 @@ export default {
                 && expNode.expression.escapedText === 'Number'
                 && (func = staticMap[helpers.getTextOfNode(expNode.name)])
             ) {
-                return func(node, helpers, helperClass);
+                return func(node, helpers, {helperClass});
             }
 
             if (
                 isNumberLike(expNode.expression, typeChecker)
                 && (func = protoMap[helpers.getTextOfNode(expNode.name)])
             ) {
-                return func(node, helpers, helperClass);
+                return func(node, helpers, {helperClass});
             }
         }
 
