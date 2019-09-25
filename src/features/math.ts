@@ -39,7 +39,7 @@ let map = {
     max: 'max',
     min: 'min',
     pow: 'pow',
-    random: '\\Ts2Php_Helper::random',
+    random: '%helper::random',
     round: 'round',
     // sign: 'sign',
     sin: 'sin',
@@ -57,7 +57,7 @@ for (let key in map) {
 
 export default {
 
-    emit(hint, node, {helpers}) {
+    emit(hint, node, {helpers, helperClass}) {
 
         const expNode = node.expression;
         let func;
@@ -70,7 +70,7 @@ export default {
             && expNode.expression.escapedText === 'Math'
             && (func = map[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers);
+            return func(node, helpers, helperClass);
         }
 
         return false;

@@ -27,7 +27,7 @@ const map = {
     encodeURIComponent: method('rawurlencode', false, 1),
     decodeURIComponent: method('rawurldecode', false, 1),
     isNaN: method('is_nan', false, 1),
-    encodeURI: method('\\Ts2Php_Helper::encodeURI', false, 1),
+    encodeURI: method('%helper::encodeURI', false, 1),
 };
 
 const identifierMap = new Map([
@@ -39,7 +39,7 @@ const isDynamicImport = node => isCallExpression(node) && node.expression.kind =
 
 export default {
 
-    emit(hint, node, {helpers, modules, sourceFile}) {
+    emit(hint, node, {helpers, modules, sourceFile, helperClass}) {
 
         const expNode = node.expression;
         let func;
@@ -49,7 +49,7 @@ export default {
             && isCallExpression(node)
             && (func = map[expNode.escapedText])
         ) {
-            return func(node, helpers);
+            return func(node, helpers, helperClass);
         }
 
         if (

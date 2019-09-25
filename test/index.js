@@ -59,5 +59,27 @@ describe('features', () => {
         let res = compile('test.ts', {namespace: 'test', source: 'var a = 1;'});
         assert.equal(res.phpCode, '<?php\nnamespace test;\n$a = 1;\n');
     });
+
+    it('respect helper class name', function () {
+        this.timeout(5000);
+        let res = compile('test.ts', {namespace: 'test', source: '[].some(() => true);', helperClass: '\\foo\\Ts2Php_Helper'});
+        let expected = '<?php\n' +
+            'namespace test;\n' +
+            '\\foo\\Ts2Php_Helper::array_some(array(), function (){\n' +
+            'return true;\n' +
+            '});\n'
+        assert.equal(res.phpCode, expected);
+    });
+
+    it('helper class name default to \\Ts2Php_Helper', function () {
+        this.timeout(5000);
+        let res = compile('test.ts', {namespace: 'test', source: '[].some(() => true);'});
+        let expected = '<?php\n' +
+            'namespace test;\n' +
+            '\\Ts2Php_Helper::array_some(array(), function (){\n' +
+            'return true;\n' +
+            '});\n'
+        assert.equal(res.phpCode, expected);
+    });
 });
 
