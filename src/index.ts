@@ -31,6 +31,7 @@ const defaultOptions = {
     },
     getModuleNamespace: () => '\\',
     modules: {},
+    helperClass: '\\Ts2Php_Helper',
     customTransformers: []
 };
 

@@ -24,15 +24,15 @@ import {
     isStringLike, isNumberLike,
 } from '../utilities/nodeTest';
 
-import method from '../utilities/method';
+import method, {formatMethodName} from '../utilities/method';
 import {CompilerState} from '../types';
 
-function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}) {
+function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}, {helperClass}) {
 
     const expNode = node.expression as PropertyAccessExpression;
 
     let nodeList = [...node.arguments, expNode.expression];
-    let method = '\\Ts2Php_Helper::str_replace_once';
+    let method = '%helper::str_replace_once';
 
     if (isRegularExpressionLiteral(node.arguments[0])) {
         method = 'preg_replace';
@@ -42,7 +42,7 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
         }
     }
 
-    writePunctuation(method);
+    writePunctuation(formatMethodName(method, helperClass));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
@@ -52,7 +52,7 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     const pattern = node.arguments[0];
     const method = isStringLike(pattern, state.typeChecker) ? 'explode' : 'preg_split';
     let nodeList = [node.arguments[0], expNode.expression];
-    writePunctuation(method);
+    writePunctuation(formatMethodName(method, state.helperClass));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
@@ -63,14 +63,14 @@ const map = {
     trimLeft: method('ltrim'),
     toUpperCase: method('strtoupper'),
     toLowerCase: method('strtolower'),
-    slice: method('\\Ts2Php_Helper::str_slice', true, 2),
-    indexOf: method('\\Ts2Php_Helper::str_pos', true, 1),
-    substring: method('\\Ts2Php_Helper::str_slice', true, 2),
+    slice: method('%helper::str_slice', true, 2),
+    indexOf: method('%helper::str_pos', true, 1),
+    substring: method('%helper::str_slice', true, 2),
     repeat: method('str_repeat', true, 1),
-    startsWith: method('\\Ts2Php_Helper::startsWith', true, 2),
-    endsWith: method('\\Ts2Php_Helper::endsWith', true, 2),
-    includes: method('\\Ts2Php_Helper::includes', true, 2),
-    padStart: method('\\Ts2Php_Helper::padStart', true, 2),
+    startsWith: method('%helper::startsWith', true, 2),
+    endsWith: method('%helper::endsWith', true, 2),
+    includes: method('%helper::includes', true, 2),
+    padStart: method('%helper::padStart', true, 2),
     replace,
     split
 };

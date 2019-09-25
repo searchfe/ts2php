@@ -22,21 +22,21 @@ const map = {
     splice: method('array_splice', true),
     map: method('array_map', false, 1, true),
     forEach: method('array_walk', true, 1),
-    every: method('\\Ts2Php_Helper::array_every', true, 1),
-    some: method('\\Ts2Php_Helper::array_some', true, 1),
-    indexOf: method('\\Ts2Php_Helper::array_pos', false, 1, true),
+    every: method('%helper::array_every', true, 1),
+    some: method('%helper::array_some', true, 1),
+    indexOf: method('%helper::array_pos', false, 1, true),
     join: method('join', false, 1, true),
     filter: method('array_filter', true, 1),
-    slice: method('\\Ts2Php_Helper::arraySlice', true, 2)
+    slice: method('%helper::arraySlice', true, 2)
 };
 
 const api = {
-    isArray: method('\\Ts2Php_Helper::isPlainArray', false, 1)
+    isArray: method('%helper::isPlainArray', false, 1)
 };
 
 export default {
 
-    emit(hint, node, {helpers, typeChecker}) {
+    emit(hint, node, {helpers, typeChecker, helperClass}) {
 
         const expNode = node.expression;
 
@@ -54,7 +54,7 @@ export default {
         ) {
             const func = map[getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers);
+                return func(node, helpers, {helperClass});
             }
         }
 
@@ -67,7 +67,7 @@ export default {
         ) {
             const func = api[getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers);
+                return func(node, helpers, {helperClass});
             }
         }
 

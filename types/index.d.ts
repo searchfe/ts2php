@@ -50,6 +50,9 @@ export interface Ts2phpOptions {
     /** 指定当前文件的命名空间 */
     namespace?: string;
 
+    /** 指定 Ts2Php_Helper 的 class 名字 */
+    helperClass?: string,
+
     /** 获取当前文件的命名空间的函数，优先级低于 [[Ts2phpOptions.namespace]] */
     getNamespace?: () => string;
 

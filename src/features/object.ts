@@ -45,7 +45,7 @@ function emitPropertyExists(objNode, propNode, typeChecker, emitExpression) {
 
 export default {
 
-    emit(hint, node, {helpers, typeChecker}) {
+    emit(hint, node, {helpers, typeChecker, helperClass}) {
 
         const expNode = node.expression;
         let func;
@@ -58,7 +58,7 @@ export default {
             && expNode.expression.escapedText === 'Object'
             && (func = staticMap[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers);
+            return func(node, helpers, {helperClass});
         }
 
         if (

@@ -4,6 +4,7 @@
  */
 
 import * as ts from 'typescript';
+import {formatMethodName} from './utilities/method'
 import {createWrappedNode} from 'ts-morph';
 import * as tsMorph from 'ts-morph';
 
@@ -1305,7 +1306,8 @@ export function emitFile(
     }
 
     function emitTypeOfExpression(node: ts.TypeOfExpression) {
-        writePunctuation('\\Ts2Php_Helper::typeof(');
+        const funcName = formatMethodName('%helper::typeof', state.helperClass)
+        writePunctuation(`${funcName}(`);
         emitExpression(node.expression);
         writePunctuation(')');
     }

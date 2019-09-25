@@ -38,7 +38,7 @@ const methods = {
 
 export default {
 
-    emit(hint, node, {helpers}) {
+    emit(hint, node, {helpers, helperClass}) {
 
         const expNode = node.expression;
         let func;
@@ -51,7 +51,7 @@ export default {
             && expNode.expression.escapedText === 'console'
             && (func = methods[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers);
+            return func(node, helpers, {helperClass});
         }
 
         return false;
