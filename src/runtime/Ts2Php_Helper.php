@@ -93,6 +93,60 @@ class Ts2Php_Helper {
     }
 
     /**
+     * string.prototype.match
+     * @param $patten {string}
+     * @param $subject {string}
+     * @param $isStr {boolean}
+     */
+    static public function match($patten, $subject, $isStr = false) {
+        $matches = array();
+    
+        if ($isStr) {
+            $patten = '/' . preg_quote($patten, '/') . '/';
+        }
+        else {
+            // support g
+            $pattenArr = explode('/', $patten);
+            $marks = $pattenArr[2];
+            if (strpos($marks, 'g') !== false) {
+                $newMarks = str_ireplace('g', '', $marks);
+                $pattenArr[2] = $newMarks;
+                $patten = implode('/', $pattenArr);
+        
+                preg_match_all($patten, $subject, $matches);
+                if (empty($matches[0])) {
+                    return null;
+                }
+                return $matches[0];
+            }
+        }
+    
+    
+        $res = preg_match($patten, $subject, $matches);
+        if ($res === 0) {
+            return null;
+        }
+    
+        // support group
+        $group = array();
+        foreach($matches as $x=>$x_val) {
+            if (!is_numeric($x)) {
+                $group[$x] = $x_val;
+                unset($matches[$x]);
+            }
+        }
+        if (!empty($group)) {
+            $matches['group'] = $group;
+        }
+    
+        // index, input
+        $matches['index'] = strpos($subject, $matches[0]);
+        $matches['input'] = $subject;
+    
+        return $matches;
+    }
+
+    /**
      * string.prototype.indexOf
      * @param $haystack {string}
      * @param $needle {string}
