@@ -542,6 +542,7 @@ $g = array_merge(array(), $a, array(
   - String.prototype.endsWidth
   - String.prototype.includes
   - String.prototype.padStart
+  - String.prototype.match **只支持正则和字符串匹配**
 - Array
   - Array.isArray
   - Array.prototype.length
