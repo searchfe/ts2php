@@ -238,4 +238,56 @@ final class Ts2Php_HelperTest extends TestCase {
         $this->assertTrue($result > 0);
         $this->assertTrue($result < 1);
     }
+
+    public function testMatch() {
+        $this->assertEquals(
+            \Ts2Php_Helper::match("/a/", "aaa"),
+            array(
+                "0" => "a",
+                "index" => 0,
+                "input" => "aaa"
+            )
+        );
+
+        $this->assertEquals(
+            \Ts2Php_Helper::match("a", "aaa", true),
+            array(
+                "0" => "a",
+                "index" => 0,
+                "input" => "aaa"
+            )
+        );
+
+        $this->assertEquals(
+            \Ts2Php_Helper::match("/a/ig", "aaa"),
+            array(
+                "a",
+                "a",
+                "a"
+            )
+        );
+
+        $this->assertEquals(
+            \Ts2Php_Helper::match("/a(bc)/", "abcdef"),
+            array(
+                "0" => "abc",
+                "1" => "bc",
+                "index" => 0,
+                "input" => "abcdef"
+            )
+        );
+
+        $this->assertEquals(
+            \Ts2Php_Helper::match("/a(?<name>bc)/", "abcdef"),
+            array(
+                "0" => "abc",
+                "1" => "bc",
+                "index" => 0,
+                "input" => "abcdef",
+                "group" => array(
+                    "name" => "bc"
+                )
+            )
+        );
+    }
 }
