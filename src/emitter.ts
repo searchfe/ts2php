@@ -648,7 +648,7 @@ export function emitFile(
     }
 
     function emitRegularExpressionLiteral(node: ts.RegularExpressionLiteral) {
-        const text = JSON.stringify(getLiteralTextOfNode(node, true).replace(/g$/, ''));
+        const text = JSON.stringify(getLiteralTextOfNode(node, true).replace(/\/[^/]+$/, match => match.replace('g', '')));
         writeStringLiteral(text);
     }
 

@@ -19,7 +19,8 @@ import {
     createIdentifier,
     createStringLiteral,
     SyntaxKind,
-    createTrue
+    createTrue,
+    createFalse
 } from 'typescript';
 
 import {
@@ -65,9 +66,20 @@ function match(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     let isRegularExpressionLiteral = pattern.kind === SyntaxKind.RegularExpressionLiteral;
     let method = '%helper::match';
     let nodeList = [node.arguments[0], expNode.expression];
+
     if (!isRegularExpressionLiteral) {
+        // mark is string
         nodeList.push(createTrue());
     }
+    else {
+        // mark all match
+        let isAll = pattern.getText().split('/')[2].indexOf('g') != -1;
+        if (isAll) {
+            nodeList.push(createFalse());
+            nodeList.push(createTrue());
+        }
+    }
+
     writePunctuation(formatMethodName(method, state.helperClass));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);

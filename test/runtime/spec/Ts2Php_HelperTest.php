@@ -259,7 +259,7 @@ final class Ts2Php_HelperTest extends TestCase {
         );
 
         $this->assertEquals(
-            \Ts2Php_Helper::match("/a/ig", "aaa"),
+            \Ts2Php_Helper::match("/a/i", "aaa", false, true),
             array(
                 "a",
                 "a",

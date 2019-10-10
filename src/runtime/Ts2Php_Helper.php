@@ -98,27 +98,18 @@ class Ts2Php_Helper {
      * @param $subject {string}
      * @param $isStr {boolean}
      */
-    static public function match($patten, $subject, $isStr = false) {
+    static public function match($patten, $subject, $isStr = false, $isAll = false) {
         $matches = array();
     
         if ($isStr) {
             $patten = '/' . preg_quote($patten, '/') . '/';
         }
-        else {
-            // support g
-            $pattenArr = explode('/', $patten);
-            $marks = $pattenArr[2];
-            if (strpos($marks, 'g') !== false) {
-                $newMarks = str_ireplace('g', '', $marks);
-                $pattenArr[2] = $newMarks;
-                $patten = implode('/', $pattenArr);
-        
-                preg_match_all($patten, $subject, $matches);
-                if (empty($matches[0])) {
-                    return null;
-                }
-                return $matches[0];
+        else if ($isAll) {
+            preg_match_all($patten, $subject, $matches);
+            if (empty($matches[0])) {
+                return null;
             }
+            return $matches[0];
         }
     
     
