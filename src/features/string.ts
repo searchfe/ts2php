@@ -17,7 +17,9 @@ import {
     isElementAccessExpression,
     createCall,
     createIdentifier,
-    createStringLiteral
+    createStringLiteral,
+    SyntaxKind,
+    createTrue
 } from 'typescript';
 
 import {
@@ -57,6 +59,20 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
+function match(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
+    const expNode = node.expression as PropertyAccessExpression;
+    const pattern = node.arguments[0];
+    let isRegularExpressionLiteral = pattern.kind === SyntaxKind.RegularExpressionLiteral;
+    let method = '%helper::match';
+    let nodeList = [node.arguments[0], expNode.expression];
+    if (!isRegularExpressionLiteral) {
+        nodeList.push(createTrue());
+    }
+    writePunctuation(formatMethodName(method, state.helperClass));
+    const args = createNodeArray(nodeList);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
+}
+
 const map = {
     trim: method('trim'),
     trimRight: method('rtrim'),
@@ -72,12 +88,13 @@ const map = {
     includes: method('%helper::includes', true, 2),
     padStart: method('%helper::padStart', true, 2),
     replace,
-    split
+    split,
+    match
 };
 
 export default {
 
-    emit(hint, node, state) {
+    emit(hint, node, state: CompilerState) {
 
         const expNode = node.expression;
         const helpers = state.helpers;
