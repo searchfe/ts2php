@@ -10,8 +10,8 @@ function my_autoloader($classname) {
         'Ts2Php_Helper' => 'Ts2Php_Helper.php',
     );
 
-    if (isset($smartyClassMap[$classname])) {
-        require_once ($smartyClassMap[$classname]);
+    if (isset($rumtimeClassMap[$classname])) {
+        require_once ($runtimeDir . $rumtimeClassMap[$classname]);
     }
 }
 

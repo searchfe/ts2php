@@ -59,8 +59,11 @@ class Ts2Php_Helper {
      * @param $postion {number}
      * @return {boolean}
      */
-    static public function startsWith($origin, $substr, $postion = 0){
-        return strncmp($substr, $origin, strlen($substr)) === $postion;
+    static public function startsWith($origin, $substr, $position = 0){
+        if ($position !== 0) {
+            $origin = substr($origin, $position);
+        }
+        return strncmp($substr, $origin, strlen($substr)) === 0;
     }
 
     /**
