@@ -59,8 +59,11 @@ class Ts2Php_Helper {
      * @param $postion {number}
      * @return {boolean}
      */
-    static public function startsWith($origin, $substr, $postion = 0){
-        return strncmp($substr, $origin, strlen($substr)) === $postion;
+    static public function startsWith($origin, $substr, $position = 0){
+        if ($position !== 0) {
+            $origin = substr($origin, $position);
+        }
+        return strncmp($substr, $origin, strlen($substr)) === 0;
     }
 
     /**
@@ -87,6 +90,51 @@ class Ts2Php_Helper {
     static public function includes($haystack, $needle, $postion = 0){
         $pos = strpos($haystack, $needle);
         return $pos !== false && $pos >= $postion;
+    }
+
+    /**
+     * string.prototype.match
+     * @param $patten {string}
+     * @param $subject {string}
+     * @param $isStr {boolean}
+     */
+    static public function match($patten, $subject, $isStr = false, $isAll = false) {
+        $matches = array();
+    
+        if ($isStr) {
+            $patten = '/' . preg_quote($patten, '/') . '/';
+        }
+        else if ($isAll) {
+            preg_match_all($patten, $subject, $matches);
+            if (empty($matches[0])) {
+                return null;
+            }
+            return $matches[0];
+        }
+    
+    
+        $res = preg_match($patten, $subject, $matches);
+        if ($res === 0) {
+            return null;
+        }
+    
+        // support group
+        $group = array();
+        foreach($matches as $x=>$x_val) {
+            if (!is_numeric($x)) {
+                $group[$x] = $x_val;
+                unset($matches[$x]);
+            }
+        }
+        if (!empty($group)) {
+            $matches['group'] = $group;
+        }
+    
+        // index, input
+        $matches['index'] = strpos($subject, $matches[0]);
+        $matches['input'] = $subject;
+    
+        return $matches;
     }
 
     /**
