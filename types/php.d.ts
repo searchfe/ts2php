@@ -14,6 +14,8 @@ declare function intval(x: any): number;
 
 declare function floatval(x: any): number;
 
+declare function iconv(sourceCode: string, targetCode: string, content: string); 
+
 declare function version_compare(a: string, b: string): -1 | 0 | 1;
 
 type UrlInfo = {
