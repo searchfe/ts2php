@@ -32,6 +32,7 @@ TypeScript 转 PHP
       - [`anonymous function inherit variables`](#anonymous-function-inherit-variables)
       - [`rest function arguments`](#rest-function-arguments)
       - [`spread`](#spread)
+      - [`exception`](#exception)
     - [Core JavaScript API](#core-javascript-api)
   - [Thanks to](#thanks-to)
 
@@ -487,6 +488,29 @@ $g = array_merge(array(), $a, array(
 ```
 
 > 注：箭头函数暂不支持
+
+
+#### `exception`
+
+```typescript
+try {
+    throw 'error!';
+}
+catch (e) {
+    console.log('error' + e.message);
+}
+```
+
+outputs
+
+```typescript
+try {
+    throw new \Exception("error!");
+}
+catch (\Exception $e) {
+    echo "error" . $e->getMessage();
+}
+```
 
 ### Core JavaScript API
 
