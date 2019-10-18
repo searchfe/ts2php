@@ -36,7 +36,7 @@ const methods = {
 
 export default {
 
-    emit(hint, node, {helpers, helperClass}) {
+    emit(hint, node, {helpers, helperNamespace}) {
 
         const expNode = node.expression;
         let func;
@@ -49,7 +49,7 @@ export default {
             && expNode.expression.escapedText === 'JSON'
             && (func = methods[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, {helperClass});
+            return func(node, helpers, {helperNamespace});
         }
 
         return false;

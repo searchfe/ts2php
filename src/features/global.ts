@@ -39,7 +39,7 @@ const isDynamicImport = node => isCallExpression(node) && node.expression.kind =
 
 export default {
 
-    emit(hint, node, {helpers, modules, sourceFile, helperClass}) {
+    emit(hint, node, {helpers, modules, sourceFile, helperNamespace}) {
 
         const expNode = node.expression;
         let func;
@@ -49,7 +49,7 @@ export default {
             && isCallExpression(node)
             && (func = map[expNode.escapedText])
         ) {
-            return func(node, helpers, {helperClass});
+            return func(node, helpers, {helperNamespace});
         }
 
         if (

@@ -36,7 +36,7 @@ const api = {
 
 export default {
 
-    emit(hint, node, {helpers, typeChecker, helperClass}) {
+    emit(hint, node, {helpers, typeChecker, helperNamespace}) {
 
         const expNode = node.expression;
 
@@ -54,7 +54,7 @@ export default {
         ) {
             const func = map[getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers, {helperClass});
+                return func(node, helpers, {helperNamespace});
             }
         }
 
@@ -67,7 +67,7 @@ export default {
         ) {
             const func = api[getTextOfNode(expNode.name)];
             if (func) {
-                return func(node, helpers, {helperClass});
+                return func(node, helpers, {helperNamespace});
             }
         }
 

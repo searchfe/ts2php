@@ -100,7 +100,7 @@ class Ts2Php_Helper {
      */
     static public function match($patten, $subject, $isStr = false, $isAll = false) {
         $matches = array();
-    
+
         if ($isStr) {
             $patten = '/' . preg_quote($patten, '/') . '/';
         }
@@ -111,13 +111,13 @@ class Ts2Php_Helper {
             }
             return $matches[0];
         }
-    
-    
+
+
         $res = preg_match($patten, $subject, $matches);
         if ($res === 0) {
             return null;
         }
-    
+
         // support group
         $group = array();
         foreach($matches as $x=>$x_val) {
@@ -129,11 +129,11 @@ class Ts2Php_Helper {
         if (!empty($group)) {
             $matches['group'] = $group;
         }
-    
+
         // index, input
         $matches['index'] = strpos($subject, $matches[0]);
         $matches['input'] = $subject;
-    
+
         return $matches;
     }
 
@@ -294,13 +294,16 @@ class Ts2Php_Helper {
  *
  * @class Ts2Php_Date
  */
-class Ts2Php_Date {
+class Ts2Php_Date implements \JsonSerializable {
     private $value = 0;
     function __construct($v = -1) {
         if ($v == -1) {
             $v = time() * 1000;
         }
         $this->value = intval($v / 1000);
+    }
+    public function jsonSerialize () {
+      return $this->toISOString();
     }
     // Returns the day of the month (from 1-31)
     public function getDate() {
@@ -443,6 +446,10 @@ class Ts2Php_Date {
     // Converts a Date object to a string, using locale conventions
     public function toLocaleString() {
         return date('Y-m-d H:i:s',$this->value);
+    }
+    // Converts a Date object to ISO 8601 Extended Format
+    public function toISOString () {
+      return date('Y-m-d\TH:i:s.000\Z',$this->value);
     }
 
     private function padTime($time) {
