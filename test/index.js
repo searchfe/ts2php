@@ -62,7 +62,7 @@ describe('features', () => {
 
     it('respect helper class name', function () {
         this.timeout(5000);
-        let res = compile('test.ts', {namespace: 'test', source: '[].some(() => true);', helperClass: '\\foo\\Ts2Php_Helper'});
+        let res = compile('test.ts', {namespace: 'test', source: '[].some(() => true);', helperNamespace: '\\foo\\'});
         let expected = '<?php\n' +
             'namespace test;\n' +
             '\\foo\\Ts2Php_Helper::array_some(array(), function (){\n' +

@@ -1306,7 +1306,7 @@ export function emitFile(
     }
 
     function emitTypeOfExpression(node: ts.TypeOfExpression) {
-        const funcName = formatMethodName('%helper::typeof', state.helperClass)
+        const funcName = formatMethodName('%helper::typeof', state.helperNamespace)
         writePunctuation(`${funcName}(`);
         emitExpression(node.expression);
         writePunctuation(')');

@@ -26,7 +26,7 @@ const protoMap = {
 
 export default {
 
-    emit(hint, node, {helpers, typeChecker, helperClass}) {
+    emit(hint, node, {helpers, typeChecker, helperNamespace}) {
 
         const expNode = node.expression;
         let func;
@@ -42,14 +42,14 @@ export default {
                 && expNode.expression.escapedText === 'Number'
                 && (func = staticMap[helpers.getTextOfNode(expNode.name)])
             ) {
-                return func(node, helpers, {helperClass});
+                return func(node, helpers, {helperNamespace});
             }
 
             if (
                 isNumberLike(expNode.expression, typeChecker)
                 && (func = protoMap[helpers.getTextOfNode(expNode.name)])
             ) {
-                return func(node, helpers, {helperClass});
+                return func(node, helpers, {helperNamespace});
             }
         }
 
