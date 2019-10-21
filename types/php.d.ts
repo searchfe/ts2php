@@ -31,7 +31,7 @@ type UrlInfo = {
 
 declare function parse_url(x: string): false | UrlInfo;
 declare function parse_url(x: string, component: number): false | string;
-
+declare function parse_str(x: string, array: {[key: string]: any}): void;
 declare const PHP_URL_SCHEME = 1;
 declare const PHP_URL_HOST = 2;
 declare const PHP_URL_PORT = 3;
