@@ -34,3 +34,14 @@ $arr3 = array_map(function ($item) use(&$a)  {
         "item" => $item
     ));
 }, $arr);
+class mmm {
+    static function func($num) {
+        return $num;
+    }
+}
+class nnn {
+}
+$arr4 = array_map(function ($item) {
+    $c = new nnn();
+    return mmm::func($item);
+}, $arr);
