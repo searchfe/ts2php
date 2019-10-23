@@ -52,6 +52,9 @@ class mmm {
     }
 }
 
+class nnn {}
+
 let arr4 = arr.map(item => {
+    let c = new nnn();
     return mmm.func(item);
 });
