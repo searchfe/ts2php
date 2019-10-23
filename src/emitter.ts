@@ -1770,6 +1770,12 @@ export function emitFile(
                 ) {
                     return;
                 }
+
+                let symbol = typeChecker.getSymbolAtLocation(item);
+                if (symbol && symbol.flags === ts.SymbolFlags.Class) {
+                    return;
+                }
+
                 const currentSourceFile = item.getSourceFile();
                 const symbolOfIdentifier = typeChecker.getSymbolAtLocation(item);
                 if (!symbolOfIdentifier) {

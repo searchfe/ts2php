@@ -45,3 +45,13 @@ let arr3 = arr.map(item => {
         item
     }
 });
+
+class mmm {
+    static func(num: string) {
+        return num;
+    }
+}
+
+let arr4 = arr.map(item => {
+    return mmm.func(item);
+});

@@ -34,3 +34,11 @@ $arr3 = array_map(function ($item) use(&$a)  {
         "item" => $item
     ));
 }, $arr);
+class mmm {
+    static function func($num) {
+        return $num;
+    }
+}
+$arr4 = array_map(function ($item) {
+    return mmm::func($item);
+}, $arr);
