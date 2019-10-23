@@ -5,9 +5,15 @@ $b = array(1, "a");
 $c = count($b);
 array_push($b, $c);
 $d = \Ts2Php_Helper::array_pos(1, $b);
-$f = array_map(function ($value, $index) {
+$f = array_map(function ($value) {
     return $value;
 }, $b);
+$h = array_map(function ($value, $index) {
+    return array(
+        "value" => $value,
+        "index" => $index
+    );
+}, $b, array_keys($b));
 $e = array_walk($b, function ($value, $index) {
     $a = $value;
 });
