@@ -3,8 +3,14 @@ const b = [1, 'a'];
 const c = b.length;
 b.push(c);
 const d = b.indexOf(1);
-const f = b.map(function (value, index) {
+const f = b.map(function (value) {
     return value;
+});
+const h = b.map(function (value, index) {
+    return {
+        value,
+        index
+    };
 });
 const e = b.forEach(function (value, index) {
     let a = value;
