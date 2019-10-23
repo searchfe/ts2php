@@ -14,6 +14,14 @@ $h = array_map(function ($value, $index) {
         "index" => $index
     );
 }, $b, array_keys($b));
+$fn1 = function ($value, $index) {
+    return $index;
+};
+$fn2 = function ($value) {
+    return $value;
+};
+array_map($fn1, $b, array_keys($b));
+array_map($fn2, $b);
 $e = array_walk($b, function ($value, $index) {
     $a = $value;
 });
