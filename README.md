@@ -555,7 +555,7 @@ $g = array_merge(array(), $a, array(
   - Array.prototype.reverse
   - Array.prototype.splice
   - Array.prototype.reverse
-  - Array.prototype.map **回调函数只接收第一个参数**
+  - Array.prototype.map
   - Array.prototype.forEach
   - Array.prototype.indexOf
   - Array.prototype.join
