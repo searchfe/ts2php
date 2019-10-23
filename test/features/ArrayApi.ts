@@ -3,15 +3,23 @@ const b = [1, 'a'];
 const c = b.length;
 b.push(c);
 const d = b.indexOf(1);
-const f = b.map(function (value) {
+const f = b.map(function (value: number | string) {
     return value;
 });
-const h = b.map(function (value, index) {
+const h = b.map(function (value: number | string, index: number) {
     return {
         value,
         index
     };
 });
+let fn1 = function (value: number | string, index: number) {
+    return index;
+}
+let fn2 = function (value: number | string) {
+    return value;
+}
+b.map(fn1);
+b.map(fn2);
 const e = b.forEach(function (value, index) {
     let a = value;
 });
