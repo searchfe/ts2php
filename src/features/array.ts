@@ -48,7 +48,9 @@ const map = {
     indexOf: method('%helper::array_pos', false, 1, true),
     join: method('join', false, 1, true),
     filter: method('array_filter', true, 1),
-    slice: method('%helper::arraySlice', true, 2)
+    slice: method('%helper::arraySlice', true, 2),
+    find: method('%helper::array_find', false, 1, true),
+    findIndex: method('%helper::array_find_index', false, 1, true)
 };
 
 const api = {

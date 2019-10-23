@@ -32,3 +32,11 @@ function run(x: {y: number[]}) {
     x.y.slice(1);
     x.y.push(1);
 }
+
+const z = b.find(item => {
+    return item === 'a';
+});
+
+const zz = b.findIndex(item => {
+    return item === 'a';
+});
