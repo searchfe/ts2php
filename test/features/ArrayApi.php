@@ -31,3 +31,9 @@ function run($x) {
     \Ts2Php_Helper::arraySlice($x["y"], 1);
     array_push($x["y"], 1);
 }
+$z = \Ts2Php_Helper::array_find(function ($item) {
+    return $item === "a";
+}, $b);
+$zz = \Ts2Php_Helper::array_find_index(function ($item) {
+    return $item === "a";
+}, $b);

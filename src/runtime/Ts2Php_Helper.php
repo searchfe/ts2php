@@ -214,6 +214,22 @@ class Ts2Php_Helper {
         return true;
     }
 
+    static function array_find($fn, $arr) {
+        foreach($arr as $key=>$val) {
+            if ($fn($val, $key)) {
+                return $val;
+            }
+        }
+    }
+
+    static function array_find_index($fn, $arr) {
+        foreach($arr as $key=>$val) {
+            if ($fn($val, $key)) {
+                return $key;
+            }
+        }
+    }
+
     /**
      * encodeURI
      * @param $uri {string}

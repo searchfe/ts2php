@@ -147,6 +147,24 @@ final class Ts2Php_HelperTest extends TestCase {
         );
     }
 
+    public function testArray_find() {
+        $this->assertEquals(
+            Ts2Php_Helper::array_find(function ($item) {
+                return $item > 3;
+            }, array(1,2,3,4,5,6)),
+            4
+        );
+    }
+
+    public function testArray_find_index() {
+        $this->assertEquals(
+            Ts2Php_Helper::array_find_index(function ($item) {
+                return $item > 3;
+            }, array(1,2,3,4,5,6)),
+            3
+        );
+    }
+
     public function testencodeURI() {
 
         $this->assertEquals(
