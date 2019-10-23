@@ -7,7 +7,7 @@ $b = "b";
 $c = "c";
 $d = "d";
 $arr = array("1", "2", "3");
-$arr1 = array_map(function ($item) use(&$b, &$c, &$d)  {
+$arr1 = array_map(function ($item) use(&$d, &$c, &$b)  {
     return $item . $b . $c . $d;
 }, $arr);
 $arr2 = array_map(function ($item) use(&$b)  {
@@ -29,3 +29,8 @@ $obj = array(
         return "123" . $b . $a;
     }
 );
+$arr3 = array_map(function ($item) use(&$a)  {
+    return array_merge(array(), $a, array(
+        "item" => $item
+    ));
+}, $arr);

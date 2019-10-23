@@ -117,7 +117,13 @@ export function transform(context: ts.TransformationContext) {
      */
     function visitTypeScript(node: ts.Node): ts.VisitResult<ts.Node> {
 
+        let originalNode = node;
         node = ts.visitEachChild(node, visitTypeScript, context);
+        if (node !== originalNode) {
+            node.parent = originalNode.parent;
+            ts.setOriginalNode(node, originalNode);
+            ts.setTextRange(node, originalNode);
+        }
 
         switch (node.kind) {
             case ts.SyntaxKind.EnumDeclaration:

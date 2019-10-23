@@ -38,3 +38,10 @@ let obj = {
         return '123' + b + a;
     }
 }
+
+let arr3 = arr.map(item => {
+    return {
+        ...a,
+        item
+    }
+});
