@@ -1152,10 +1152,12 @@ export function emitFile(
         let suffix = '"]';
 
         if (symbol) {
+            let expression = utilities.getRealExpression(node.expression);
             if (
                 // $this->func();
-                node.expression.kind === ts.SyntaxKind.ThisKeyword
-                || isClassInstance(node.expression, typeChecker)
+                expression.kind === ts.SyntaxKind.ThisKeyword
+                || isClassInstance(expression, typeChecker)
+                || expression.kind === ts.SyntaxKind.NewExpression
             ) {
                 prefix = '->';
                 suffix = '';
@@ -1249,11 +1251,23 @@ export function emitFile(
     }
 
     function emitNewExpression(node: ts.NewExpression) {
+        // new expression must be parenthesied to run immediately.
+        // e.g. new Date()->getTime() will not work in PHP.
+        // should compile to (new Date())->getTime()
+        let openParenPos: number;
+        if (
+            node.parent
+            && node.parent.kind === ts.SyntaxKind.PropertyAccessExpression
+            && (node.parent as ts.PropertyAccessExpression).expression === node
+        ) {
+            openParenPos = emitTokenWithComment(SyntaxKind.OpenParenToken, node.pos, writePunctuation, node);
+        }
         emitTokenWithComment(SyntaxKind.NewKeyword, node.pos, writeKeyword, node);
         writeSpace();
         emitExpression(node.expression);
         // emitTypeArguments(node, node.typeArguments);
         emitExpressionList(node, node.arguments, ListFormat.NewExpressionArguments);
+        openParenPos !== undefined && emitTokenWithComment(SyntaxKind.CloseParenToken, node.expression ? node.expression.end : openParenPos, writePunctuation, node);
     }
 
     // function emitTaggedTemplateExpression(node: TaggedTemplateExpression) {

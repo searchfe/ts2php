@@ -451,3 +451,13 @@ export function getDescendantIdentifiers(node: ts.Node) {
 
     return identifiers;
 }
+
+/**
+ * in case expression is wrapped by Parenthesis
+ */
+export function getRealExpression(node: ts.Node) {
+    while(node.kind === ts.SyntaxKind.ParenthesizedExpression) {
+        node = (node as ts.ParenthesizedExpression).expression;
+    }
+    return node;
+}
