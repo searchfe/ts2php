@@ -1,3 +1,81 @@
+<a name="0.12.6"></a>
+## [0.12.6](https://github.com/max-team/ts2php/compare/v0.12.5...v0.12.6) (2019-10-21)
+
+
+### Features
+
+* add php parse_str ([3e09fc8](https://github.com/max-team/ts2php/commit/3e09fc8))
+* add php parse_str ([e4efd07](https://github.com/max-team/ts2php/commit/e4efd07))
+
+
+
+<a name="0.12.5"></a>
+## [0.12.5](https://github.com/max-team/ts2php/compare/v0.12.4...v0.12.5) (2019-10-18)
+
+
+### Features
+
+* `Ts2Php_Date` supports encode_json/custom ns ([635e5a6](https://github.com/max-team/ts2php/commit/635e5a6))
+
+
+
+<a name="0.12.4"></a>
+## [0.12.4](https://github.com/max-team/ts2php/compare/v0.12.3...v0.12.4) (2019-10-12)
+
+
+### Bug Fixes
+
+* autoload ([b797dfd](https://github.com/max-team/ts2php/commit/b797dfd))
+* startsWith error in php 7.3.10 ([28aa0ac](https://github.com/max-team/ts2php/commit/28aa0ac))
+* string.match g ([83a0801](https://github.com/max-team/ts2php/commit/83a0801))
+
+
+### Features
+
+* add php iconv func ([a33a0ad](https://github.com/max-team/ts2php/commit/a33a0ad))
+* add php iconv func ([5f130ed](https://github.com/max-team/ts2php/commit/5f130ed))
+* compile string.match ([997a718](https://github.com/max-team/ts2php/commit/997a718))
+* readme add string.match ([67df403](https://github.com/max-team/ts2php/commit/67df403))
+* string.prototype.match helper ([9fcb087](https://github.com/max-team/ts2php/commit/9fcb087))
+* unit test for string.match ([c2c44d9](https://github.com/max-team/ts2php/commit/c2c44d9))
+
+
+
+<a name="0.12.3"></a>
+## [0.12.3](https://github.com/max-team/ts2php/compare/v0.12.2...v0.12.3) (2019-09-26)
+
+
+### Features
+
+* make \\Ts2PhpHelper name configurable ([df8562e](https://github.com/max-team/ts2php/commit/df8562e))
+
+
+
+<a name="0.12.2"></a>
+## [0.12.2](https://github.com/max-team/ts2php/compare/v0.12.1...v0.12.2) (2019-09-10)
+
+
+### Bug Fixes
+
+* math.random() do not match ([36b31b9](https://github.com/max-team/ts2php/commit/36b31b9))
+
+
+
+<a name="0.12.1"></a>
+## [0.12.1](https://github.com/max-team/ts2php/compare/v0.12.0-0...v0.12.1) (2019-08-26)
+
+
+### Bug Fixes
+
+* [#46](https://github.com/max-team/ts2php/issues/46) ([971f23e](https://github.com/max-team/ts2php/commit/971f23e))
+
+
+
+<a name="0.12.0-0"></a>
+# [0.12.0-0](https://github.com/max-team/ts2php/compare/v0.11.3...v0.12.0-0) (2019-08-05)
+
+
+
 <a name="0.11.3"></a>
 ## [0.11.3](https://github.com/max-team/ts2php/compare/v0.11.2...v0.11.3) (2019-07-22)
 
