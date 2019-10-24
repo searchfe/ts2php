@@ -38,3 +38,23 @@ let obj = {
         return '123' + b + a;
     }
 }
+
+let arr3 = arr.map(item => {
+    return {
+        ...a,
+        item
+    }
+});
+
+class mmm {
+    static func(num: string) {
+        return num;
+    }
+}
+
+class nnn {}
+
+let arr4 = arr.map(item => {
+    let c = new nnn();
+    return mmm.func(item);
+});

@@ -5,9 +5,23 @@ $b = array(1, "a");
 $c = count($b);
 array_push($b, $c);
 $d = \Ts2Php_Helper::array_pos(1, $b);
-$f = array_map(function ($value, $index) {
+$f = array_map(function ($value) {
     return $value;
 }, $b);
+$h = array_map(function ($value, $index) {
+    return array(
+        "value" => $value,
+        "index" => $index
+    );
+}, $b, array_keys($b));
+$fn1 = function ($value, $index) {
+    return $index;
+};
+$fn2 = function ($value) {
+    return $value;
+};
+array_map($fn1, $b, array_keys($b));
+array_map($fn2, $b);
 $e = array_walk($b, function ($value, $index) {
     $a = $value;
 });
@@ -25,3 +39,9 @@ function run($x) {
     \Ts2Php_Helper::arraySlice($x["y"], 1);
     array_push($x["y"], 1);
 }
+$z = \Ts2Php_Helper::array_find(function ($item) {
+    return $item === "a";
+}, $b);
+$zz = \Ts2Php_Helper::array_find_index(function ($item) {
+    return $item === "a";
+}, $b);

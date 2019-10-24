@@ -433,3 +433,21 @@ export function getLastExpression(node: ts.Node) {
     } while (exp.expression);
     return exp;
 }
+
+export function getDescendantIdentifiers(node: ts.Node) {
+    const identifiers:ts.Identifier[] = [];
+    const stack = [node];
+    while(stack.length > 0) {
+        let cur = stack.pop();
+        cur.forEachChild(child => {
+            if (child.kind === ts.SyntaxKind.Identifier) {
+                identifiers.push(child as ts.Identifier);
+            }
+            else {
+                stack.push(child);
+            }
+        });
+    }
+
+    return identifiers;
+}

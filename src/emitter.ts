@@ -5,8 +5,6 @@
 
 import * as ts from 'typescript';
 import {formatMethodName} from './utilities/method'
-import {createWrappedNode} from 'ts-morph';
-import * as tsMorph from 'ts-morph';
 
 import {
     SyntaxKind,
@@ -1758,29 +1756,33 @@ export function emitFile(
             || node.kind === ts.SyntaxKind.FunctionExpression
             || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent || node.original.parent))
         ) {
-            const wrappedNode = createWrappedNode(node, {typeChecker});
-            const body = wrappedNode.getBody();
-            const identifiers = body.getKind() === ts.SyntaxKind.Identifier ? [body as tsMorph.Identifier] : body.getDescendantsOfKind(ts.SyntaxKind.Identifier);
-            const inheritedVariables: tsMorph.Identifier[] = [];
+            const identifiers = utilities.getDescendantIdentifiers(node);
+            const inheritedVariables: ts.Identifier[] = [];
             const nodeStart = node.getStart();
             const nodeEnd = node.getEnd();
 
             let names = {};
             identifiers.forEach(item => {
                 if (
-                    item.getParent().getKind() === ts.SyntaxKind.PropertyAccessExpression
-                    && (item.getParent().compilerNode as ts.PropertyAccessExpression).name === item.compilerNode
+                    item.parent
+                    && item.parent.kind === ts.SyntaxKind.PropertyAccessExpression
+                    && (item.parent as ts.PropertyAccessExpression).name === item
                 ) {
                     return;
                 }
-                const currentSourceFile = item.getSourceFile();
-                const nodeSymbol = item.getSymbol();
-                if (!nodeSymbol) {
+
+                let symbol = typeChecker.getSymbolAtLocation(item);
+                if (symbol && symbol.flags === ts.SymbolFlags.Class) {
                     return;
                 }
-                const symbolOfIdentifier = nodeSymbol.compilerSymbol;
+
+                const currentSourceFile = item.getSourceFile();
+                const symbolOfIdentifier = typeChecker.getSymbolAtLocation(item);
+                if (!symbolOfIdentifier) {
+                    return;
+                }
                 const d = symbolOfIdentifier.getDeclarations();
-                const inherite = d.find(item => (item.getStart() < nodeStart || item.getEnd() > nodeEnd) && item.getSourceFile().fileName === currentSourceFile.compilerNode.fileName);
+                const inherite = d.find(item => (item.getStart() < nodeStart || item.getEnd() > nodeEnd) && item.getSourceFile().fileName === currentSourceFile.fileName);
                 if (inherite) {
                     const text = item.getText();
                     if (!names[text]) {
