@@ -957,6 +957,7 @@ img { max-width: 100%; }
 										<li><a href="#anonymous-function-inherit-variables"><code>anonymous function inherit variables</code></a></li>
 										<li><a href="#rest-function-arguments"><code>rest function arguments</code></a></li>
 										<li><a href="#spread"><code>spread</code></a></li>
+										<li><a href="#exception"><code>exception</code></a></li>
 									</ul>
 								</li>
 								<li><a href="#core-javascript-api">Core JavaScript API</a></li>
@@ -1271,6 +1272,20 @@ $g = array_merge(<span class="hljs-keyword">array</span>(), $a, <span class="hlj
 			<blockquote>
 				<p>注：箭头函数暂不支持</p>
 			</blockquote>
+			<h4 id="exception"><code>exception</code></h4>
+			<pre><code class="language-typescript"><span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">throw</span> <span class="hljs-string">'error!'</span>;
+}
+<span class="hljs-keyword">catch</span> (e) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'error'</span> + e.message);
+}</code></pre>
+			<p>outputs</p>
+			<pre><code class="language-typescript"><span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> \Exception(<span class="hljs-string">"error!"</span>);
+}
+<span class="hljs-keyword">catch</span> (\Exception $e) {
+    echo <span class="hljs-string">"error"</span> . $e-&gt;getMessage();
+}</code></pre>
 			<h3 id="core-javascript-api">Core JavaScript API</h3>
 			<ul>
 				<li>parseInt <strong>只接收一个参数</strong></li>
@@ -1432,7 +1447,7 @@ $g = array_merge(<span class="hljs-keyword">array</span>(), $a, <span class="hlj
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/184d6f2/types/index.d.ts#L126">index.d.ts:126</a></li>
+								<li>Defined in <a href="https://github.com/max-team/ts2php/blob/fb63ddb/types/index.d.ts#L126">index.d.ts:126</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
