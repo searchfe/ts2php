@@ -2,7 +2,7 @@
 import {Base} from '../some-utils';
 import {SomeType} from '../some-types';
 
-class Article extends Base {
+export class Article extends Base {
 
     public title: string;
     id: number;

@@ -1785,8 +1785,7 @@ export function emitFile(
                     return;
                 }
 
-                let symbol = typeChecker.getSymbolAtLocation(item);
-                if (symbol && symbol.flags === ts.SymbolFlags.Class) {
+                if (isClassLike(item, typeChecker)) {
                     return;
                 }
 

@@ -1,5 +1,7 @@
 <?php
 namespace test\case_inheritedVariables;
+require_once(dirname(__FILE__) . '/' . "./Class.php");
+use \Article as Art;
 $a = array(
     "b" => "123456"
 );
@@ -44,5 +46,6 @@ class nnn {
 }
 $arr4 = array_map(function ($item) {
     $c = new nnn();
+    $d = new Art(array( "title" => "" ));
     return mmm::func($item);
 }, $arr);
