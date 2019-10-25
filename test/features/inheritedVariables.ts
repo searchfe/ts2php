@@ -10,7 +10,11 @@ let arr1 = arr.map(item => {
     return item + b + c + d;
 });
 
-let arr2 = arr.map(function (item) {
+let ar = [{aaa: 123}];
+interface DDD {
+    aaa: number;
+}
+let arr2 = ar.map(function (item: DDD) {
     return item + b;
 });
 

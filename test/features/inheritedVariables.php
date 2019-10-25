@@ -10,9 +10,10 @@ $arr = array("1", "2", "3");
 $arr1 = array_map(function ($item) use(&$d, &$c, &$b)  {
     return $item . $b . $c . $d;
 }, $arr);
+$ar = array(array( "aaa" => 123 ));
 $arr2 = array_map(function ($item) use(&$b)  {
     return $item . $b;
-}, $arr);
+}, $ar);
 $fa = function () use(&$b) {
 return "123" . $b;
 };
