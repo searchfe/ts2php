@@ -441,7 +441,9 @@ export function getDescendantIdentifiers(node: ts.Node) {
         let cur = stack.pop();
         cur.forEachChild(child => {
             if (child.kind === ts.SyntaxKind.Identifier) {
-                identifiers.push(child as ts.Identifier);
+                if (!child.parent || !ts.isTypeNode(child.parent)) {
+                    identifiers.push(child as ts.Identifier);
+                }
             }
             else {
                 stack.push(child);

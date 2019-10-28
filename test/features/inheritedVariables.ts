@@ -1,3 +1,4 @@
+import {Article as Art} from './Class';
 let a = {
     b: '123456'
 };
@@ -10,7 +11,11 @@ let arr1 = arr.map(item => {
     return item + b + c + d;
 });
 
-let arr2 = arr.map(function (item) {
+let ar = [{aaa: 123}];
+interface DDD {
+    aaa: number;
+}
+let arr2 = ar.map(function (item: DDD) {
     return item + b;
 });
 
@@ -56,5 +61,6 @@ class nnn {}
 
 let arr4 = arr.map(item => {
     let c = new nnn();
+    let d = new Art({title: ''});
     return mmm.func(item);
 });
