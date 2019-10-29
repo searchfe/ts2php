@@ -1,3 +1,47 @@
+<a name="0.12.9"></a>
+## [0.12.9](https://github.com/max-team/ts2php/compare/v0.12.8...v0.12.9) (2019-10-28)
+
+
+### Bug Fixes
+
+* filter out type identifiers ([3f3c6b1](https://github.com/max-team/ts2php/commit/3f3c6b1))
+
+
+### Features
+
+* aclass as bclass ([2e9d443](https://github.com/max-team/ts2php/commit/2e9d443))
+
+
+
+<a name="0.12.8"></a>
+## [0.12.8](https://github.com/max-team/ts2php/compare/v0.12.7...v0.12.8) (2019-10-24)
+
+
+### Bug Fixes
+
+* [#60](https://github.com/max-team/ts2php/issues/60) ([8333d0d](https://github.com/max-team/ts2php/commit/8333d0d))
+
+
+
+<a name="0.12.7"></a>
+## [0.12.7](https://github.com/max-team/ts2php/compare/v0.12.6...v0.12.7) (2019-10-24)
+
+
+### Bug Fixes
+
+* array.map compile error while using var ([857d4a2](https://github.com/max-team/ts2php/commit/857d4a2))
+* compile error while using ... in function ([47652c7](https://github.com/max-team/ts2php/commit/47652c7))
+* inherited variables included class ([0352ef8](https://github.com/max-team/ts2php/commit/0352ef8))
+
+
+### Features
+
+* add unit test ([9a6a273](https://github.com/max-team/ts2php/commit/9a6a273))
+* array.find array.findIndex ([c461bc3](https://github.com/max-team/ts2php/commit/c461bc3))
+* support index in array.map ([f93d0ba](https://github.com/max-team/ts2php/commit/f93d0ba))
+
+
+
 <a name="0.12.6"></a>
 ## [0.12.6](https://github.com/max-team/ts2php/compare/v0.12.5...v0.12.6) (2019-10-21)
 
@@ -5,7 +49,6 @@
 ### Features
 
 * add php parse_str ([3e09fc8](https://github.com/max-team/ts2php/commit/3e09fc8))
-* add php parse_str ([e4efd07](https://github.com/max-team/ts2php/commit/e4efd07))
 
 
 
@@ -33,7 +76,6 @@
 ### Features
 
 * add php iconv func ([a33a0ad](https://github.com/max-team/ts2php/commit/a33a0ad))
-* add php iconv func ([5f130ed](https://github.com/max-team/ts2php/commit/5f130ed))
 * compile string.match ([997a718](https://github.com/max-team/ts2php/commit/997a718))
 * readme add string.match ([67df403](https://github.com/max-team/ts2php/commit/67df403))
 * string.prototype.match helper ([9fcb087](https://github.com/max-team/ts2php/commit/9fcb087))
