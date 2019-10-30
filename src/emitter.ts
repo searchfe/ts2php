@@ -482,7 +482,7 @@ export function emitFile(
                     return emitRegularExpressionLiteral(<ts.RegularExpressionLiteral>node);
 
                 case SyntaxKind.StringLiteral:
-                case SyntaxKind.NoSubstitutionTemplateLiteral:
+                case SyntaxKind.NoSubstitutionTemplateLiteral: // `abc`
                     return emitLiteral(<ts.LiteralExpression>node);
 
                 // // Identifiers

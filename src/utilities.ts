@@ -178,7 +178,7 @@ export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFi
                 return '"' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '"';
             }
         case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
-            return "`" + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + "`";
+            return '"' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '"';
         case ts.SyntaxKind.TemplateHead:
             // tslint:disable-next-line no-invalid-template-strings
             return '"' + escapeText(escapeText(node.text, ts.CharacterCodes.backtick), ts.CharacterCodes.doubleQuote) + '" ' + ".";
