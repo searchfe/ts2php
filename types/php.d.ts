@@ -18,7 +18,7 @@ declare function iconv(sourceCode: string, targetCode: string, content: string):
 
 declare function version_compare(a: string, b: string): -1 | 0 | 1;
 
-declare function md5 (a: string, b?: boolean): string;
+declare function md5 (a: string): string;
 
 type UrlInfo = {
     scheme: string
