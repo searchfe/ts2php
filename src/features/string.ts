@@ -40,7 +40,7 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
     if (isRegularExpressionLiteral(node.arguments[0])) {
         method = 'preg_replace';
         const firstArg = node.arguments[0] as RegularExpressionLiteral;
-        if (!/g$/.test(getLiteralTextOfNode(firstArg, true))) {
+        if (!/gi?$/.test(getLiteralTextOfNode(firstArg, true))) {
             nodeList.push(createNumericLiteral("1"));
         }
     }
