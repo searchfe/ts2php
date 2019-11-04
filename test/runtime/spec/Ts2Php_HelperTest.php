@@ -47,6 +47,11 @@ final class Ts2Php_HelperTest extends TestCase {
             Ts2Php_Helper::str_slice('abcdefghi', 5),
             'fghi'
         );
+
+        $this->assertEquals(
+            Ts2Php_Helper::str_slice('test一下中文', 3, 6),
+            't一下'
+        );
     }
 
     public function testStartsWith() {
