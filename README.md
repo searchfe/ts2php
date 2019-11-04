@@ -549,10 +549,10 @@ catch (\Exception $e) {
   - JSON.parse **只接收一个参数**
 - console
   - console.log
-  - console.info **转成var_dump**
+  - console.info **转成 var_dump**
   - console.error
 - String
-  - String.prototype.replace
+  - String.prototype.replace **第二个参数只支持 string，不支持 Function**
   - String.prototype.trim
   - String.prototype.trimRight
   - String.prototype.trimLeft
