@@ -24,18 +24,30 @@ import {
 } from 'typescript';
 
 import {
-    isStringLike, isNumberLike,
+    isStringLike, isNumberLike, isFunctionLike,
 } from '../utilities/nodeTest';
 
 import method, {formatMethodName} from '../utilities/method';
 import {CompilerState} from '../types';
 
-function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}, {helperNamespace}) {
+function replace(
+    node: CallExpression,
+    {getLiteralTextOfNode, emitExpressionList, writePunctuation},
+    {helperNamespace, typeChecker, errors}: CompilerState
+) {
 
     const expNode = node.expression as PropertyAccessExpression;
 
     let nodeList = [...node.arguments, expNode.expression];
     let method = '%helper::str_replace_once';
+
+    if (isFunctionLike(node.arguments[1], typeChecker)) {
+        errors.push({
+            code: 1,
+            msg: 'Function as second param is not supported yet in String.prototype.replace.'
+        });
+        return;
+    }
 
     if (isRegularExpressionLiteral(node.arguments[0])) {
         method = 'preg_replace';
