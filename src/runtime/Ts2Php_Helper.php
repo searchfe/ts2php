@@ -49,7 +49,7 @@ class Ts2Php_Helper {
      */
     static public function str_slice($origin, $start, $end = null) {
         $end = isset($end) ? $end : mb_strlen($origin, 'utf8');
-        return substr($origin, $start, $end - $start);
+        return mb_substr($origin, $start, $end - $start);
     }
 
     /**
