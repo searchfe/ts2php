@@ -4,6 +4,7 @@ $a = count(array(1));
 $b = array(1, "a");
 $c = count($b);
 array_push($b, $c);
+array_push($b, 1, 2, 3, 4, 5);
 $d = \Ts2Php_Helper::array_pos(1, $b);
 $f = array_map(function ($value) {
     return $value;

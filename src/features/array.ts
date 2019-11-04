@@ -22,7 +22,7 @@ import ts = require('typescript');
 
 
 const map = {
-    push: method('array_push', true, 1),
+    push: method('array_push', true),
     pop: method('array_pop', true, 0),
     unshift: method('array_unshift', true, 1),
     shift: method('array_shift', true, 0),

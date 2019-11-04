@@ -2,6 +2,7 @@ const a = [1].length;
 const b = [1, 'a'];
 const c = b.length;
 b.push(c);
+b.push(1, 2, 3, 4, 5);
 const d = b.indexOf(1);
 const f = b.map(function (value: number | string) {
     return value;
