@@ -4,7 +4,7 @@ try {
     throw new \Exception("error!");
 }
 catch (\Exception $e) {
-    echo "error" . $e->getMessage();
+    echo "error" . $e->getMessage(), "\n";
 }
 $a = "hard";
 throw new \Exception("a " . $a . " error!");

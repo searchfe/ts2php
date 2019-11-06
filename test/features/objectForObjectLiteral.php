@@ -3,30 +3,36 @@ namespace test\case_objectForObjectLiteral;
 class Bar {
     public static $bar = "s";
     static function getBar() {
-        return "s";
+        return "name";
     }
     public $name;
     function method() {
         $this->name;
     }
 }
-$foo = (object)array( "name" => "s", "getName" => function (){
-    return "s";
+$foo = (object)array( "name" => "name", "getName" => function (){
+    return "name";
     } );
-$foo->name;
-$foo->getName();
-$bar = (object)array( "name" => "s", "getName" => function (){
-    return "s";
+echo "object literal as interface", "\n";
+echo $foo->name, "\n";
+echo ($foo->getName)(), "\n";
+$bar = (object)array( "name" => "name", "getName" => function (){
+    return "name";
     } );
-$bar->name;
-$bar->getName();
+echo "object literal", "\n";
+echo $bar->name, "\n";
+echo ($bar->getName)(), "\n";
 $arr1 = array(1, 2, 3);
-$arr1[2];
+echo "read array element", "\n";
+echo $arr1[2], "\n";
 $arr2 = array(1, 2, 3);
 $i = 2;
-$arr2[$i];
-$arr2[2];
-Bar::$bar;
-Bar::getBar();
-$bar->{"name"};
-$bar->{$bar->{"name"}};
+echo $arr2[$i], "\n";
+echo $arr2[2], "\n";
+echo "static property/method", "\n";
+echo Bar::$bar, "\n";
+echo Bar::getBar(), "\n";
+echo "nested property access", "\n";
+echo $bar->{"name"}, "\n";
+echo ($bar->{"getName"})(), "\n";
+echo $bar->{$bar->{"name"}}, "\n";

@@ -23,6 +23,8 @@ function log(node: CallExpression, {emitExpression, writePunctuation, writeSpace
             writeSpace();
         }
     });
+    if (node.arguments.length) writePunctuation(', ');
+    writePunctuation('"\\n"');
 }
 
 const methods = {

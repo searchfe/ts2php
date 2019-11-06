@@ -21,7 +21,7 @@ class Article extends Base {
 $a = new Article(array( "title" => "a" ));
 $b = $a->base;
 $a->dispose();
-echo $b;
+echo $b, "\n";
 class A {
     public $test;
 }
@@ -40,4 +40,4 @@ class Cat extends Animal {
 }
 $n = "cat";
 $c = new Cat($n);
-echo $c->getName();
+echo $c->getName(), "\n";

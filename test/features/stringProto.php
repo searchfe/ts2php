@@ -14,4 +14,4 @@ $k = 2;
 $l = \Ts2Php_Helper::str_slice($a, 1, $k);
 $m = mb_strlen($a, "utf8");
 $n = "a啊哈哈";
-echo mb_substr($n, 1, 1, "utf8");
+echo mb_substr($n, 1, 1, "utf8"), "\n";

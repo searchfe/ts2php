@@ -20,7 +20,7 @@ $fa = function () use(&$b) {
 return "123" . $b;
 };
 $f = function () use(&$a)  {
-    echo 123;
+    echo 123, "\n";
     return "123" . mb_strlen($a["b"], "utf8");
 };
 $obj = array(

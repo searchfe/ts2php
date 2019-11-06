@@ -6,7 +6,7 @@ interface Foo {
 class Bar {
     static bar: string = 's'
     static getBar() {
-        return 's'
+        return 'name'
     }
     name: 'name'
     method() {
@@ -15,29 +15,35 @@ class Bar {
 }
 
 // 接口对象
-const foo: Foo = { name: 's', getName: () => 's' }
-foo.name
-foo.getName()
+const foo: Foo = { name: 'name', getName: () => 'name' }
+console.log("object literal as interface")
+console.log(foo.name)
+console.log(foo.getName())
 
 // 普通对象
-const bar = { name: 's', getName: () => 's' }
-bar.name
-bar.getName()
+const bar = { name: 'name', getName: () => 'name' }
+console.log("object literal")
+console.log(bar.name)
+console.log(bar.getName())
 
 // 数组对象
 const arr1 = [1, 2, 3]
-arr1[2]
+console.log('read array element')
+console.log(arr1[2])
 
 // 类型缺失：猜类型
 const arr2: any = [1, 2, 3]
 const i = 2
-arr2[i]
-arr2[2]
+console.log(arr2[i])
+console.log(arr2[2])
 
 // 静态属性
-Bar.bar
-Bar.getBar()
+console.log('static property/method')
+console.log(Bar.bar)
+console.log(Bar.getBar())
 
-// 包装
-bar['name']
-bar[bar['name'] as 'name']
+// 元素访问语法
+console.log('nested property access')
+console.log(bar['name'])
+console.log((bar['getName'] as () => string)())
+console.log(bar[bar['name'] as 'name'])

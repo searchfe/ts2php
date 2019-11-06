@@ -1148,19 +1148,20 @@ export function emitFile(
     }
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
-        const [prefix, suffix] = state.useArrayForObjectLitral
+        const [prefix, infix, suffix] = state.useArrayForObjectLitral
             ? getPropertyAccessPunctuationInterfaceAsArray(node)
             : getPropertyAccessPunctuationInterfaceAsClass(node)
 
-        emitWithHint(ts.EmitHint.Expression, node.expression);
         writePunctuation(prefix);
+        emitWithHint(ts.EmitHint.Expression, node.expression);
+        writePunctuation(infix);
         emitWithHint(ts.EmitHint.Unspecified, node.name);
         writePunctuation(suffix);
     }
 
     function getPropertyAccessPunctuationInterfaceAsArray (node: ts.PropertyAccessExpression) {
         const symbol = typeChecker.getSymbolAtLocation(node);
-        const defaultPunctuation = ['["', '"]'];
+        const defaultPunctuation = ['', '["', '"]'];
         if (!symbol) return defaultPunctuation;
 
         let expression = utilities.getRealExpression(node.expression);
@@ -1169,14 +1170,14 @@ export function emitFile(
             || isClassInstance(expression, state)
             || expression.kind === ts.SyntaxKind.NewExpression
         ) {
-            return ['->', '']; // $this->func();
+            return ['', '->', '']; // $this->func();
         }
         if (isClassLike(node.expression, typeChecker)) {
             switch (symbol.getFlags()) {
                 case ts.SymbolFlags.Method:
-                    return ['::', ''];
+                    return ['', '::', ''];
                 case ts.SymbolFlags.Property:
-                    return ['::$', ''];
+                    return ['', '::$', ''];
             }
         }
         return defaultPunctuation;
@@ -1184,16 +1185,25 @@ export function emitFile(
 
     function getPropertyAccessPunctuationInterfaceAsClass (node: ts.PropertyAccessExpression) {
         const symbol = typeChecker.getSymbolAtLocation(node);
-        const defaultPunctuation = ['->', ''];
+        const defaultPunctuation = ['', '->', ''];
+
+        if (
+            ts.isCallExpression(node.parent)    // include: ($obj-foo)()
+            && node.parent.expression === node  // exclude: print($obj-foo)
+        ) {
+            defaultPunctuation[0] = '('
+            defaultPunctuation[2] = ')'
+        }
+
         if (!symbol) return defaultPunctuation;
 
         let expression = utilities.getRealExpression(node.expression);
         if (isClassType(node.expression, typeChecker)) {
             switch (symbol.getFlags()) {
                 case ts.SymbolFlags.Method:
-                    return ['::', ''];
+                    return ['', '::', ''];
                 case ts.SymbolFlags.Property:
-                    return ['::$', ''];
+                    return ['', '::$', ''];
             }
         }
         return defaultPunctuation;
