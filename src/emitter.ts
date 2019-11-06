@@ -43,7 +43,8 @@ import {
     isClassLike,
     isClassInstance,
     isFunctionLike,
-    isVariable
+    isVariable,
+    shouldUseReference
 } from './utilities/nodeTest';
 
 import {
@@ -2749,6 +2750,11 @@ export function emitFile(
             writeSpace();
             emitTokenWithComment(SyntaxKind.EqualsToken, equalCommentStartPos, writeOperator, container);
             writeSpace();
+
+            if (shouldUseReference(node, typeChecker)) {
+                writeBase("&");
+            }
+
             emitExpression(node);
         }
     }

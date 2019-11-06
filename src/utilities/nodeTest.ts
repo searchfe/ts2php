@@ -115,6 +115,15 @@ export function shouldUseArray(format: ts.ListFormat) {
     return arrayBracketsMap[format] || '';
 }
 
+/**
+ * e.g. let a = []; let b = a;  ==>  $a = array(); $b = &$a;
+ * @param node node
+ */
+export function shouldUseReference(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    return ts.isIdentifier(node) && !isFunctionLike(node, typeChecker) && (nodeType.flags === ts.TypeFlags.Object);
+}
+
 const stringLikeType = new Set([
     ts.TypeFlags.String,
     ts.TypeFlags.StringLiteral
