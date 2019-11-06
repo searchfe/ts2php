@@ -40,6 +40,8 @@ import {
     isVisibilityModifier,
     isSupportedPropertyModifier,
     isStringLike,
+    isArrayType,
+    isClassType,
     isClassLike,
     isClassInstance
 } from './utilities/nodeTest';
@@ -1137,6 +1139,7 @@ export function emitFile(
         const preferNewLine = node.multiLine ? ts.ListFormat.PreferNewLine : ts.ListFormat.None;
         // const allowTrailingComma = currentSourceFile.languageVersion >= ScriptTarget.ES5 && !isJsonSourceFile(currentSourceFile) ? ListFormat.AllowTrailingComma : ListFormat.None;
         const allowTrailingComma = ts.ListFormat.None;
+        if (!state.useArrayForObjectLitral) writePunctuation('(object)')
         emitList(node, node.properties, ts.ListFormat.ObjectLiteralExpressionProperties | allowTrailingComma | preferNewLine);
 
         // if (indentedFlag) {
@@ -1145,43 +1148,55 @@ export function emitFile(
     }
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
-
-        const symbol = typeChecker.getSymbolAtLocation(node);
-
-        let prefix = '["';
-        let suffix = '"]';
-
-        if (symbol) {
-            let expression = utilities.getRealExpression(node.expression);
-            if (
-                // $this->func();
-                expression.kind === ts.SyntaxKind.ThisKeyword
-                || isClassInstance(expression, typeChecker)
-                || expression.kind === ts.SyntaxKind.NewExpression
-            ) {
-                prefix = '->';
-                suffix = '';
-            }
-            else if (isClassLike(node.expression, typeChecker)) {
-                switch (symbol.getFlags()) {
-                    case ts.SymbolFlags.Method:
-                        prefix = '::';
-                        suffix = '';
-                        break;
-                    case ts.SymbolFlags.Property:
-                        prefix = '::$';
-                        suffix = '';
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        const [prefix, suffix] = state.useArrayForObjectLitral
+            ? getPropertyAccessPunctuationInterfaceAsArray(node)
+            : getPropertyAccessPunctuationInterfaceAsClass(node)
 
         emitWithHint(ts.EmitHint.Expression, node.expression);
         writePunctuation(prefix);
         emitWithHint(ts.EmitHint.Unspecified, node.name);
         writePunctuation(suffix);
+    }
+
+    function getPropertyAccessPunctuationInterfaceAsArray (node: ts.PropertyAccessExpression) {
+        const symbol = typeChecker.getSymbolAtLocation(node);
+        const defaultPunctuation = ['["', '"]'];
+        if (!symbol) return defaultPunctuation;
+
+        let expression = utilities.getRealExpression(node.expression);
+        if (
+            expression.kind === ts.SyntaxKind.ThisKeyword
+            || isClassInstance(expression, state)
+            || expression.kind === ts.SyntaxKind.NewExpression
+        ) {
+            return ['->', '']; // $this->func();
+        }
+        if (isClassLike(node.expression, typeChecker)) {
+            switch (symbol.getFlags()) {
+                case ts.SymbolFlags.Method:
+                    return ['::', ''];
+                case ts.SymbolFlags.Property:
+                    return ['::$', ''];
+            }
+        }
+        return defaultPunctuation;
+    }
+
+    function getPropertyAccessPunctuationInterfaceAsClass (node: ts.PropertyAccessExpression) {
+        const symbol = typeChecker.getSymbolAtLocation(node);
+        const defaultPunctuation = ['->', ''];
+        if (!symbol) return defaultPunctuation;
+
+        let expression = utilities.getRealExpression(node.expression);
+        if (isClassType(node.expression, typeChecker)) {
+            switch (symbol.getFlags()) {
+                case ts.SymbolFlags.Method:
+                    return ['::', ''];
+                case ts.SymbolFlags.Property:
+                    return ['::$', ''];
+            }
+        }
+        return defaultPunctuation;
     }
 
     // // 1..toString is a valid property access, emit a dot after the literal
@@ -1205,10 +1220,18 @@ export function emitFile(
     // }
 
     function emitElementAccessExpression(node: ts.ElementAccessExpression) {
-        emitExpression(node.expression);
-        emitTokenWithComment(SyntaxKind.OpenBracketToken, node.expression.end, writePunctuation, node);
-        emitExpression(node.argumentExpression);
-        emitTokenWithComment(SyntaxKind.CloseBracketToken, node.argumentExpression.end, writePunctuation, node);
+        if (state.useArrayForObjectLitral || isArrayType(node.expression, node.argumentExpression, typeChecker)) {
+            emitExpression(node.expression);
+            emitTokenWithComment(SyntaxKind.OpenBracketToken, node.expression.end, writePunctuation, node);
+            emitExpression(node.argumentExpression);
+            emitTokenWithComment(SyntaxKind.CloseBracketToken, node.argumentExpression.end, writePunctuation, node);
+        } else {
+            emitExpression(node.expression);
+            writePunctuation('->');
+            writePunctuation('{');
+            emitExpression(node.argumentExpression);
+            writePunctuation('}');
+        }
     }
 
     function emitCallExpression(node: ts.CallExpression) {

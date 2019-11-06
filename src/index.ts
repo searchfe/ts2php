@@ -19,6 +19,7 @@ import {Ts2phpOptions, ModuleInfo} from '../types/index';
 const defaultOptions = {
     showDiagnostics: true,
     emitHeader: true,
+    useArrayForObjectLitral: true,
     getModulePathCode: (name, _, moduleIt) => {
         if (moduleIt && moduleIt.path) {
             return JSON.stringify(moduleIt.path);

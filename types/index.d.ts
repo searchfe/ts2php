@@ -56,6 +56,9 @@ export interface Ts2phpOptions {
     /** 获取当前文件的命名空间的函数，优先级低于 [[Ts2phpOptions.namespace]] */
     getNamespace?: () => string;
 
+    /** 对象语法使用关联数组（还是对象），默认为 true。为 true 时，interface 翻译为关联数组，对象语法翻译为关联数组。为 false 时 interface 翻译为对象，对象语法翻译为对象。 */
+    useArrayForObjectLitral?: boolean;
+
     /**
      * 自定义代码生成插件，可参考 https://github.com/max-team/ts2php/blob/master/src/features/array.ts
      */

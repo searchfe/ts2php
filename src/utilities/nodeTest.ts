@@ -4,6 +4,7 @@ import {
     Node,
     SyntaxKind
 } from 'typescript';
+import { TypeGuards } from 'ts-morph'
 import * as ts from 'typescript';
 import {CompilerState} from '../types';
 
@@ -146,6 +147,24 @@ export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     return numberLikeType.has(nodeType.getFlags());
 }
 
+export function isClassType(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const nodeSymbol = typeChecker.getSymbolAtLocation(node);
+    if (!nodeSymbol) return false;
+    if (node.kind === SyntaxKind.ThisKeyword) return false
+    return ts.SymbolFlags.Class & nodeSymbol.getFlags();
+}
+
+export function isArrayType(node: ts.Node, arg: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const argType  = typeChecker.getTypeAtLocation(arg);
+    const nodeSymbol = nodeType.getSymbol()
+    if (nodeSymbol) return nodeSymbol.getName() === 'Array'
+
+    // Let's guess
+    return ts.isNumericLiteral(arg) /* arr[2] */ || (argType.getFlags() & ts.TypeFlags.NumberLike) /* i=2; arr[i] */
+}
+
 export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = typeChecker.getSymbolAtLocation(node);
@@ -163,14 +182,24 @@ export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
         || (!nodeSymbol.valueDeclaration && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()) && nodeType.symbol.exports.has('prototype' as ts.__String));
 }
 
-export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
-    const nodeType = typeChecker.getTypeAtLocation(node);
+export function isClassInstance(node: ts.Node, state: CompilerState) {
+    const typeChecker = state.typeChecker
+    let nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = typeChecker.getSymbolAtLocation(node);
     if (!nodeSymbol) {
         return false;
     }
-    return (nodeType.isClass() && !(nodeSymbol.getFlags() & ts.SymbolFlags.Class))
-        || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
+    if (isTypeReference(nodeType)) {    // 支持 class/interface 泛型
+        nodeType = nodeType.target
+    }
+    const isInstance = state.useArrayForObjectLitral
+        ? nodeType.isClass()
+        : nodeType.isClassOrInterface()
+    return isInstance && !(nodeSymbol.getFlags() & ts.SymbolFlags.Class) || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
+}
+
+export function isTypeReference (t: ts.Type): t is ts.TypeReference {
+    return t.hasOwnProperty('target')
 }
 
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {

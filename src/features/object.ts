@@ -26,8 +26,10 @@ const staticMap = {
     }
 };
 
-function emitPropertyExists(objNode, propNode, typeChecker, emitExpression) {
-    if (isClassInstance(objNode, typeChecker)) {
+function emitPropertyExists(objNode, propNode, state) {
+    const typeChecker = state.typeChecker
+    const emitExpression = state.helpers.emitExpression
+    if (isClassInstance(objNode, state)) {
         return emitExpression(
             createCall(createIdentifier('property_exists'), [], [
                 objNode,
@@ -45,8 +47,8 @@ function emitPropertyExists(objNode, propNode, typeChecker, emitExpression) {
 
 export default {
 
-    emit(hint, node, {helpers, typeChecker, helperNamespace}) {
-
+    emit(hint, node, state) {
+        const {helpers, typeChecker, helperNamespace} = state
         const expNode = node.expression;
         let func;
 
@@ -66,7 +68,7 @@ export default {
             && isBinaryExpression(node)
             && node.operatorToken.kind === SyntaxKind.InKeyword
         ) {
-            return emitPropertyExists(node.right, node.left, typeChecker, helpers.emitExpression);
+            return emitPropertyExists(node.right, node.left, state);
         }
 
         if (
@@ -75,7 +77,7 @@ export default {
             && isIdentifier(expNode.name)
             && helpers.getTextOfNode(expNode.name) === 'hasOwnProperty'
         ) {
-            return emitPropertyExists(expNode.expression, node.arguments[0], typeChecker, helpers.emitExpression);
+            return emitPropertyExists(expNode.expression, node.arguments[0], state);
         }
 
         return false;
