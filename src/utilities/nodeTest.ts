@@ -46,7 +46,7 @@ export function shouldAddDollar(node: Node, state: CompilerState): boolean {
         return false;
     }
 
-    if (isFunctionLike(node, state.typeChecker) && node.parent && ts.isImportSpecifier(node.parent)) {
+    if (isFunctionLike(node, state.typeChecker) && !isVariable(node, state.typeChecker)) {
         return false;
     }
 

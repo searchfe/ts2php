@@ -1,3 +1,5 @@
+import {func as func1} from '../some-utils';
+
 const b = {
     a: 123,
     b: '456'
@@ -44,7 +46,12 @@ let mmm = {
         console.log('ccc');
     },
     ddd,
-    eee
+    eee,
+    fff: aaa,
+    ggg: bbb,
+    hhh: ddd,
+    iii: eee,
+    jjj: func1
 };
 
 mmm.aaa();

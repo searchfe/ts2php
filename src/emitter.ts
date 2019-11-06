@@ -1227,25 +1227,7 @@ export function emitFile(
             writeBase("$");
         }
 
-        let writeNamespace = false;
-        if (ts.isIdentifier(node.expression)) {
-            const symbol = typeChecker.getSymbolAtLocation(node.expression);
-
-            if (symbol) {
-                const declarations = symbol.getDeclarations();
-
-                if (declarations.length && ts.isImportSpecifier(declarations[0])) {
-                    const specifier = declarations[0] as ts.ImportSpecifier;
-                    const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
-                    const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
-                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
-                    namespace && writeBase(namespace);
-                    writeNamespace = true;
-                    emitExpression(specifier.propertyName || specifier.name)
-                }
-            }
-
-        }
+        let writeNamespace = emitIdentifierFromImport(node.expression);
         if (!writeNamespace) {
             emitWithHint(ts.EmitHint.Expression, node.expression);
         }
@@ -2378,7 +2360,17 @@ export function emitFile(
         writeSpace();
         writePunctuation("=>");
         writeSpace();
-        emitExpression(node.initializer);
+        if (isFunctionLike(node.initializer, typeChecker) && !isVariable(node.initializer, typeChecker) && !ts.isFunctionLikeDeclaration(node.initializer)) {
+            writeBase('"');
+            let fromImport = emitIdentifierFromImport(node.initializer);
+            if (!fromImport) {
+                emit(node.initializer);
+            }
+            writeBase('"');
+        }
+        else {
+            emitExpression(node.initializer);
+        }
     }
 
     function emitShorthandPropertyAssignment(node: ts.ShorthandPropertyAssignment) {
@@ -2398,7 +2390,8 @@ export function emitFile(
 
             if (isFunctionLike(node, typeChecker) && !isVariable(node, typeChecker)) {
                 writeBase('"');
-                emit(node.name);
+                let fromImport = emitIdentifierFromImport(node.name);
+                !fromImport && emit(node.name);
                 writeBase('"');
             }
             else {
@@ -3016,6 +3009,32 @@ export function emitFile(
 
         if (format & ts.ListFormat.BracketsMask) {
             writePunctuation(getClosingBracket(format));
+        }
+    }
+
+
+    /**
+     * identifier from import may need add namespace
+     */
+    function emitIdentifierFromImport(node: ts.Node): boolean {
+        if (ts.isIdentifier(node)) {
+            const type = typeChecker.getTypeAtLocation(node);
+            const symbol = typeChecker.getSymbolAtLocation(node);
+
+            if (symbol) {
+                const declarations = symbol.getDeclarations();
+
+                if (declarations.length && ts.isImportSpecifier(declarations[0])) {
+                    const specifier = declarations[0] as ts.ImportSpecifier;
+                    const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
+                    const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
+                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
+                    namespace && writeBase(namespace);
+                    emitExpression(specifier.propertyName || specifier.name);
+                    return true;
+                }
+            }
+
         }
     }
 

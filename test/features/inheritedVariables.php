@@ -1,7 +1,7 @@
 <?php
 namespace test\case_inheritedVariables;
 require_once(dirname(__FILE__) . '/' . "./Class.php");
-use \Article as Art;
+use \someModule\Article as Art;
 $a = array(
     "b" => "123456"
 );

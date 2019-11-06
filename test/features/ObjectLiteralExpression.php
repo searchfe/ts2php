@@ -1,5 +1,6 @@
 <?php
 namespace test\case_ObjectLiteralExpression;
+require_once(dirname(__FILE__) . '/' . "../some-utils.php");
 $b = array(
     "a" => 123,
     "b" => "456"
@@ -37,7 +38,12 @@ $mmm = array(
         echo "ccc";
     },
     "ddd" => $ddd,
-    "eee" => $eee
+    "eee" => $eee,
+    "fff" => "aaa",
+    "ggg" => $bbb,
+    "hhh" => $ddd,
+    "iii" => $eee,
+    "jjj" => "\someModule\func"
 );
 $mmm["aaa"]();
 $mmm["bbb"]();

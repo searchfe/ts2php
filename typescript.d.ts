@@ -4040,6 +4040,7 @@ declare namespace ts {
     function isPropertyName(node: Node): node is PropertyName;
     function isBindingName(node: Node): node is BindingName;
     function isFunctionLike(node: Node): node is SignatureDeclaration;
+    function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration;
     function isClassElement(node: Node): node is ClassElement;
     function isClassLike(node: Node): node is ClassLikeDeclaration;
     function isAccessor(node: Node): node is AccessorDeclaration;
