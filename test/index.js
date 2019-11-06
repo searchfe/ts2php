@@ -41,6 +41,9 @@ describe('features', () => {
                     'vue': {
                         required: true
                     }
+                },
+                getModuleNamespace(name) {
+                    return '\\someModule\\';
                 }
             });
             assert.equal(res.phpCode, phpContent);

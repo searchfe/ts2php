@@ -46,7 +46,7 @@ export function shouldAddDollar(node: Node, state: CompilerState): boolean {
         return false;
     }
 
-    if (isFunctionLike(node, state.typeChecker) && node.parent && ts.isImportSpecifier(node.parent)) {
+    if (isFunctionLike(node, state.typeChecker) && !isVariable(node, state.typeChecker)) {
         return false;
     }
 
@@ -115,6 +115,15 @@ export function shouldUseArray(format: ts.ListFormat) {
     return arrayBracketsMap[format] || '';
 }
 
+/**
+ * e.g. let a = []; let b = a;  ==>  $a = array(); $b = &$a;
+ * @param node node
+ */
+export function shouldUseReference(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    return ts.isIdentifier(node) && !isFunctionLike(node, typeChecker) && (nodeType.flags === ts.TypeFlags.Object);
+}
+
 const stringLikeType = new Set([
     ts.TypeFlags.String,
     ts.TypeFlags.StringLiteral
@@ -177,6 +186,16 @@ export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = nodeType.getSymbol();
     return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Function;
+}
+
+/**
+ * used for:
+ * variable whos value is function-like but not function declaration
+ */
+export function isVariable(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const nodeSymbol = nodeType.getSymbol();
+    return nodeSymbol.declarations[0].parent.kind === ts.SyntaxKind.VariableDeclaration;
 }
 
 export function isVisibilityModifier(node: ts.Modifier) {
