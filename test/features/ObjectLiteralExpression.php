@@ -20,3 +20,27 @@ $e = array_merge(array(), array(
     "w" => 2,
     "c" => 3
 ));
+function aaa() {
+    echo "aaa";
+}
+$bbb = function () {
+    echo "bbb";
+};
+$ddd = function () {
+    echo "ddd";
+};
+$eee = $bbb;
+$mmm = array(
+    "aaa" => "aaa",
+    "bbb" => $bbb,
+    "ccc" => function () {
+        echo "ccc";
+    },
+    "ddd" => $ddd,
+    "eee" => $eee
+);
+$mmm["aaa"]();
+$mmm["bbb"]();
+$mmm["ccc"]();
+$mmm["ddd"]();
+$mmm["eee"]();

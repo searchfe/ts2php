@@ -22,3 +22,33 @@ const e = {
     w: 2,
     c: 3
 };
+
+function aaa () {
+    console.log('aaa');
+}
+
+let bbb = function () {
+    console.log('bbb');
+};
+
+let ddd = () => {
+    console.log('ddd');
+};
+
+let eee = bbb;
+
+let mmm = {
+    aaa,
+    bbb,
+    ccc() {
+        console.log('ccc');
+    },
+    ddd,
+    eee
+};
+
+mmm.aaa();
+mmm.bbb();
+mmm.ccc();
+mmm.ddd();
+mmm.eee();

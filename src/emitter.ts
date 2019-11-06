@@ -41,7 +41,9 @@ import {
     isSupportedPropertyModifier,
     isStringLike,
     isClassLike,
-    isClassInstance
+    isClassInstance,
+    isFunctionLike,
+    isVariable
 } from './utilities/nodeTest';
 
 import {
@@ -2392,8 +2394,17 @@ export function emitFile(
             writeSpace();
             writePunctuation("=>");
             writeSpace();
-            writeBase("$");
-            emit(node.name);
+
+            if (isFunctionLike(node, typeChecker) && !isVariable(node, typeChecker)) {
+                writeBase('"');
+                emit(node.name);
+                writeBase('"');
+            }
+            else {
+                writeBase("$");
+                emit(node.name);
+            }
+
         }
     }
 

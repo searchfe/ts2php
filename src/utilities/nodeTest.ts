@@ -179,6 +179,16 @@ export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Function;
 }
 
+/**
+ * used for:
+ * variable whos value is function-like but not function declaration
+ */
+export function isVariable(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    const nodeSymbol = nodeType.getSymbol();
+    return nodeSymbol.declarations[0].parent.kind === ts.SyntaxKind.VariableDeclaration;
+}
+
 export function isVisibilityModifier(node: ts.Modifier) {
     return node.kind === SyntaxKind.PublicKeyword
         || node.kind === SyntaxKind.PrivateKeyword
