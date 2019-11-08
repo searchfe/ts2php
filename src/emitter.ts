@@ -1215,15 +1215,11 @@ export function emitFile(
     }
 
     function emitCallExpression(node: ts.CallExpression) {
-        let flowNode = node.expression.flowNode as ts.FlowAssignment;
+
         if (
-            flowNode
-            && flowNode.node
-            && ts.isVariableDeclaration(flowNode.node)
-            && ts.isIdentifier(node.expression)
-            && ts.isIdentifier(flowNode.node.name)
-            && node.expression.escapedText === flowNode.node.name.escapedText
-        ) {
+            ts.isIdentifier(node.expression)
+            && isFunctionLike(node.expression, typeChecker)
+            && isVariable(node.expression, typeChecker)) {
             writeBase("$");
         }
 
