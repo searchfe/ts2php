@@ -65,7 +65,7 @@ function replace(
 function split(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    const method = isStringLike(pattern, state.typeChecker) ? 'explode' : 'preg_split';
+    const method = isStringLike(pattern, state.typeChecker) ? '%helper::strSplit' : 'preg_split';
     let nodeList = [node.arguments[0], expNode.expression];
     writePunctuation(formatMethodName(method, state.helperNamespace));
     const args = createNodeArray(nodeList);

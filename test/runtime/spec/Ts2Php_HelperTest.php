@@ -54,6 +54,18 @@ final class Ts2Php_HelperTest extends TestCase {
         );
     }
 
+    public function testStrSplit() {
+        $this->assertEquals(
+            Ts2Php_Helper::strSplit('', 'abcde'),
+            array('a', 'b', 'c', 'd', 'e')
+        );
+
+        $this->assertEquals(
+            Ts2Php_Helper::strSplit('c', 'abcde'),
+            array('ab', 'de')
+        );
+    }
+
     public function testStartsWith() {
         $this->assertTrue(
             Ts2Php_Helper::startsWith('abcdef', 'cde', 2)

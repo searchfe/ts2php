@@ -53,6 +53,20 @@ class Ts2Php_Helper {
     }
 
     /**
+     * slice helper for string.prototype.split
+     * @param $origin {string}
+     * @param $start {number}
+     * @param $end {number}
+     * @return {string}
+     */
+    static public function strSplit($delimiter, $string) {
+        if ($delimiter === '') {
+            return str_split($string);
+        }
+        return explode($delimiter, $string);
+    }
+
+    /**
      * string.prototype.startsWidth
      * @param $haystack {string}
      * @param $needle {string}
