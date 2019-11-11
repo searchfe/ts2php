@@ -117,6 +117,10 @@ export interface Ts2phpOptions {
     customTransformers?: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[]
 }
 
+export interface PHPClass {}
+
+export interface PHPArray {}
+
 /**
  * 编译入口
  *

@@ -175,11 +175,38 @@ export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
 export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = typeChecker.getSymbolAtLocation(node);
+
+    const baseTypeName = getBaseTypeName(nodeType)
+    if (baseTypeName === 'PHPClass') return true
+    if (baseTypeName === 'PHPArray') return false
+
     if (!nodeSymbol) {
         return false;
     }
     return (nodeType.isClass() && !(nodeSymbol.getFlags() & ts.SymbolFlags.Class))
         || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
+}
+
+// 通过最近的父类来确定是用对象（->）还是数组（[]）
+// 优化：遍历父类有的方法来确定用哪个父类
+function getBaseTypeName(nodeType: ts.Type): 'PHPClass' | 'PHPArray' | 'other' {
+    const queue = [nodeType]
+
+    while(queue.length) {
+        const nodeType = queue.shift()
+        const baseTypes = nodeType.getBaseTypes()
+        if (!baseTypes) continue
+
+        for (const baseType of baseTypes) {
+            const baseSymbol = baseType.getSymbol()
+            if (!baseSymbol) continue
+
+            const name = baseSymbol.getName()
+            if (name === 'PHPClass' || name === 'PHPArray') return name
+            else queue.push(baseType)
+        }
+    }
+    return 'other'
 }
 
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
