@@ -1750,10 +1750,13 @@ export function emitFile(
             node.kind === ts.SyntaxKind.ArrowFunction
             || node.kind === ts.SyntaxKind.FunctionExpression
             || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent || node.original.parent))
+
+            // report error
+            || node.kind === ts.SyntaxKind.FunctionDeclaration
         ) {
             const identifiers = utilities.getDescendantIdentifiers(node);
             const inheritedVariables: ts.Identifier[] = [];
-            const nodeStart = node.getStart();
+            const nodeStart = node.getStart(state.sourceFile);
             const nodeEnd = node.getEnd();
 
             let names = {};
@@ -1787,6 +1790,19 @@ export function emitFile(
             });
 
             if (inheritedVariables.length > 0) {
+
+                if (node.kind === ts.SyntaxKind.FunctionDeclaration) {
+                    const {
+                        line,
+                        character
+                    } = state.sourceFile.getLineAndCharacterOfPosition(node.getStart(state.sourceFile));
+                    state.errors.push({
+                        code: 1,
+                        msg: `Function declaration can not use outside variables, use anonymous function instead. At pos: ${line + 1}, ${character}.`
+                    });
+                    return;
+                }
+
                 writeSpace();
                 write('use');
                 writePunctuation('(')
