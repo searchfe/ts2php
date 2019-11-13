@@ -1443,7 +1443,14 @@ export function emitFile(
 
     function emitTemplateSpan(node: ts.TemplateSpan) {
         writeSpace();
+        let needQuote = !ts.isIdentifier(node.expression);
+        if (needQuote) {
+            writePunctuation("(");
+        }
         emitExpression(node.expression);
+        if (needQuote) {
+            writePunctuation(")");
+        }
         emit(node.literal);
     }
 
