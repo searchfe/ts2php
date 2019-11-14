@@ -4,10 +4,9 @@ dist: trusty
 language: php
 php:
   - 5.6
-node_js: "10"
 
 env:
-  - NOTE_RELEASE=8.x
+  - NOTE_RELEASE=10.x
 
 cache:
   directories:
@@ -39,7 +38,6 @@ deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  node_js: "10"
   install: npm ci
   script: npx semantic-release
   on:
