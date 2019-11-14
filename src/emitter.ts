@@ -1780,6 +1780,10 @@ export function emitFile(
                     return;
                 }
 
+                if (isFunctionLike(item, typeChecker) && !isVariable(item, typeChecker)) {
+                    return;
+                }
+
                 const currentSourceFile = item.getSourceFile();
                 const symbolOfIdentifier = typeChecker.getSymbolAtLocation(item);
                 if (!symbolOfIdentifier) {

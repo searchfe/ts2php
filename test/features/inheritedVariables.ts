@@ -1,4 +1,5 @@
 import {Article as Art} from './Class';
+import somFunc from './export';
 let a = {
     b: '123456'
 };
@@ -22,6 +23,8 @@ let arr2 = ar.map(function (item: DDD) {
 let fa = () => '123' + b;
 
 let f = function () {
+    somFunc('');
+    fa();
     console.log(123);
     return '123' + a.b.length;
 }
@@ -64,3 +67,7 @@ let arr4 = arr.map(item => {
     let d = new Art({title: ''});
     return mmm.func(item);
 });
+
+function noError() {
+    somFunc('');
+}
