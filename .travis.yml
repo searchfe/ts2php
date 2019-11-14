@@ -1,44 +1,34 @@
-sudo: required
-dist: trusty
-
-language: php
-php:
-  - 5.6
-
-env:
-  - NOTE_RELEASE=10.x
-
-cache:
-  directories:
-    - ~/.npm
-
-before_install:
-  - sudo rm -rf ~/.nvm - curl -sL "https://deb.nodesource.com/setup_${NODE_RELEASE}" | sudo -E bash -
-  - sudo apt-get install -y nodejs
-
-install:
-  - npm install
-  - cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts
-  - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
-
-script:
-  - npm test
-  - npm run doc
-  - npm run test:runtime
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  local_dir: docs
-  github_token: $GITHUB_TOKEN # a token generated on github allowing travis to push code on you repository
-  keep_history: true
-  on:
-    branch: master
-
-deploy:
-  provider: script
-  skip_cleanup: true
-  install: npm ci
-  script: npx semantic-release
-  on:
-    branch: master
+language: node_js
+node_js: "10"
+php: 5.6
+jobs:
+  include:
+    - stage: test
+      name: 'Unit on Node.js10 / PHP5.6'
+      node_js: "10"
+      php: 5.6
+      install:
+        - npm install
+        - cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts
+        - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
+      script:
+        - npm test
+        - npm run doc
+        - npm run test:runtime
+    - stage: release
+      if: branch = master
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        install: npm ci
+        script: npx semantic-release
+    - stage: release
+      if: branch = master
+      script: skip
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        local_dir: docs
+        github_token: $GITHUB_TOKEN # a token generated on github allowing travis to push code on you repository
+        keep_history: true
