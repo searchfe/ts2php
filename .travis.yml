@@ -38,5 +38,6 @@ deploy:
 deploy:
   provider: script
   skip_cleanup: true
+  node_js: "10"
   install: npm ci
   script: npx semantic-release
