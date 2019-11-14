@@ -1,16 +1,14 @@
 language: node_js
 node_js: "10"
 php: 5.6
+install:
+  - npm install
+  - cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts
+  - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
 jobs:
   include:
     - stage: test
       name: 'Unit on Node.js10 / PHP5.6'
-      node_js: "10"
-      php: 5.6
-      install:
-        - npm install
-        - cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts
-        - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
       script:
         - npm test
         - npm run doc
@@ -21,7 +19,6 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        install: npm ci
         script: npx semantic-release
     - stage: release
       if: branch = master
