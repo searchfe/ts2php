@@ -1,3 +1,10 @@
+# [0.14.0](https://github.com/searchfe/ts2php/compare/v0.13.0...v0.14.0) (2019-11-14)
+
+
+### Features
+
+* exclude function declare in inherated ([c96017c](https://github.com/searchfe/ts2php/commit/c96017c9ada173ce45faf6be0946fed078bf5906))
+
 # [0.13.0](https://github.com/searchfe/ts2php/compare/v0.12.11...v0.13.0) (2019-11-14)
 
 
