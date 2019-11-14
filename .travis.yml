@@ -34,3 +34,9 @@ deploy:
   keep_history: true
   on:
     branch: master
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  install: npm ci
+  script: npx semantic-release
