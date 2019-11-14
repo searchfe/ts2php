@@ -1,3 +1,27 @@
+# [0.13.0](https://github.com/searchfe/ts2php/compare/v0.12.11...v0.13.0) (2019-11-14)
+
+
+### Bug Fixes
+
+* [#42](https://github.com/searchfe/ts2php/issues/42) ([1559fb0](https://github.com/searchfe/ts2php/commit/1559fb0ce93655d7abf1f87138524e4001291abd))
+* [#70](https://github.com/searchfe/ts2php/issues/70) ([f96d735](https://github.com/searchfe/ts2php/commit/f96d735b0ebe973b24a879fe5348439c560cf331))
+* [#72](https://github.com/searchfe/ts2php/issues/72) ([4c1f018](https://github.com/searchfe/ts2php/commit/4c1f018735b5c9e3cb78df6a6bab270cc5f827c5))
+* [#75](https://github.com/searchfe/ts2php/issues/75) ([aa73942](https://github.com/searchfe/ts2php/commit/aa73942520fe122bc846a4894972e4d81ee3d40f))
+* [#75](https://github.com/searchfe/ts2php/issues/75) ([3685cff](https://github.com/searchfe/ts2php/commit/3685cff2fe985db97ceb53a5d039da46d9d809dc))
+* [#80](https://github.com/searchfe/ts2php/issues/80) ([3d8d64d](https://github.com/searchfe/ts2php/commit/3d8d64d3a0bcc9f9b290c49614cb2f1cf3151cf1))
+* [#85](https://github.com/searchfe/ts2php/issues/85), toFixed compile to number_format ([f899861](https://github.com/searchfe/ts2php/commit/f89986114d806f1bba703b75357b5db042fea9e4))
+* 71 ([dee8487](https://github.com/searchfe/ts2php/commit/dee848739777063ef7827cc2953f6b8df2d125c0))
+* 81 ([5e93458](https://github.com/searchfe/ts2php/commit/5e93458b301111626d7964c43f49ccc3d296ba55))
+* binary expression in template need quote ([66b1215](https://github.com/searchfe/ts2php/commit/66b1215fd6d8ff51f53c0e650b48fafe3d7f7b20))
+
+
+### Features
+
+* eslint config ([cb3104d](https://github.com/searchfe/ts2php/commit/cb3104dafed240cc7d7a199cf74253fce88f8a12))
+* report error while using func in str.replace ([4e0641c](https://github.com/searchfe/ts2php/commit/4e0641ce7fbe93b346e28615e4e6c87fe21c548b))
+* solve [#79](https://github.com/searchfe/ts2php/issues/79) ([179a679](https://github.com/searchfe/ts2php/commit/179a67942ec7e6605fa5649927ef0a35f0fe3f4d))
+* support access interface method using ->, see [#23](https://github.com/searchfe/ts2php/issues/23) ([3ca585a](https://github.com/searchfe/ts2php/commit/3ca585a9d48eb649db5d8c691c4d85b9704e5143))
+
 <a name="0.12.9"></a>
 ## [0.12.9](https://github.com/max-team/ts2php/compare/v0.12.8...v0.12.9) (2019-10-28)
 
@@ -685,6 +709,3 @@
 * 编译 ([9ede565](https://github.com/max-team/ts2php/commit/9ede565))
 * 编译 ([f178d29](https://github.com/max-team/ts2php/commit/f178d29))
 * 设置单测框架 ([b1f1d4d](https://github.com/max-team/ts2php/commit/b1f1d4d))
-
-
-
