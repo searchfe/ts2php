@@ -11,7 +11,6 @@ jobs:
       name: 'Unit on Node.js10 / PHP5.6'
       script:
         - npm test
-        - npm run doc
         - npm run test:runtime
     - stage: release
       if: branch = master
@@ -22,7 +21,8 @@ jobs:
         script: npx semantic-release
     - stage: release
       if: branch = master
-      script: skip
+      script:
+        - npm run doc
       deploy:
         provider: pages
         skip_cleanup: true
