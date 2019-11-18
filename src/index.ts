@@ -115,7 +115,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         moduleNamedImports: {},
         moduleDefaultImports: {},
         namespace: (options && options.namespace)
-            || (options && options.getNamespace && options.getNamespace())
+            || (options && options.getNamespace && options.getNamespace(filePath))
             || upperFirst(getRandomString(5)),
         plugins
     });
