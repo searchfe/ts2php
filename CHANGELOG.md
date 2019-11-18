@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/searchfe/ts2php/compare/v0.14.0...v0.15.0) (2019-11-18)
+
+
+### Features
+
+* pass filePath to options.getNamespace() ([49eee15](https://github.com/searchfe/ts2php/commit/49eee15d0d7206d7c6dca2f74215e0c0af71cfe3))
+
 # [0.14.0](https://github.com/searchfe/ts2php/compare/v0.13.0...v0.14.0) (2019-11-14)
 
 
