@@ -14,6 +14,8 @@ declare function intval(x: any): number;
 
 declare function floatval(x: any): number;
 
+declare function hexdec(str: string): number;
+
 declare function iconv(sourceCode: string, targetCode: string, content: string): string;
 
 declare function version_compare(a: string, b: string): -1 | 0 | 1;
@@ -34,6 +36,14 @@ type UrlInfo = {
 declare function parse_url(x: string): false | UrlInfo;
 declare function parse_url(x: string, component: number): false | string;
 declare function parse_str(x: string, array: {[key: string]: any}): void;
+
+declare function http_build_query(
+    array: {[key: string]: any},
+    prefix?: string,
+    separator?: string,
+    encType?: number
+): string;
+
 declare function is_array(array: any) : boolean;
 declare const PHP_URL_SCHEME = 1;
 declare const PHP_URL_HOST = 2;
