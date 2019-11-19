@@ -20,7 +20,8 @@ import {
     createStringLiteral,
     SyntaxKind,
     createTrue,
-    createFalse
+    createFalse,
+    createNull
 } from 'typescript';
 
 import {
@@ -65,8 +66,14 @@ function replace(
 function split(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    const method = isStringLike(pattern, state.typeChecker) ? '%helper::strSplit' : 'preg_split';
+    const isPreg = !isStringLike(pattern, state.typeChecker);
+    const method = isPreg ? 'preg_split' : '%helper::strSplit';
     let nodeList = [node.arguments[0], expNode.expression];
+
+    if (isPreg) {
+        nodeList.push(createNull(), createIdentifier('PREG_SPLIT_DELIM_CAPTURE'));
+    }
+
     writePunctuation(formatMethodName(method, state.helperNamespace));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
