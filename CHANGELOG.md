@@ -1,3 +1,10 @@
+# [0.16.0](https://github.com/searchfe/ts2php/compare/v0.15.0...v0.16.0) (2019-11-19)
+
+
+### Features
+
+* add php hexdec&http_build_query ([a769f90](https://github.com/searchfe/ts2php/commit/a769f908c270fbe52a6f33a201b987d46d3be182))
+
 # [0.15.0](https://github.com/searchfe/ts2php/compare/v0.14.0...v0.15.0) (2019-11-18)
 
 
