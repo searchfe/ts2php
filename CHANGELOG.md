@@ -1,3 +1,15 @@
+# [0.18.0](https://github.com/searchfe/ts2php/compare/v0.17.0...v0.18.0) (2019-11-20)
+
+
+### Bug Fixes
+
+* make sure outter options.modules not change ([e8f5461](https://github.com/searchfe/ts2php/commit/e8f5461a814d9c72adcff054e2b40df0b5b354c1))
+
+
+### Features
+
+* reduce quote in template ([6fb82c6](https://github.com/searchfe/ts2php/commit/6fb82c63cac87b3dcf4fbcad356da8d379759ee6))
+
 # [0.17.0](https://github.com/searchfe/ts2php/compare/v0.16.1...v0.17.0) (2019-11-20)
 
 
