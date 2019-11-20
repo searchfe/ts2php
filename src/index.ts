@@ -90,6 +90,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         ...defaultOptions,
         ...options
     };
+    // avoid change options
+    finalOptions.modules = Object.assign({}, options.modules);
 
     const typeChecker = program.getTypeChecker();
 
