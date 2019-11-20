@@ -7,6 +7,12 @@ let i = 123;
 sa + `_${i ? 'a' : 'b'}_${i + 2}_${`1${b}2${b}3${b}4`}`;
 
 let a = {
-    b: ['123']
+    b: ['123'],
+    c: {
+        d: '456'
+    }
 };
 let d = `aaa${a.b[0]}ccc`;
+`aaa${a.c.d}ccc`;
+`aaa${Math.round(i)}ccc`;
+`aaa${(i / 10)}bbb`;
