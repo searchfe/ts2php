@@ -1,3 +1,10 @@
+# [0.17.0](https://github.com/searchfe/ts2php/compare/v0.16.1...v0.17.0) (2019-11-20)
+
+
+### Features
+
+* element access dont use quote in template ([1bac983](https://github.com/searchfe/ts2php/commit/1bac983b8951bc8a0563c8dfd4321108b8270348))
+
 ## [0.16.1](https://github.com/searchfe/ts2php/compare/v0.16.0...v0.16.1) (2019-11-19)
 
 
