@@ -49,3 +49,6 @@ const z = b.find(item => {
 const zz = b.findIndex(item => {
     return item === 'a';
 });
+
+const y = b.sort();
+const yy = b.sort((a: number, b: number) => a - b);

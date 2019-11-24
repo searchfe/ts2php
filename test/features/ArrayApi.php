@@ -46,3 +46,7 @@ $z = \Ts2Php_Helper::array_find(function ($item) {
 $zz = \Ts2Php_Helper::array_find_index(function ($item) {
     return $item === "a";
 }, $b);
+$y = sort($b);
+$yy = usort($b, function ($a, $b){
+return $a - $b;
+});

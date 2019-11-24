@@ -102,7 +102,7 @@
     "source-map-support": "^0.5.12",
     "sync-files": "^1.0.3",
     "ts-node": "^8.2.0",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.3",
     "typescript": "~3.4.5",
     "vue": "^2.6.10"
   },

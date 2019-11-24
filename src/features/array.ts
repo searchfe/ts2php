@@ -20,8 +20,26 @@ import {
 import method, {formatMethodName} from '../utilities/method';
 import ts = require('typescript');
 
-function sort(node: CallExpression, {emitExpressionList, writePunctuation}, {typeChecker}) {
-
+function sort(node: CallExpression, {emitExpressionList, writePunctuation, errors}, {typeChecker}) {
+    let expNode = node.expression as PropertyAccessExpression;
+    let args = [expNode.expression];
+    if (!node.arguments || node.arguments.length <= 0) {
+        writePunctuation('sort');
+        emitExpressionList(node, createNodeArray(args), ListFormat.CallExpressionArguments);
+    }
+    else if (
+        ts.isArrowFunction(node.arguments[0])
+        || ts.isFunctionExpression(node.arguments[0])
+    ) {
+        writePunctuation('usort');
+        emitExpressionList(node, createNodeArray([...args, node.arguments[0]]), ListFormat.CallExpressionArguments);
+    }
+    else {
+        errors.push({
+            code: 1,
+            msg: `Array.prototype.sort does not support parameters except arrow function or function expression`
+        });
+    }
 }
 
 
@@ -69,7 +87,8 @@ const map = {
     filter: method('array_filter', true, 1),
     slice: method('%helper::arraySlice', true, 2),
     find: method('%helper::array_find', false, 1, true),
-    findIndex: method('%helper::array_find_index', false, 1, true)
+    findIndex: method('%helper::array_find_index', false, 1, true),
+    sort
 };
 
 const api = {

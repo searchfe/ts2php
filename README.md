@@ -588,6 +588,7 @@ catch (\Exception $e) {
   - Array.prototype.every
   - Array.prototype.find
   - Array.prototype.findIndex
+  - Array.prototype.sort
 - Number
   - Number.isInterger
   - Number.prototype.toFixed
