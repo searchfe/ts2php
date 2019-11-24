@@ -1,3 +1,74 @@
+# [0.18.0](https://github.com/searchfe/ts2php/compare/v0.17.0...v0.18.0) (2019-11-20)
+
+
+### Bug Fixes
+
+* make sure outter options.modules not change ([e8f5461](https://github.com/searchfe/ts2php/commit/e8f5461a814d9c72adcff054e2b40df0b5b354c1))
+
+
+### Features
+
+* reduce quote in template ([6fb82c6](https://github.com/searchfe/ts2php/commit/6fb82c63cac87b3dcf4fbcad356da8d379759ee6))
+
+# [0.17.0](https://github.com/searchfe/ts2php/compare/v0.16.1...v0.17.0) (2019-11-20)
+
+
+### Features
+
+* element access dont use quote in template ([1bac983](https://github.com/searchfe/ts2php/commit/1bac983b8951bc8a0563c8dfd4321108b8270348))
+
+## [0.16.1](https://github.com/searchfe/ts2php/compare/v0.16.0...v0.16.1) (2019-11-19)
+
+
+### Bug Fixes
+
+* [#87](https://github.com/searchfe/ts2php/issues/87) ([d82b3fa](https://github.com/searchfe/ts2php/commit/d82b3fa71e5f84d2597f466444fc21a7ea5385bb))
+
+# [0.16.0](https://github.com/searchfe/ts2php/compare/v0.15.0...v0.16.0) (2019-11-19)
+
+
+### Features
+
+* add php hexdec&http_build_query ([a769f90](https://github.com/searchfe/ts2php/commit/a769f908c270fbe52a6f33a201b987d46d3be182))
+
+# [0.15.0](https://github.com/searchfe/ts2php/compare/v0.14.0...v0.15.0) (2019-11-18)
+
+
+### Features
+
+* pass filePath to options.getNamespace() ([49eee15](https://github.com/searchfe/ts2php/commit/49eee15d0d7206d7c6dca2f74215e0c0af71cfe3))
+
+# [0.14.0](https://github.com/searchfe/ts2php/compare/v0.13.0...v0.14.0) (2019-11-14)
+
+
+### Features
+
+* exclude function declare in inherated ([c96017c](https://github.com/searchfe/ts2php/commit/c96017c9ada173ce45faf6be0946fed078bf5906))
+
+# [0.13.0](https://github.com/searchfe/ts2php/compare/v0.12.11...v0.13.0) (2019-11-14)
+
+
+### Bug Fixes
+
+* [#42](https://github.com/searchfe/ts2php/issues/42) ([1559fb0](https://github.com/searchfe/ts2php/commit/1559fb0ce93655d7abf1f87138524e4001291abd))
+* [#70](https://github.com/searchfe/ts2php/issues/70) ([f96d735](https://github.com/searchfe/ts2php/commit/f96d735b0ebe973b24a879fe5348439c560cf331))
+* [#72](https://github.com/searchfe/ts2php/issues/72) ([4c1f018](https://github.com/searchfe/ts2php/commit/4c1f018735b5c9e3cb78df6a6bab270cc5f827c5))
+* [#75](https://github.com/searchfe/ts2php/issues/75) ([aa73942](https://github.com/searchfe/ts2php/commit/aa73942520fe122bc846a4894972e4d81ee3d40f))
+* [#75](https://github.com/searchfe/ts2php/issues/75) ([3685cff](https://github.com/searchfe/ts2php/commit/3685cff2fe985db97ceb53a5d039da46d9d809dc))
+* [#80](https://github.com/searchfe/ts2php/issues/80) ([3d8d64d](https://github.com/searchfe/ts2php/commit/3d8d64d3a0bcc9f9b290c49614cb2f1cf3151cf1))
+* [#85](https://github.com/searchfe/ts2php/issues/85), toFixed compile to number_format ([f899861](https://github.com/searchfe/ts2php/commit/f89986114d806f1bba703b75357b5db042fea9e4))
+* 71 ([dee8487](https://github.com/searchfe/ts2php/commit/dee848739777063ef7827cc2953f6b8df2d125c0))
+* 81 ([5e93458](https://github.com/searchfe/ts2php/commit/5e93458b301111626d7964c43f49ccc3d296ba55))
+* binary expression in template need quote ([66b1215](https://github.com/searchfe/ts2php/commit/66b1215fd6d8ff51f53c0e650b48fafe3d7f7b20))
+
+
+### Features
+
+* eslint config ([cb3104d](https://github.com/searchfe/ts2php/commit/cb3104dafed240cc7d7a199cf74253fce88f8a12))
+* report error while using func in str.replace ([4e0641c](https://github.com/searchfe/ts2php/commit/4e0641ce7fbe93b346e28615e4e6c87fe21c548b))
+* solve [#79](https://github.com/searchfe/ts2php/issues/79) ([179a679](https://github.com/searchfe/ts2php/commit/179a67942ec7e6605fa5649927ef0a35f0fe3f4d))
+* support access interface method using ->, see [#23](https://github.com/searchfe/ts2php/issues/23) ([3ca585a](https://github.com/searchfe/ts2php/commit/3ca585a9d48eb649db5d8c691c4d85b9704e5143))
+
 <a name="0.12.9"></a>
 ## [0.12.9](https://github.com/max-team/ts2php/compare/v0.12.8...v0.12.9) (2019-10-28)
 
@@ -685,6 +756,3 @@
 * 编译 ([9ede565](https://github.com/max-team/ts2php/commit/9ede565))
 * 编译 ([f178d29](https://github.com/max-team/ts2php/commit/f178d29))
 * 设置单测框架 ([b1f1d4d](https://github.com/max-team/ts2php/commit/b1f1d4d))
-
-
-

@@ -15,7 +15,7 @@ $Vue["extend"](array(
     },
     "created" => function () {
         $e = mb_strlen($this->b, "utf8");
-        $g = round($this->f, 2);
+        $g = number_format($this->f, 2);
     },
     "computed" => array(
         "f" => function () {

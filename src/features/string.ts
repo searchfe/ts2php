@@ -20,27 +20,40 @@ import {
     createStringLiteral,
     SyntaxKind,
     createTrue,
-    createFalse
+    createFalse,
+    createNull
 } from 'typescript';
 
 import {
-    isStringLike, isNumberLike,
+    isStringLike, isNumberLike, isFunctionLike,
 } from '../utilities/nodeTest';
 
 import method, {formatMethodName} from '../utilities/method';
 import {CompilerState} from '../types';
 
-function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList, writePunctuation}, {helperNamespace}) {
+function replace(
+    node: CallExpression,
+    {getLiteralTextOfNode, emitExpressionList, writePunctuation},
+    {helperNamespace, typeChecker, errors}: CompilerState
+) {
 
     const expNode = node.expression as PropertyAccessExpression;
 
     let nodeList = [...node.arguments, expNode.expression];
     let method = '%helper::str_replace_once';
 
+    if (isFunctionLike(node.arguments[1], typeChecker)) {
+        errors.push({
+            code: 1,
+            msg: 'Function as second param is not supported yet in String.prototype.replace.'
+        });
+        return;
+    }
+
     if (isRegularExpressionLiteral(node.arguments[0])) {
         method = 'preg_replace';
         const firstArg = node.arguments[0] as RegularExpressionLiteral;
-        if (!/g$/.test(getLiteralTextOfNode(firstArg, true))) {
+        if (!/gi?$/.test(getLiteralTextOfNode(firstArg, true))) {
             nodeList.push(createNumericLiteral("1"));
         }
     }
@@ -53,8 +66,14 @@ function replace(node: CallExpression, {getLiteralTextOfNode, emitExpressionList
 function split(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    const method = isStringLike(pattern, state.typeChecker) ? 'explode' : 'preg_split';
+    const isPreg = !isStringLike(pattern, state.typeChecker);
+    const method = isPreg ? 'preg_split' : '%helper::strSplit';
     let nodeList = [node.arguments[0], expNode.expression];
+
+    if (isPreg) {
+        nodeList.push(createNull(), createIdentifier('PREG_SPLIT_DELIM_CAPTURE'));
+    }
+
     writePunctuation(formatMethodName(method, state.helperNamespace));
     const args = createNodeArray(nodeList);
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);

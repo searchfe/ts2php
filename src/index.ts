@@ -90,6 +90,8 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         ...defaultOptions,
         ...options
     };
+    // avoid change options
+    finalOptions.modules = Object.assign({}, options.modules);
 
     const typeChecker = program.getTypeChecker();
 
@@ -115,7 +117,7 @@ export function compile(filePath: string, options: Ts2phpOptions = {}) {
         moduleNamedImports: {},
         moduleDefaultImports: {},
         namespace: (options && options.namespace)
-            || (options && options.getNamespace && options.getNamespace())
+            || (options && options.getNamespace && options.getNamespace(filePath))
             || upperFirst(getRandomString(5)),
         plugins
     });

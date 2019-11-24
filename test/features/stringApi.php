@@ -1,5 +1,5 @@
 <?php
-namespace test\case_stringProto;
+namespace test\case_stringApi;
 $a = "wwa";
 $b = \Ts2Php_Helper::str_replace_once("a", "b", $a);
 $c = array( "s" => "aaa" );
@@ -8,8 +8,8 @@ $f = preg_replace("/w/", "b", $a);
 $e = preg_replace("/w/", "b", $a, 1);
 $g = trim($a);
 $h = \Ts2Php_Helper::str_pos($a, "a");
-$i = explode(" ", $a);
-$j = preg_split("/\\0/", $a);
+$i = \Ts2Php_Helper::strSplit(" ", $a);
+$j = preg_split("/\\0/", $a, null, PREG_SPLIT_DELIM_CAPTURE);
 $k = 2;
 $l = \Ts2Php_Helper::str_slice($a, 1, $k);
 $m = mb_strlen($a, "utf8");

@@ -41,7 +41,10 @@ import {
     isSupportedPropertyModifier,
     isStringLike,
     isClassLike,
-    isClassInstance
+    isClassInstance,
+    isFunctionLike,
+    isVariable,
+    shouldUseReference
 } from './utilities/nodeTest';
 
 import {
@@ -1212,37 +1215,15 @@ export function emitFile(
     }
 
     function emitCallExpression(node: ts.CallExpression) {
-        let flowNode = node.expression.flowNode as ts.FlowAssignment;
+
         if (
-            flowNode
-            && flowNode.node
-            && ts.isVariableDeclaration(flowNode.node)
-            && ts.isIdentifier(node.expression)
-            && ts.isIdentifier(flowNode.node.name)
-            && node.expression.escapedText === flowNode.node.name.escapedText
-        ) {
+            ts.isIdentifier(node.expression)
+            && isFunctionLike(node.expression, typeChecker)
+            && isVariable(node.expression, typeChecker)) {
             writeBase("$");
         }
 
-        let writeNamespace = false;
-        if (ts.isIdentifier(node.expression)) {
-            const symbol = typeChecker.getSymbolAtLocation(node.expression);
-
-            if (symbol) {
-                const declarations = symbol.getDeclarations();
-
-                if (declarations.length && ts.isImportSpecifier(declarations[0])) {
-                    const specifier = declarations[0] as ts.ImportSpecifier;
-                    const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
-                    const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
-                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
-                    namespace && writeBase(namespace);
-                    writeNamespace = true;
-                    emitExpression(specifier.propertyName || specifier.name)
-                }
-            }
-
-        }
+        let writeNamespace = emitIdentifierFromImport(node.expression);
         if (!writeNamespace) {
             emitWithHint(ts.EmitHint.Expression, node.expression);
         }
@@ -1462,7 +1443,20 @@ export function emitFile(
 
     function emitTemplateSpan(node: ts.TemplateSpan) {
         writeSpace();
+        let needQuote = (
+            !ts.isIdentifier(node.expression)
+            && !ts.isElementAccessExpression(node.expression)
+            && !ts.isPropertyAccessExpression(node.expression)
+            && !ts.isCallExpression(node.expression)
+            && !ts.isParenthesizedExpression(node.expression)
+        );
+        if (needQuote) {
+            writePunctuation("(");
+        }
         emitExpression(node.expression);
+        if (needQuote) {
+            writePunctuation(")");
+        }
         emit(node.literal);
     }
 
@@ -1769,10 +1763,13 @@ export function emitFile(
             node.kind === ts.SyntaxKind.ArrowFunction
             || node.kind === ts.SyntaxKind.FunctionExpression
             || (node.kind === ts.SyntaxKind.MethodDeclaration && !ts.isClassDeclaration(node.parent || node.original.parent))
+
+            // report error
+            || node.kind === ts.SyntaxKind.FunctionDeclaration
         ) {
             const identifiers = utilities.getDescendantIdentifiers(node);
             const inheritedVariables: ts.Identifier[] = [];
-            const nodeStart = node.getStart();
+            const nodeStart = node.getStart(state.sourceFile);
             const nodeEnd = node.getEnd();
 
             let names = {};
@@ -1786,6 +1783,10 @@ export function emitFile(
                 }
 
                 if (isClassLike(item, typeChecker)) {
+                    return;
+                }
+
+                if (isFunctionLike(item, typeChecker) && !isVariable(item, typeChecker)) {
                     return;
                 }
 
@@ -1806,6 +1807,19 @@ export function emitFile(
             });
 
             if (inheritedVariables.length > 0) {
+
+                if (node.kind === ts.SyntaxKind.FunctionDeclaration) {
+                    const {
+                        line,
+                        character
+                    } = state.sourceFile.getLineAndCharacterOfPosition(node.getStart(state.sourceFile));
+                    state.errors.push({
+                        code: 1,
+                        msg: `Function declaration can not use outside variables, use anonymous function instead. At pos: ${line + 1}, ${character}.`
+                    });
+                    return;
+                }
+
                 writeSpace();
                 write('use');
                 writePunctuation('(')
@@ -2375,7 +2389,17 @@ export function emitFile(
         writeSpace();
         writePunctuation("=>");
         writeSpace();
-        emitExpression(node.initializer);
+        if (isFunctionLike(node.initializer, typeChecker) && !isVariable(node.initializer, typeChecker) && !ts.isFunctionLikeDeclaration(node.initializer)) {
+            writeBase('"');
+            let fromImport = emitIdentifierFromImport(node.initializer);
+            if (!fromImport) {
+                emit(node.initializer);
+            }
+            writeBase('"');
+        }
+        else {
+            emitExpression(node.initializer);
+        }
     }
 
     function emitShorthandPropertyAssignment(node: ts.ShorthandPropertyAssignment) {
@@ -2392,8 +2416,18 @@ export function emitFile(
             writeSpace();
             writePunctuation("=>");
             writeSpace();
-            writeBase("$");
-            emit(node.name);
+
+            if (isFunctionLike(node, typeChecker) && !isVariable(node, typeChecker)) {
+                writeBase('"');
+                let fromImport = emitIdentifierFromImport(node.name);
+                !fromImport && emit(node.name);
+                writeBase('"');
+            }
+            else {
+                writeBase("$");
+                emit(node.name);
+            }
+
         }
     }
 
@@ -2738,6 +2772,11 @@ export function emitFile(
             writeSpace();
             emitTokenWithComment(SyntaxKind.EqualsToken, equalCommentStartPos, writeOperator, container);
             writeSpace();
+
+            if (shouldUseReference(node, typeChecker)) {
+                writeBase("&");
+            }
+
             emitExpression(node);
         }
     }
@@ -2999,6 +3038,32 @@ export function emitFile(
 
         if (format & ts.ListFormat.BracketsMask) {
             writePunctuation(getClosingBracket(format));
+        }
+    }
+
+
+    /**
+     * identifier from import may need add namespace
+     */
+    function emitIdentifierFromImport(node: ts.Node): boolean {
+        if (ts.isIdentifier(node)) {
+            const type = typeChecker.getTypeAtLocation(node);
+            const symbol = typeChecker.getSymbolAtLocation(node);
+
+            if (symbol) {
+                const declarations = symbol.getDeclarations();
+
+                if (declarations.length && ts.isImportSpecifier(declarations[0])) {
+                    const specifier = declarations[0] as ts.ImportSpecifier;
+                    const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
+                    const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
+                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
+                    namespace && writeBase(namespace);
+                    emitExpression(specifier.propertyName || specifier.name);
+                    return true;
+                }
+            }
+
         }
     }
 

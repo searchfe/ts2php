@@ -54,7 +54,7 @@ export interface Ts2phpOptions {
     helperNamespace?: string,
 
     /** 获取当前文件的命名空间的函数，优先级低于 [[Ts2phpOptions.namespace]] */
-    getNamespace?: () => string;
+    getNamespace?: (filePath: string) => string;
 
     /**
      * 自定义代码生成插件，可参考 https://github.com/max-team/ts2php/blob/master/src/features/array.ts
@@ -116,6 +116,10 @@ export interface Ts2phpOptions {
      */
     customTransformers?: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[]
 }
+
+export interface PHPClass {}
+
+export interface PHPArray {}
 
 /**
  * 编译入口

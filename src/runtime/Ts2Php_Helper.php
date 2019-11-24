@@ -49,7 +49,21 @@ class Ts2Php_Helper {
      */
     static public function str_slice($origin, $start, $end = null) {
         $end = isset($end) ? $end : mb_strlen($origin, 'utf8');
-        return substr($origin, $start, $end - $start);
+        return mb_substr($origin, $start, $end - $start);
+    }
+
+    /**
+     * slice helper for string.prototype.split
+     * @param $origin {string}
+     * @param $start {number}
+     * @param $end {number}
+     * @return {string}
+     */
+    static public function strSplit($delimiter, $string) {
+        if ($delimiter === '') {
+            return str_split($string);
+        }
+        return explode($delimiter, $string);
     }
 
     /**

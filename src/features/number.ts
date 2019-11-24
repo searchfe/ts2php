@@ -21,7 +21,7 @@ const staticMap = {
 };
 
 const protoMap = {
-    toFixed: method('round', true, 1)
+    toFixed: method('number_format', true, 1)
 };
 
 export default {

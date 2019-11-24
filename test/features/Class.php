@@ -1,7 +1,7 @@
 <?php
 namespace test\case_Class;
 require_once(dirname(__FILE__) . '/' . "../some-utils.php");
-use \Base;
+use \someModule\Base;
 class Article extends Base {
     public $title;
     public $id;

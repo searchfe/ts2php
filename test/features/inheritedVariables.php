@@ -1,7 +1,7 @@
 <?php
 namespace test\case_inheritedVariables;
 require_once(dirname(__FILE__) . '/' . "./Class.php");
-use \Article as Art;
+use \someModule\Article as Art;
 $a = array(
     "b" => "123456"
 );
@@ -19,7 +19,9 @@ $arr2 = array_map(function ($item) use(&$b)  {
 $fa = function () use(&$b) {
 return "123" . $b;
 };
-$f = function () use(&$a)  {
+$f = function () use(&$a, &$fa)  {
+    somFunc("");
+    $fa();
     echo 123;
     return "123" . mb_strlen($a["b"], "utf8");
 };
@@ -49,3 +51,6 @@ $arr4 = array_map(function ($item) {
     $d = new Art(array( "title" => "" ));
     return mmm::func($item);
 }, $arr);
+function noError() {
+    somFunc("");
+}

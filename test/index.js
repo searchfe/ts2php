@@ -41,6 +41,9 @@ describe('features', () => {
                     'vue': {
                         required: true
                     }
+                },
+                getModuleNamespace(name) {
+                    return '\\someModule\\';
                 }
             });
             assert.equal(res.phpCode, phpContent);
@@ -81,5 +84,11 @@ describe('features', () => {
             '});\n'
         assert.equal(res.phpCode, expected);
     });
+
+    it('function declaration can not use outside variables', function () {
+        this.timeout(5000);
+        let res = compile('test.ts', {namespace: 'test', source: 'let a = 1;function bbb() {return a;}'});
+        assert.equal(res.errors.length, 1);
+    })
 });
 

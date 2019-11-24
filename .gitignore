@@ -69,6 +69,8 @@ Thumbs.db
 # IDE configurations
 .idea
 .vscode
+**/.vscode/*
+!**/.vscode/settings.template.json
 .ts2php
 
 # build assets

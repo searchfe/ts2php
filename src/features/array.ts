@@ -20,9 +20,13 @@ import {
 import method, {formatMethodName} from '../utilities/method';
 import ts = require('typescript');
 
+function sort(node: CallExpression, {emitExpressionList, writePunctuation}, {typeChecker}) {
+
+}
+
 
 const map = {
-    push: method('array_push', true, 1),
+    push: method('array_push', true),
     pop: method('array_pop', true, 0),
     unshift: method('array_unshift', true, 1),
     shift: method('array_shift', true, 0),
@@ -41,7 +45,7 @@ const map = {
             if (
                 declarations[0]
                 && declarations[0].kind === ts.SyntaxKind.VariableDeclaration
-                && ts.isFunctionLike(declarations[0].initializer) 
+                && ts.isFunctionLike(declarations[0].initializer)
             ) {
                 argumentFunction = declarations[0].initializer;
             }
