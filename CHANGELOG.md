@@ -1,3 +1,10 @@
+# [0.19.0](https://github.com/searchfe/ts2php/compare/v0.18.0...v0.19.0) (2019-11-24)
+
+
+### Features
+
+* support Array.prototype.sort, close[#89](https://github.com/searchfe/ts2php/issues/89) ([9a59438](https://github.com/searchfe/ts2php/commit/9a59438fb836bd1edaa348829a1d7496218b4623))
+
 # [0.18.0](https://github.com/searchfe/ts2php/compare/v0.17.0...v0.18.0) (2019-11-20)
 
 
