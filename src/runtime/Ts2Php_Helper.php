@@ -155,10 +155,11 @@ class Ts2Php_Helper {
      * string.prototype.indexOf
      * @param $haystack {string}
      * @param $needle {string}
+     * @param $start {number}
      * @return {number}
      */
-    static public function str_pos($haystack, $needle){
-        $pos = strpos($haystack, $needle);
+    static public function str_pos($haystack, $needle, $start = 0){
+        $pos = strpos($haystack, $needle, $start);
         return $pos === false ? -1 : $pos;
     }
 

@@ -111,7 +111,7 @@ const map = {
     toUpperCase: method('strtoupper'),
     toLowerCase: method('strtolower'),
     slice: method('%helper::str_slice', true, 2),
-    indexOf: method('%helper::str_pos', true, 1),
+    indexOf: method('%helper::str_pos', true, 2),
     substring: method('%helper::str_slice', true, 2),
     repeat: method('str_repeat', true, 1),
     startsWith: method('%helper::startsWith', true, 2),
