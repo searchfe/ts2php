@@ -1,3 +1,10 @@
+## [0.19.1](https://github.com/searchfe/ts2php/compare/v0.19.0...v0.19.1) (2019-11-27)
+
+
+### Bug Fixes
+
+* support fromIndex for String.prototype.indexOf. fixes [#97](https://github.com/searchfe/ts2php/issues/97) ([09b68f5](https://github.com/searchfe/ts2php/commit/09b68f59751fcc90bf989f1872119361f4531f8b))
+
 # [0.19.0](https://github.com/searchfe/ts2php/compare/v0.18.0...v0.19.0) (2019-11-24)
 
 
