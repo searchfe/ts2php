@@ -19,7 +19,7 @@ import {
 import * as ts from 'typescript';
 import {Node} from 'typescript';
 import {error} from './state';
-import { isClassInstance, isClassLike } from './utilities/nodeTest';
+import {isClassInstance,isClassLike,isFunctionLike} from './utilities/nodeTest';
 
 const indentStrings: string[] = ["", "    "];
 export function getIndentString(level: number) {
@@ -466,16 +466,14 @@ export function getRealExpression(node: ts.Node) {
 }
 
 export function getAccessPrefixAndSuffix(node: ts.PropertyAccessExpression | ts.ElementAccessExpression, typeChecker: ts.TypeChecker) {
-    const symbol = typeChecker.getSymbolAtLocation(node);
-    
     let prefix = '[';
     let suffix = ']';
+
     if (ts.isPropertyAccessExpression(node)) {
         prefix = '["';
         suffix = '"]';
     }
 
-    // if (symbol) {
     let expression = getRealExpression(node.expression);
     if (
         // $this->func();
@@ -486,21 +484,22 @@ export function getAccessPrefixAndSuffix(node: ts.PropertyAccessExpression | ts.
         prefix = '->';
         suffix = '';
     }
-    else if (symbol && isClassLike(node.expression, typeChecker)) {
-        switch (symbol.getFlags()) {
-            case ts.SymbolFlags.Method:
-                prefix = '::';
-                suffix = '';
-                break;
-            case ts.SymbolFlags.Property:
-                prefix = '::$';
-                suffix = '';
-                break;
-            default:
-                break;
+    else if (isClassLike(node.expression, typeChecker)) {
+        const isMethod = isFunctionLike(node, typeChecker);
+
+        if (isMethod) {
+            prefix = '::';
+            suffix = '';
+        }
+        else {
+            prefix = '::$';
+            suffix = '';
+        }
+        if (!ts.isPropertyAccessExpression(node) && ts.isLiteralExpression(node.argumentExpression)) {
+            // should not emit quote, set as NumericLiteral
+            node.argumentExpression.kind = ts.SyntaxKind.NumericLiteral;
         }
     }
-    // }
 
     return {
         prefix,

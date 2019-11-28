@@ -212,7 +212,7 @@ function getBaseTypeName(nodeType: ts.Type): 'PHPClass' | 'PHPArray' | 'other' {
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = nodeType.getSymbol();
-    return !!nodeSymbol && nodeSymbol.getFlags() === ts.SymbolFlags.Function;
+    return !!nodeSymbol && (nodeSymbol.getFlags() === ts.SymbolFlags.Function || nodeSymbol.getFlags() === ts.SymbolFlags.Method);
 }
 
 /**
