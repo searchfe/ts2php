@@ -20,6 +20,8 @@ class Article extends Base {
 }
 $a = new Article(array( "title" => "a" ));
 $b = $a->base;
+$name = "base";
+$d = $a->$name;
 $a->dispose();
 echo $b;
 class A {
@@ -41,3 +43,10 @@ class Cat extends Animal {
 $n = "cat";
 $c = new Cat($n);
 echo $c->getName();
+abstract class XX {
+}
+function get($name) {
+    return array();
+}
+$val = get("aaaa");
+echo $val->a;

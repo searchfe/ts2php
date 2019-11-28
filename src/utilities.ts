@@ -19,6 +19,7 @@ import {
 import * as ts from 'typescript';
 import {Node} from 'typescript';
 import {error} from './state';
+import { isClassInstance, isClassLike } from './utilities/nodeTest';
 
 const indentStrings: string[] = ["", "    "];
 export function getIndentString(level: number) {
@@ -462,4 +463,47 @@ export function getRealExpression(node: ts.Node) {
         node = (node as ts.ParenthesizedExpression).expression;
     }
     return node;
+}
+
+export function getAccessPrefixAndSuffix(node: ts.PropertyAccessExpression | ts.ElementAccessExpression, typeChecker: ts.TypeChecker) {
+    const symbol = typeChecker.getSymbolAtLocation(node);
+    
+    let prefix = '[';
+    let suffix = ']';
+    if (ts.isPropertyAccessExpression(node)) {
+        prefix = '["';
+        suffix = '"]';
+    }
+
+    // if (symbol) {
+    let expression = getRealExpression(node.expression);
+    if (
+        // $this->func();
+        expression.kind === ts.SyntaxKind.ThisKeyword
+        || isClassInstance(expression, typeChecker)
+        || expression.kind === ts.SyntaxKind.NewExpression
+    ) {
+        prefix = '->';
+        suffix = '';
+    }
+    else if (symbol && isClassLike(node.expression, typeChecker)) {
+        switch (symbol.getFlags()) {
+            case ts.SymbolFlags.Method:
+                prefix = '::';
+                suffix = '';
+                break;
+            case ts.SymbolFlags.Property:
+                prefix = '::$';
+                suffix = '';
+                break;
+            default:
+                break;
+        }
+    }
+    // }
+
+    return {
+        prefix,
+        suffix
+    };
 }

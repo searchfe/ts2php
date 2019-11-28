@@ -26,6 +26,10 @@ export class Article extends Base {
 
 const a = new Article({title: 'a'});
 const b = a.base;
+
+const name = 'base';
+const d = a[name];
+
 a.dispose();
 console.log(b);
 
@@ -52,3 +56,10 @@ const n = 'cat';
 
 const c = new Cat(n);
 console.log(c.getName());
+
+abstract class XX { [key:string]: any }
+function get(name: string): any {
+   return {};
+}
+const val: XX = get('aaaa');
+console.log(val.a);

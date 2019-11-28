@@ -1149,37 +1149,7 @@ export function emitFile(
 
     function emitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
 
-        const symbol = typeChecker.getSymbolAtLocation(node);
-
-        let prefix = '["';
-        let suffix = '"]';
-
-        if (symbol) {
-            let expression = utilities.getRealExpression(node.expression);
-            if (
-                // $this->func();
-                expression.kind === ts.SyntaxKind.ThisKeyword
-                || isClassInstance(expression, typeChecker)
-                || expression.kind === ts.SyntaxKind.NewExpression
-            ) {
-                prefix = '->';
-                suffix = '';
-            }
-            else if (isClassLike(node.expression, typeChecker)) {
-                switch (symbol.getFlags()) {
-                    case ts.SymbolFlags.Method:
-                        prefix = '::';
-                        suffix = '';
-                        break;
-                    case ts.SymbolFlags.Property:
-                        prefix = '::$';
-                        suffix = '';
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        const {prefix, suffix} = utilities.getAccessPrefixAndSuffix(node, typeChecker);
 
         emitWithHint(ts.EmitHint.Expression, node.expression);
         writePunctuation(prefix);
@@ -1208,10 +1178,12 @@ export function emitFile(
     // }
 
     function emitElementAccessExpression(node: ts.ElementAccessExpression) {
+        const {prefix, suffix} = utilities.getAccessPrefixAndSuffix(node, typeChecker);
+
         emitExpression(node.expression);
-        emitTokenWithComment(SyntaxKind.OpenBracketToken, node.expression.end, writePunctuation, node);
+        writePunctuation(prefix);
         emitExpression(node.argumentExpression);
-        emitTokenWithComment(SyntaxKind.CloseBracketToken, node.argumentExpression.end, writePunctuation, node);
+        writePunctuation(suffix);
     }
 
     function emitCallExpression(node: ts.CallExpression) {
