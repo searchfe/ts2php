@@ -1,3 +1,11 @@
+## [0.19.4](https://github.com/searchfe/ts2php/compare/v0.19.3...v0.19.4) (2019-12-01)
+
+
+### Bug Fixes
+
+* array.prototype.splice insert object&array wrong [#91](https://github.com/searchfe/ts2php/issues/91) ([656fb1b](https://github.com/searchfe/ts2php/commit/656fb1bc56c15bc17c13674f6e4c76c559fcad78))
+* test case ([2935e5f](https://github.com/searchfe/ts2php/commit/2935e5fd77f0a92e44799544e6ae3a41c0e1875d))
+
 ## [0.19.3](https://github.com/searchfe/ts2php/compare/v0.19.2...v0.19.3) (2019-11-28)
 
 
