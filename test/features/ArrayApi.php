@@ -50,3 +50,7 @@ $y = sort($b);
 $yy = usort($b, function ($a, $b){
 return $a - $b;
 });
+$u = array_splice($b, 0, 1);
+$uu = array_splice($b, 0, 1, array(3, 4));
+$cc = array(array( "a" => 1 ), array( "a" => 3 ));
+$ccc = array_splice($cc, 1, 0, array(array( "a" => 2 )));

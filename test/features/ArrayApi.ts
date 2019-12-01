@@ -52,3 +52,8 @@ const zz = b.findIndex(item => {
 
 const y = b.sort();
 const yy = b.sort((a: number, b: number) => a - b);
+
+const u = b.splice(0, 1);
+const uu = b.splice(0, 1, 3, 4);
+const cc = [{a: 1}, {a: 3}];
+const ccc = cc.splice(1, 0, {a: 2});

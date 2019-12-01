@@ -42,6 +42,48 @@ function sort(node: CallExpression, {emitExpressionList, writePunctuation, error
     }
 }
 
+function arrayMap(node: CallExpression, {emitExpressionList, writePunctuation}, {helperNamespace, typeChecker}) {
+    let expNode = node.expression as PropertyAccessExpression;
+    let postList = [expNode.expression];
+    writePunctuation(formatMethodName('array_map', helperNamespace));
+
+    // support index, if arguments[0] is not function like, need to check declaration.
+    let argumentFunction = node.arguments[0];
+    if (!ts.isFunctionLike(node.arguments[0])) {
+        let declarations = typeChecker.getSymbolAtLocation(node.arguments[0]).getDeclarations();
+        if (
+            declarations[0]
+            && declarations[0].kind === ts.SyntaxKind.VariableDeclaration
+            && ts.isFunctionLike(declarations[0].initializer)
+        ) {
+            argumentFunction = declarations[0].initializer;
+        }
+    }
+    if (ts.isFunctionLike(argumentFunction) && (argumentFunction as FunctionLike).parameters.length > 1) {
+        postList.push(createCall(
+            createIdentifier('array_keys'),
+            undefined,
+            [expNode.expression]
+        ));
+    }
+
+    const args = createNodeArray([node.arguments[0], ...postList]);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
+}
+
+function splice(node: CallExpression, {emitExpressionList, writePunctuation}, {helperNamespace, typeChecker}) {
+    let expNode = node.expression as PropertyAccessExpression;
+    writePunctuation(formatMethodName('array_splice', helperNamespace));
+
+    const argsList = [expNode.expression, ...node.arguments.slice(0, 2)];
+    if (node.arguments.length > 2) {
+        argsList.push(ts.createArrayLiteral(node.arguments.slice(2)));
+    }
+
+    const args = createNodeArray(argsList);
+    emitExpressionList(node, args, ListFormat.CallExpressionArguments);
+}
+
 
 const map = {
     push: method('array_push', true),
@@ -50,35 +92,6 @@ const map = {
     shift: method('array_shift', true, 0),
     concat: method('array_merge', true),
     reverse: method('array_reverse', true),
-    splice: method('array_splice', true),
-    map(node: CallExpression, {emitExpressionList, writePunctuation}, {helperNamespace, typeChecker}) {
-        let expNode = node.expression as PropertyAccessExpression;
-        let postList = [expNode.expression];
-        writePunctuation(formatMethodName('array_map', helperNamespace));
-
-        // support index, if arguments[0] is not function like, need to check declaration.
-        let argumentFunction = node.arguments[0];
-        if (!ts.isFunctionLike(node.arguments[0])) {
-            let declarations = typeChecker.getSymbolAtLocation(node.arguments[0]).getDeclarations();
-            if (
-                declarations[0]
-                && declarations[0].kind === ts.SyntaxKind.VariableDeclaration
-                && ts.isFunctionLike(declarations[0].initializer)
-            ) {
-                argumentFunction = declarations[0].initializer;
-            }
-        }
-        if (ts.isFunctionLike(argumentFunction) && (argumentFunction as FunctionLike).parameters.length > 1) {
-            postList.push(createCall(
-                createIdentifier('array_keys'),
-                undefined,
-                [expNode.expression]
-            ));
-        }
-
-        const args = createNodeArray([node.arguments[0], ...postList]);
-        emitExpressionList(node, args, ListFormat.CallExpressionArguments);
-    },
     forEach: method('array_walk', true, 1),
     every: method('%helper::array_every', true, 1),
     some: method('%helper::array_some', true, 1),
@@ -88,7 +101,9 @@ const map = {
     slice: method('%helper::arraySlice', true, 2),
     find: method('%helper::array_find', false, 1, true),
     findIndex: method('%helper::array_find_index', false, 1, true),
-    sort
+    sort,
+    map: arrayMap,
+    splice
 };
 
 const api = {
