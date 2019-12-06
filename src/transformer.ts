@@ -151,6 +151,9 @@ export function transform(context: ts.TransformationContext) {
             case ts.SyntaxKind.ArrayLiteralExpression:
                 return visitArrayLiteralExpression(<ts.ArrayLiteralExpression>node);
 
+            case ts.SyntaxKind.ClassDeclaration:
+                return visitClassDeclaration(<ts.ClassDeclaration>node);
+
             default:
                 return node;
         }
@@ -567,6 +570,38 @@ export function transform(context: ts.TransformationContext) {
         }
     }
 
+    function visitClassDeclaration(node: ts.ClassDeclaration): ts.VisitResult<ts.Node> {
+        let initAfter: {key: ts.PropertyName, initializer: ts.Expression}[] = [];
+        node.members.forEach(item => {
+            if (
+                item.kind === ts.SyntaxKind.PropertyDeclaration
+                && item.modifiers && item.modifiers.find(item => item.kind === ts.SyntaxKind.StaticKeyword)
+                && (item as ts.PropertyDeclaration).initializer
+                && !ts.isStringLiteralLike((item as ts.PropertyDeclaration).initializer)
+                && !ts.isNumericLiteral((item as ts.PropertyDeclaration).initializer)
+            ) {
+                initAfter.push({
+                    key: item.name,
+                    initializer: (item as ts.PropertyDeclaration).initializer
+                });
+                (item as ts.PropertyDeclaration).initializer = undefined;
+            }
+
+        });
+        let res = [];
+        res.push(node);
+        initAfter.forEach(item => {
+            const init = ts.createExpressionStatement(ts.createBinary(
+                ts.createPropertyAccess(node.name, item.key.getText()),
+                ts.createToken(ts.SyntaxKind.EqualsToken),
+                item.initializer
+            ));
+            res.push(init);
+        });
+
+        return res;
+    }
+
     /**
      * General-purpose node visitor.
      *
@@ -575,7 +610,6 @@ export function transform(context: ts.TransformationContext) {
     function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
         return saveStateAndInvoke(node, visitTypeScript);
     }
-
 }
 
 

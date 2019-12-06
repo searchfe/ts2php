@@ -7,7 +7,7 @@ class Article extends Base {
     public $id;
     public $foo;
     private $_x;
-    public static $published = array();
+    public static $published;
     function __construct($options) {
         parent::__construct($options);
         $this->title = $options["title"];
@@ -18,6 +18,7 @@ class Article extends Base {
         parent::dispose();
     }
 }
+Article::$published = (array());
 $a = new Article(array( "title" => "a" ));
 $b = $a->base;
 $name = "base";
