@@ -16,3 +16,6 @@ let d = `aaa${a.b[0]}ccc`;
 `aaa${a.c.d}ccc`;
 `aaa${Math.round(i)}ccc`;
 `aaa${(i / 10)}bbb`;
+let x1 = `x
+x`;
+let x2 = `x\nx`;

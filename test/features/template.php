@@ -16,3 +16,5 @@ $d = "aaa" . $a["b"][0] . "ccc";
 "aaa" . $a["c"]["d"] . "ccc";
 "aaa" . round($i) . "ccc";
 "aaa" . ($i / 10) . "bbb";
+$x1 = "x\nx";
+$x2 = "x\nx";
