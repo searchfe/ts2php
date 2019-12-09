@@ -1,6 +1,6 @@
 {
   "name": "ts2php",
-  "version": "0.19.5",
+  "version": "0.19.6",
   "description": "TypeScript to PHP Transpiler",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
