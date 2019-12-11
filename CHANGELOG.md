@@ -1,3 +1,10 @@
+## [0.19.7](https://github.com/searchfe/ts2php/compare/v0.19.6...v0.19.7) (2019-12-11)
+
+
+### Bug Fixes
+
+* remove typeof return array ([36846aa](https://github.com/searchfe/ts2php/commit/36846aaf1e806eed7560d69ad3c9f715c48f5d63))
+
 ## [0.19.6](https://github.com/searchfe/ts2php/compare/v0.19.5...v0.19.6) (2019-12-09)
 
 
