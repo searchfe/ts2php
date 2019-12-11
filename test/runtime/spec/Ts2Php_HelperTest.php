@@ -227,11 +227,6 @@ final class Ts2Php_HelperTest extends TestCase {
             Ts2Php_Helper::typeof(null),
             'object'
         );
-
-        $this->assertEquals(
-            Ts2Php_Helper::typeof(array(1,2,3,4)),
-            'array'
-        );
         $this->assertEquals(
             Ts2Php_Helper::typeof(array('aaa' => 123)),
             'object'

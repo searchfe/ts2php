@@ -302,9 +302,6 @@ class Ts2Php_Helper {
         if (!isset($var)) {
             return 'undefined';
         }
-        if (self::isPlainArray($var)) {
-            return 'array';
-        }
         if (is_array($var) || is_object($var)) {
             return 'object';
         }
