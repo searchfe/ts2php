@@ -31,7 +31,7 @@
         "@typescript-eslint/prefer-namespace-keyword": "error",
 
         "quotes": "off",
-        "@typescript-eslint/quotes": ["error", "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
+        "@typescript-eslint/quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
 
         "semi": "off",
         "@typescript-eslint/semi": "error",
@@ -70,7 +70,7 @@
         "curly": ["error", "multi-line"],
         "dot-notation": "error",
         "eqeqeq": "error",
-        "linebreak-style": ["error", "windows"],
+        "linebreak-style": ["error", "unix"],
         "new-parens": "error",
         "no-caller": "error",
         "no-duplicate-case": "error",
