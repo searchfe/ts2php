@@ -160,6 +160,7 @@ export class Ts2Php {
 }
 
 export function compile(filePath: string, options: Ts2phpOptions = {}) {
-    const ts2php = new Ts2Php(options.compilerOptions);
+    const compilerOptions = options.compilerOptions;
+    const ts2php = new Ts2Php({ compilerOptions });
     return ts2php.compile(filePath, options);
 }

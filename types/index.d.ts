@@ -41,7 +41,7 @@ export interface Ts2phpConstructOptions {
      *
      * @see See https://www.typescriptlang.org/docs/handbook/compiler-options.html
      */
-    compilerOptions?: CompilerOptions
+    compilerOptions?: ts.CompilerOptions
 }
 
 export interface Ts2phpCompileOptions {
