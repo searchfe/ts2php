@@ -35,8 +35,16 @@ export interface ErrorInfo {
     msg: string;
 }
 
-export interface Ts2phpOptions {
+export interface Ts2phpConstructOptions {
+    /**
+     * TypeScript 编译配置
+     *
+     * @see See https://www.typescriptlang.org/docs/handbook/compiler-options.html
+     */
+    compilerOptions?: ts.CompilerOptions
+}
 
+export interface Ts2phpCompileOptions {
     /**
      * 文件代码内容，真正被编译的代码
      **/
@@ -99,13 +107,6 @@ export interface Ts2phpOptions {
     getModuleNamespace?: (name: string, module?: ts.ResolvedModuleFull, moduleIt?: ModuleInfo) => string;
 
     /**
-     * TypeScript 编译配置
-     *
-     * @see See https://www.typescriptlang.org/docs/handbook/compiler-options.html
-     */
-    compilerOptions?: object,
-
-    /**
      * 自定义语法转换，在 `emit` 之前执行
      *
      * ```typescript
@@ -116,6 +117,8 @@ export interface Ts2phpOptions {
      */
     customTransformers?: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[]
 }
+
+export interface Ts2phpOptions extends Ts2phpCompileOptions, Ts2phpConstructOptions {}
 
 export interface PHPClass {}
 
@@ -134,4 +137,12 @@ export function compile(filePath: string, options?: Ts2phpOptions): {
 
     /** 错误信息数组 */
     errors: ErrorInfo[]
+};
+
+export class Ts2Php {
+    constructor(options?: Ts2phpConstructOptions)
+    compile(filePath: string, options?: Ts2phpCompileOptions): {
+        phpCode: string;
+        errors: ErrorInfo[];
+    };
 }
