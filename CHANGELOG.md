@@ -1,3 +1,15 @@
+## [0.19.8](https://github.com/searchfe/ts2php/compare/v0.19.7...v0.19.8) (2019-12-12)
+
+
+### Bug Fixes
+
+* options type for Ts2Php constructor ([faeeb0c](https://github.com/searchfe/ts2php/commit/faeeb0cffcfccea607c69a74111ef24e7ab559e0))
+
+
+### Performance Improvements
+
+* allow single typescript project instance ([0c54887](https://github.com/searchfe/ts2php/commit/0c54887b667eb3faadea138f49c7e883230704c7))
+
 ## [0.19.7](https://github.com/searchfe/ts2php/compare/v0.19.6...v0.19.7) (2019-12-11)
 
 
