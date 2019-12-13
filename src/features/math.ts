@@ -12,7 +12,8 @@ import {
 
 import method from '../utilities/method';
 
-let map = {
+// think about call_user_func_array before you change this map!
+export const map = {
     abs: 'abs',
     acos: 'acos',
     acosh: 'acosh',
@@ -49,9 +50,10 @@ let map = {
     tanh: 'tanh',
 };
 
+const mapFunc = {};
 for (let key in map) {
     if (map.hasOwnProperty(key)) {
-        map[key] = method(map[key], false);
+        mapFunc[key] = method(map[key], false);
     }
 }
 
@@ -68,7 +70,7 @@ export default {
             && isPropertyAccessExpression(expNode)
             && isIdentifier(expNode.expression)
             && expNode.expression.escapedText === 'Math'
-            && (func = map[helpers.getTextOfNode(expNode.name)])
+            && (func = mapFunc[helpers.getTextOfNode(expNode.name)])
         ) {
             return func(node, helpers, {helperNamespace});
         }

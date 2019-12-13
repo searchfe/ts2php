@@ -98,7 +98,7 @@ export function transform(context: ts.TransformationContext) {
 
         return ts.updateSourceFileNode(
             node,
-            ts.visitLexicalEnvironment(node.statements, sourceElementVisitor, context, /*start*/ 0, false));
+            ts.visitLexicalEnvironment(node.statements, sourceElementVisitor, context, /*start*/ 0, /*ensureUseStrict*/ false));
     }
 
     /**
@@ -117,7 +117,7 @@ export function transform(context: ts.TransformationContext) {
      */
     function visitTypeScript(node: ts.Node): ts.VisitResult<ts.Node> {
 
-        let originalNode = node;
+        const originalNode = node;
         node = ts.visitEachChild(node, visitTypeScript, context);
         if (node !== originalNode) {
             node.parent = originalNode.parent;
@@ -283,9 +283,9 @@ export function transform(context: ts.TransformationContext) {
 
     function visitCallExpression(node: ts.CallExpression) {
 
-        const index = node.arguments.findIndex(node => ts.isSpreadElement(node))
+        const index = node.arguments.findIndex(node => ts.isSpreadElement(node));
 
-        if (index < 0 || !ts.isIdentifier(node.expression)) {
+        if (index < 0) {
             return node;
         }
 

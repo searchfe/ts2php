@@ -13,6 +13,7 @@ import ArrayPlugin from './array';
 import ConsolePlugin from './console';
 import DatePlugin from './date';
 import ErrorPlugin from './error';
+import CallUserFuncArrayPlugin from './callUserFuncArray';
 
 export default [
     StringPligin,
@@ -24,5 +25,6 @@ export default [
     ArrayPlugin,
     ConsolePlugin,
     DatePlugin,
-    ErrorPlugin
+    ErrorPlugin,
+    CallUserFuncArrayPlugin
 ];

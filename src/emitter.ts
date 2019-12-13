@@ -171,8 +171,8 @@ export function emitFile(
 
     function emitWithHint(hint: ts.EmitHint, node: ts.Node) {
 
-        for (let plugin of state.plugins) {
-            let output = plugin.emit(hint, node, state);
+        for (const plugin of state.plugins) {
+            const output = plugin.emit(hint, node, state);
             if (output !== false) {
                 return;
             }
@@ -545,8 +545,8 @@ export function emitFile(
                     return emitTemplateExpression(<ts.TemplateExpression>node);
                 // case SyntaxKind.YieldExpression:
                 //     return emitYieldExpression(<YieldExpression>node);
-                // case SyntaxKind.SpreadElement:
-                //     return emitSpreadExpression(<ts.SpreadElement>node);
+                case SyntaxKind.SpreadElement:
+                    return emitSpreadExpression(<ts.SpreadElement>node);
                 case SyntaxKind.ClassExpression:
                     return emitClassExpression(<ts.ClassExpression>node);
                 case SyntaxKind.OmittedExpression:
@@ -1373,10 +1373,20 @@ export function emitFile(
     //     emitExpressionWithLeadingSpace(node.expression);
     // }
 
-    // function emitSpreadExpression(node: ts.SpreadElement) {
-    //     writePunctuation("...");
-    //     emitExpression(node.expression);
-    // }
+    // spread as arguments, e.g. max(...nums);
+    // spread needs to be transformed
+    // this should not be called, will report error
+    function emitSpreadExpression(node: ts.SpreadElement) {
+        // writePunctuation("...");
+        // emitExpression(node.expression);
+
+        // if (node.parent && node.parent.kind === ts.SyntaxKind.CallExpression) {
+        state.errors.push({
+            code: 1,
+            msg: 'Spread expression is not supported yet!'
+        });
+        // }
+    }
 
     function emitClassExpression(node: ts.ClassExpression) {
         // generateNameIfNeeded(node.name);

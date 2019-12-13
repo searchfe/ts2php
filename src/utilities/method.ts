@@ -10,11 +10,11 @@ import {
     ListFormat
 } from 'typescript';
 
-export default function (method: string, self: boolean = true, end?: number, selfLast?: boolean) {
+export default function (method: string, self = true, end?: number, selfLast?: boolean) {
     return (node: CallExpression, {emitExpressionList, writePunctuation}, {helperNamespace}) => {
-        let expNode = node.expression as PropertyAccessExpression;
-        let nodeList = self ? [expNode.expression || expNode] : [];
-        let postList = selfLast ? [expNode.expression || expNode] : [];
+        const expNode = node.expression as PropertyAccessExpression;
+        const nodeList = self ? [expNode.expression || expNode] : [];
+        const postList = selfLast ? [expNode.expression || expNode] : [];
         writePunctuation(formatMethodName(method, helperNamespace));
         const args = createNodeArray([...nodeList, ...node.arguments.slice(0, end), ...postList]);
         emitExpressionList(node, args, ListFormat.CallExpressionArguments);
@@ -22,5 +22,5 @@ export default function (method: string, self: boolean = true, end?: number, sel
 }
 
 export function formatMethodName(name, helperNamespace) {
-    return name.replace(/%helper/g, helperNamespace + 'Ts2Php_Helper')
+    return name.replace(/%helper/g, helperNamespace + 'Ts2Php_Helper');
 }
