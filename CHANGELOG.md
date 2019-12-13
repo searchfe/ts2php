@@ -1,3 +1,10 @@
+## [0.19.9](https://github.com/searchfe/ts2php/compare/v0.19.8...v0.19.9) (2019-12-13)
+
+
+### Bug Fixes
+
+* [#88](https://github.com/searchfe/ts2php/issues/88) ([10fd846](https://github.com/searchfe/ts2php/commit/10fd846576424cf83b5297a22cf89d58b4511506))
+
 ## [0.19.8](https://github.com/searchfe/ts2php/compare/v0.19.7...v0.19.8) (2019-12-12)
 
 
