@@ -2746,7 +2746,7 @@ $a = <span class="hljs-keyword">array</span>(
 $bbb = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-number">0</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-number">1</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-number">2</span> );
 $ccc = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span> =&gt; <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span> =&gt; <span class="hljs-string">"c"</span> );
 $str = <span class="hljs-string">"123"</span>;
-$ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; strlen($str), <span class="hljs-string">"b"</span> =&gt; strlen($str) + <span class="hljs-number">1</span> );</code></pre>
+$ddd = <span class="hljs-keyword">array</span>( <span class="hljs-string">"a"</span> =&gt; mb_strlen($str), <span class="hljs-string">"b"</span> =&gt; mb_strlen($str) + <span class="hljs-number">1</span> );</code></pre>
 			<a href="#codeanonymous-function-inherit-variablescode" id="codeanonymous-function-inherit-variablescode" style="color: inherit; text-decoration: none;">
 				<h4><code>anonymous function inherit variables</code></h4>
 			</a>
@@ -2991,7 +2991,7 @@ $g = array_merge(<span class="hljs-keyword">array</span>(), $a, <span class="hlj
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/51433cd/types/index.d.ts#L133">index.d.ts:133</a></li>
+								<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/7009f93/types/index.d.ts#L133">index.d.ts:133</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
