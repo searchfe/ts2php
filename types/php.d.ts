@@ -26,6 +26,10 @@ declare function urldecode(str: string): string;
 
 declare function urlencode(str: string): string;
 
+declare function rawurldecode(str: string): string;
+
+declare function rawurlencode(str: string): string;
+
 type UrlInfo = {
     scheme: string
     host: string
