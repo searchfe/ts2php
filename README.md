@@ -90,7 +90,7 @@ $ ts2php -h                       # 更多功能请查看帮助
 
 ### update ts2php version
 
-Same TS code with different version of ts2php may result to different PHP code. When updating the version of ts2php, we should check the result PHP code manually. To simplify this propcess, we recommend to use [ts2php-diff-checker][ts2php-diff-checker]. Specify two version of ts2php, and some source TS code, [ts2php-diff-checker][ts2php-diff-checker] will generate diff info directly.
+Same TS code with different version of ts2php may result to different PHP code. When updating the version of ts2php, we should check the result PHP code manually. To simplify this process, we recommend to use [ts2php-diff-checker][ts2php-diff-checker]. Specify two version of ts2php, and some source TS code, [ts2php-diff-checker][ts2php-diff-checker] will generate diff info directly.
 
 ```sh
 ts2php-check <pattern> <old-version> <new-version> [destination]
