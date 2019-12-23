@@ -5,10 +5,22 @@
 
 /* eslint-disable  */
 
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
-const {compile} = require('../src/index.ts');
+import assert from 'assert';
+import fs from 'fs';
+import path from 'path';
+import {compile} from '../src/index';
+// const glob = require('glob');
+// const {MDGator} = require('mdgator');
+
+
+// const files = glob.sync('**/*.md', {
+//     cwd: path.resolve(__dirname, './features')
+// });
+// console.log(files);
+
+// function processTestGroup(group) {
+
+// }
 
 const files = fs.readdirSync(path.resolve(__dirname, './features'));
 const featureNames = files.reduce((res, file) => {

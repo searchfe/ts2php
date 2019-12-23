@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 export interface ModuleInfo {
 
     /** 模块名称 */
-    name: string;
+    name?: string;
 
     /**
      * 模块引入的 PHP 路径，编译成 require_once("${path}")
