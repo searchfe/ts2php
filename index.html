@@ -2407,6 +2407,7 @@ img {
 			</a>
 			<p><strong>under development</strong></p>
 			<p>TypeScript 转 PHP</p>
+			<p>A Compiler which can compile TypeScript to PHP.</p>
 			<p><img src="https://img.shields.io/badge/-TypeScript-blue.svg" alt="Language">
 				<a href="https://travis-ci.org/searchfe/ts2php"><img src="https://travis-ci.com/searchfe/ts2php.svg?branch=master" alt="Build Status"></a>
 				<a href="https://www.npmjs.org/package/ts2php"><img src="https://img.shields.io/npm/v/ts2php.svg" alt="npm package"></a>
@@ -2418,6 +2419,7 @@ img {
 								<li><a href="#compiler">compiler</a></li>
 								<li><a href="#runtime">runtime</a></li>
 								<li><a href="#cli">CLI</a></li>
+								<li><a href="#update-chekck">update check</a></li>
 							</ul>
 						</li>
 						<li><a href="#features">Features</a><ul>
@@ -2463,11 +2465,15 @@ img {
 			<blockquote>
 				<p>部分功能依赖一个 PHP 的类库，需要在 PHP 工程中引入</p>
 			</blockquote>
+			<blockquote>
+				<p>Some features are implemented by a PHP helper class, which need to be included in your PHP
+				code.</p>
+			</blockquote>
 			<pre><code class="language-php"><span class="hljs-keyword">require_once</span>(<span class="hljs-string">"/path/to/ts2php/dist/runtime/Ts2Php_Helper.php"</span>);</code></pre>
 			<a href="#cli" id="cli" style="color: inherit; text-decoration: none;">
 				<h3>CLI</h3>
 			</a>
-			<p>简单使用：</p>
+			<p>Quick Start：</p>
 			<pre><code class="language-bash">$ npm i -g ts2php
 $ ts2php ./a.ts                   <span class="hljs-comment"># 编译输出到 stdout</span></code></pre>
 			<p>使用<a href="https://searchfe.github.io/ts2php/interfaces/ts2phpoptions.html">配置</a>并输出到文件：</p>
@@ -2480,6 +2486,11 @@ $ ts2php -c config.js src/ -o output/</code></pre>
 			<pre><code class="language-bash">$ ts2php --show-diagnostics       <span class="hljs-comment"># 输出诊断信息</span>
 $ ts2php --emit-header            <span class="hljs-comment"># 输出头部信息</span>
 $ ts2php -h                       <span class="hljs-comment"># 更多功能请查看帮助</span></code></pre>
+			<a href="#update-chekck" id="update-chekck" style="color: inherit; text-decoration: none;">
+				<h3>update chekck</h3>
+			</a>
+			<p>Same TS code with different version of ts2php may result to different PHP code. When updating the version of ts2php, we should check the result PHP code manually. To simplify this propcess, we recommend to use <a href="https://github.com/meixg/ts2php-diff-checker">ts2php-diff-checker</a>. Specify two version of ts2php, and some source TS code, <a href="https://github.com/meixg/ts2php-diff-checker">ts2php-diff-checker</a> will generate diff info directly.</p>
+			<pre><code class="language-sh">ts2php-check &lt;pattern&gt; &lt;old-version&gt; &lt;new-version&gt; [destination]</code></pre>
 			<a href="#features" id="features" style="color: inherit; text-decoration: none;">
 				<h2>Features</h2>
 			</a>
@@ -2991,7 +3002,7 @@ $g = array_merge(<span class="hljs-keyword">array</span>(), $a, <span class="hlj
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/7009f93/types/index.d.ts#L133">index.d.ts:133</a></li>
+								<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/1800636/types/index.d.ts#L133">index.d.ts:133</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
