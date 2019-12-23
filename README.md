@@ -4,6 +4,8 @@
 
 TypeScript 转 PHP
 
+A Compiler which can compile TypeScript to PHP.
+
 ![Language](https://img.shields.io/badge/-TypeScript-blue.svg)
 [![Build Status](https://travis-ci.com/searchfe/ts2php.svg?branch=master)](https://travis-ci.org/searchfe/ts2php)
 [![npm package](https://img.shields.io/npm/v/ts2php.svg)](https://www.npmjs.org/package/ts2php)
@@ -15,6 +17,7 @@ TypeScript 转 PHP
     - [compiler](#compiler)
     - [runtime](#runtime)
     - [CLI](#cli)
+    - [update check](#update-chekck)
   - [Features](#features)
     - [Javascript Syntax](#javascript-syntax)
       - [`for`/`for of`/`for in`](#forfor-offor-in)
@@ -51,13 +54,16 @@ const result = compile(filePath, options);
 
 > 部分功能依赖一个 PHP 的类库，需要在 PHP 工程中引入
 
+> Some features are implemented by a PHP helper class, which need to be included in your PHP
+ code.
+
 ```php
 require_once("/path/to/ts2php/dist/runtime/Ts2Php_Helper.php");
 ```
 
 ### CLI
 
-简单使用：
+Quick Start：
 
 ```bash
 $ npm i -g ts2php
@@ -80,6 +86,14 @@ $ ts2php -c config.js src/ -o output/
 $ ts2php --show-diagnostics       # 输出诊断信息
 $ ts2php --emit-header            # 输出头部信息
 $ ts2php -h                       # 更多功能请查看帮助
+```
+
+### update chekck
+
+Same TS code with different version of ts2php may result to different PHP code. When updating the version of ts2php, we should check the result PHP code manually. To simplify this propcess, we recommend to use [ts2php-diff-checker][ts2php-diff-checker]. Specify two version of ts2php, and some source TS code, [ts2php-diff-checker][ts2php-diff-checker] will generate diff info directly.
+
+```sh
+ts2php-check <pattern> <old-version> <new-version> [destination]
 ```
 
 ## Features
@@ -629,3 +643,4 @@ catch (\Exception $e) {
 Based on [Typescript](https://github.com/Microsoft/TypeScript) compiler
 
 [options]: https://searchfe.github.io/ts2php/interfaces/ts2phpoptions.html
+[ts2php-diff-checker]: https://github.com/meixg/ts2php-diff-checker
