@@ -17,7 +17,7 @@ A Compiler which can compile TypeScript to PHP.
     - [compiler](#compiler)
     - [runtime](#runtime)
     - [CLI](#cli)
-    - [update check](#update-chekck)
+    - [update ts2php version](#update-ts2php-version)
   - [Features](#features)
     - [Javascript Syntax](#javascript-syntax)
       - [`for`/`for of`/`for in`](#forfor-offor-in)
@@ -88,7 +88,7 @@ $ ts2php --emit-header            # 输出头部信息
 $ ts2php -h                       # 更多功能请查看帮助
 ```
 
-### update chekck
+### update ts2php version
 
 Same TS code with different version of ts2php may result to different PHP code. When updating the version of ts2php, we should check the result PHP code manually. To simplify this propcess, we recommend to use [ts2php-diff-checker][ts2php-diff-checker]. Specify two version of ts2php, and some source TS code, [ts2php-diff-checker][ts2php-diff-checker] will generate diff info directly.
 
