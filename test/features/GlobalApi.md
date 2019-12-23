@@ -1,28 +1,76 @@
-GlobalApi
+Global Api
 ======
 
-## GlobalApi
+## parseInt
 
 ```ts
 const a = parseInt('1.2');
+```
+
+```php
+$a = intval("1.2");
+```
+
+## parseFloat
+
+```ts
 const b = parseFloat('1.2');
+```
+
+```php
+$b = floatval("1.2");
+```
+
+## typeof
+
+> 由于 php 中没有 `undefined` 关键字，故不支持返回 `undefined`
+
+> There is no `undefined` in PHP
+
+```ts
+const a = parseInt('1.2');
 const c = typeof a;
 const d = typeof c === 'string';
+```
+
+```php
+$a = intval("1.2");
+$c = \Ts2Php_Helper::typeof($a);
+$d = \Ts2Php_Helper::typeof($c) === "string";
+```
+
+
+## delete
+
+```ts
 const e = {a: 1, b: 2};
 delete e.a;
+```
+
+```php
+$e = array( "a" => 1, "b" => 2 );
+unset($e["a"]);
+```
+
+
+## navigator.userAgent
+
+```ts
 const f = navigator.userAgent;
+```
+
+```php
+$f = $_SERVER["HTTP_USER_AGENT"];
+```
+
+## __dirname/__filename
+
+```ts
 const g = __dirname;
 const h = __filename;
 ```
 
 ```php
-$a = intval("1.2");
-$b = floatval("1.2");
-$c = \Ts2Php_Helper::typeof($a);
-$d = \Ts2Php_Helper::typeof($c) === "string";
-$e = array( "a" => 1, "b" => 2 );
-unset($e["a"]);
-$f = $_SERVER["HTTP_USER_AGENT"];
 $g = dirname(__FILE__);
 $h = __FILE__;
 ```

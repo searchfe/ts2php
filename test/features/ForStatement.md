@@ -1,7 +1,7 @@
-ForStatement
+For Statement
 ======
 
-## ForStatement
+## For Statement
 
 ```ts
 let b = 1;
