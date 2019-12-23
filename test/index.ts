@@ -9,59 +9,61 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import {compile} from '../src/index';
-// const glob = require('glob');
-// const {MDGator} = require('mdgator');
+import glob from 'glob';
+import {MDGator, Group} from 'mdgator';
+import camelcase from 'camelcase';
 
+const featuresPath = path.resolve(__dirname, './features');
+const files = glob.sync('**/*.md', {
+    cwd: featuresPath
+});
 
-// const files = glob.sync('**/*.md', {
-//     cwd: path.resolve(__dirname, './features')
-// });
-// console.log(files);
-
-// function processTestGroup(group) {
-
-// }
-
-const files = fs.readdirSync(path.resolve(__dirname, './features'));
-const featureNames = files.reduce((res, file) => {
-    const m = file.match(/(.+)\.ts$/);
-    if (m) {
-        res.push(m[1]);
+function processTestGroup(group: Group) {
+    if (group.children.length > 0) {
+        group.children.forEach(processTestGroup);
     }
-    return res;
-}, []);
 
-function readFile(path) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, {encoding: 'utf-8'}, (err, data) => {
-            resolve(data);
+    describe(group.name, () => {
+        group.tests.forEach(testItem => {
+            it(testItem.name, function () {
+                this.timeout(5000);
+                const phpContent = testItem.values.get('php')[0];
+                const tsContent = testItem.values.get('ts')[0];
+
+                if (!phpContent) {
+                    throw Error(`PHP code is not fount in group: ${group.name} test: ${testItem.name}`);
+                }
+                if (!tsContent) {
+                    throw Error(`TS code is not fount in group: ${group.name} test: ${testItem.name}`);
+                }
+
+                const namespace = `test\\case_${camelcase(testItem.name)}`
+                const res = compile(path.resolve(featuresPath, camelcase(testItem.name)), {
+                    source: tsContent,
+                    namespace,
+                    modules: {
+                        'vue': {
+                            required: true
+                        }
+                    },
+                    getModuleNamespace(name) {
+                        return '\\someModule\\';
+                    }
+                });
+                const phpNamespace = `<?php\nnamespace ${namespace};\n`;
+                assert.equal(res.phpCode, phpNamespace + phpContent);
+                assert.equal(res.errors.length, 0);
+            });
         });
     });
 }
 
-describe('features', () => {
+const md = new MDGator();
+files.forEach(file => {
+    md.parse(fs.readFileSync(path.resolve(featuresPath, file)).toString()).forEach(processTestGroup);
+});
 
-    for (let i = 0; i < featureNames.length; i++) {
-        const featureName = featureNames[i];
-        it(featureName, async function () {
-            this.timeout(5000);
-            const phpContent = await readFile(path.resolve(__dirname, `./features/${featureName}.php`));
-            const tsPath = path.resolve(__dirname, `./features/${featureName}.ts`);
-            const res = compile(tsPath, {
-                namespace: `test\\case_${featureName}`,
-                modules: {
-                    'vue': {
-                        required: true
-                    }
-                },
-                getModuleNamespace(name) {
-                    return '\\someModule\\';
-                }
-            });
-            assert.equal(res.phpCode, phpContent);
-            assert.equal(res.errors.length, 0);
-        });
-    }
+describe('other features', () => {
 
     it('compile semantic diagnostics', function () {
         this.timeout(5000);
