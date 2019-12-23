@@ -1,3 +1,10 @@
+## [0.19.11](https://github.com/searchfe/ts2php/compare/v0.19.10...v0.19.11) (2019-12-23)
+
+
+### Bug Fixes
+
+* add rawurldecode & rawurlencode declaration ([30e9fda](https://github.com/searchfe/ts2php/commit/30e9fda6e72c01ed7309a1eebdef9d9fb1b72020))
+
 ## [0.19.9](https://github.com/searchfe/ts2php/compare/v0.19.8...v0.19.9) (2019-12-13)
 
 
