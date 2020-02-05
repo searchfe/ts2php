@@ -1,3 +1,10 @@
+## [0.19.12](https://github.com/searchfe/ts2php/compare/v0.19.11...v0.19.12) (2020-02-05)
+
+
+### Bug Fixes
+
+* arraySlice 和 array_pos 进行类型检查 ([5565638](https://github.com/searchfe/ts2php/commit/5565638bc14948bfc086f375c3889501c2868c6d))
+
 ## [0.19.11](https://github.com/searchfe/ts2php/compare/v0.19.10...v0.19.11) (2019-12-23)
 
 
