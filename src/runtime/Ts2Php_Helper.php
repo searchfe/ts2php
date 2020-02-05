@@ -182,6 +182,9 @@ class Ts2Php_Helper {
      * @return {string}
      */
     static public function arraySlice($origin, $start, $end = null) {
+        if (!is_array($origin)) {
+            return array();
+        }
         $end = isset($end) ? $end : count($origin);
         return array_slice($origin, $start, $end - $start);
     }
@@ -193,6 +196,9 @@ class Ts2Php_Helper {
      * @return {number}
      */
     static public function array_pos($needle, $haystack) {
+        if (!is_array($haystack)) {
+            return -1;
+        }
         $pos = array_search($needle, $haystack);
         return $pos === false ? -1 : $pos;
     }
