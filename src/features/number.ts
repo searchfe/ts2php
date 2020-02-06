@@ -8,20 +8,24 @@ import {
     isPropertyAccessExpression,
     isIdentifier,
     isCallExpression,
+    createStringLiteral
 } from 'typescript';
 
 import {
     isNumberLike
 } from '../utilities/nodeTest';
 
-import method from '../utilities/method';
+import method, { formatMethodName } from '../utilities/method';
 
 const staticMap = {
-    isInteger: method('is_int', false)
+    isInteger: method('is_int', {self: false})
 };
 
 const protoMap = {
-    toFixed: method('number_format', true, 1)
+    toFixed: method('number_format', {
+        end: 1,
+        extraArgs: [createStringLiteral('.'), createStringLiteral('')]
+    })
 };
 
 export default {

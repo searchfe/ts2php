@@ -22,12 +22,30 @@ import method from '../utilities/method';
 import { getLiteralText } from '../utilities';
 
 const map = {
-    parseInt: method('intval', false, 1),
-    parseFloat: method('floatval', false, 1),
-    encodeURIComponent: method('rawurlencode', false, 1),
-    decodeURIComponent: method('rawurldecode', false, 1),
-    isNaN: method('is_nan', false, 1),
-    encodeURI: method('%helper::encodeURI', false, 1),
+    parseInt: method('intval', {
+        self: false,
+        end: 1
+    }),
+    parseFloat: method('floatval', {
+        self: false,
+        end: 1
+    }),
+    encodeURIComponent: method('rawurlencode', {
+        self: false,
+        end: 1
+    }),
+    decodeURIComponent: method('rawurldecode', {
+        self: false,
+        end: 1
+    }),
+    isNaN: method('is_nan', {
+        self: false,
+        end: 1
+    }),
+    encodeURI: method('%helper::encodeURI', {
+        self: false,
+        end: 1
+    }),
 };
 
 const identifierMap = new Map([

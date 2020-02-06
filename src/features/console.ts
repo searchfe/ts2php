@@ -27,7 +27,7 @@ function log(node: CallExpression, {emitExpression, writePunctuation, writeSpace
 
 const methods = {
     log,
-    info: method('var_dump', false),
+    info: method('var_dump', {self: false}),
     error: log,
     dir(node: CallExpression, {emitExpression, writePunctuation}) {
         writePunctuation('echo "<script>console.log(" . json_encode(');
