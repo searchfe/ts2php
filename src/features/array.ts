@@ -86,28 +86,47 @@ function splice(node: CallExpression, {emitExpressionList, writePunctuation}, {h
 
 
 const map = {
-    push: method('array_push', true),
-    pop: method('array_pop', true, 0),
-    unshift: method('array_unshift', true, 1),
-    shift: method('array_shift', true, 0),
-    concat: method('array_merge', true),
-    reverse: method('array_reverse', true),
-    forEach: method('array_walk', true, 1),
-    every: method('%helper::array_every', true, 1),
-    some: method('%helper::array_some', true, 1),
-    indexOf: method('%helper::array_pos', false, 1, true),
-    join: method('join', false, 1, true),
-    filter: method('array_filter', true, 1),
-    slice: method('%helper::arraySlice', true, 2),
-    find: method('%helper::array_find', false, 1, true),
-    findIndex: method('%helper::array_find_index', false, 1, true),
+    push: method('array_push'),
+    pop: method('array_pop', {end: 0}),
+    unshift: method('array_unshift', {end: 1}),
+    shift: method('array_shift', {end: 0}),
+    concat: method('array_merge'),
+    reverse: method('array_reverse'),
+    forEach: method('array_walk', {end: 1}),
+    every: method('%helper::array_every', {end: 1}),
+    some: method('%helper::array_some', {end: 1}),
+    indexOf: method('%helper::array_pos', {
+        self: false,
+        end: 1,
+        selfLast: true
+    }),
+    join: method('join', {
+        self: false,
+        end: 1,
+        selfLast: true
+    }),
+    filter: method('array_filter', {end: 1}),
+    slice: method('%helper::arraySlice', {end:2}),
+    find: method('%helper::array_find', {
+        self: false,
+        end: 1,
+        selfLast: true
+    }),
+    findIndex: method('%helper::array_find_index', {
+        self: false,
+        end: 1,
+        selfLast: true
+    }),
     sort,
     map: arrayMap,
     splice
 };
 
 const api = {
-    isArray: method('%helper::isPlainArray', false, 1)
+    isArray: method('%helper::isPlainArray', {
+        self: false,
+        end: 1
+    })
 };
 
 export default {

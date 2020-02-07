@@ -18,9 +18,9 @@ import method from '../utilities/method';
 import {isClassInstance} from '../utilities/nodeTest';
 
 const staticMap = {
-    assign: method('array_merge', false),
-    keys: method('array_keys', false),
-    values: method('array_values', false),
+    assign: method('array_merge', {self: false}),
+    keys: method('array_keys', {self: false}),
+    values: method('array_values', {self: false}),
     freeze(node, {emitWithHint}) {
         emitWithHint(EmitHint.Unspecified, node.arguments[0]);
     }

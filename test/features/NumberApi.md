@@ -12,7 +12,7 @@ const d = Number.isInteger(a);
 
 ```php
 $a = 12.44;
-$b = number_format($a, 1);
-$c = number_format(($a + 1), 1);
+$b = number_format($a, 1, ".", "");
+$c = number_format(($a + 1), 1, ".", "");
 $d = is_int($a);
 ```

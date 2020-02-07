@@ -53,7 +53,7 @@ export const map = {
 const mapFunc = {};
 for (let key in map) {
     if (map.hasOwnProperty(key)) {
-        mapFunc[key] = method(map[key], false);
+        mapFunc[key] = method(map[key], {self: false});
     }
 }
 
