@@ -30,6 +30,8 @@ declare function rawurldecode(str: string): string;
 
 declare function rawurlencode(str: string): string;
 
+declare function base64_decode(str: string): string;
+
 type UrlInfo = {
     scheme: string
     host: string
