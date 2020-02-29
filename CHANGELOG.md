@@ -1,3 +1,10 @@
+## [0.19.14](https://github.com/searchfe/ts2php/compare/v0.19.13...v0.19.14) (2020-02-29)
+
+
+### Bug Fixes
+
+* **ts2php:** add base64_decode function ([4dca029](https://github.com/searchfe/ts2php/commit/4dca02982d202026b07e18aedb619b50d1f5a80c))
+
 ## [0.19.13](https://github.com/searchfe/ts2php/compare/v0.19.12...v0.19.13) (2020-02-08)
 
 
