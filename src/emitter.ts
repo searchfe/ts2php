@@ -517,8 +517,10 @@ export function emitFile(
                     return emitNewExpression(<ts.NewExpression>node);
                 // case SyntaxKind.TaggedTemplateExpression:
                 //     return emitTaggedTemplateExpression(<TaggedTemplateExpression>node);
-                // case SyntaxKind.TypeAssertionExpression:
-                //     return emitTypeAssertionExpression(<TypeAssertion>node);
+                
+                // <string>temp
+                case SyntaxKind.TypeAssertionExpression:
+                    return emitTypeAssertionExpression(<ts.TypeAssertion>node);
                 case SyntaxKind.ParenthesizedExpression:
                     return emitParenthesizedExpression(<ts.ParenthesizedExpression>node);
                 case SyntaxKind.FunctionExpression:
@@ -1230,12 +1232,12 @@ export function emitFile(
     //     emitExpression(node.template);
     // }
 
-    // function emitTypeAssertionExpression(node: TypeAssertion) {
-    //     writePunctuation("<");
-    //     emit(node.type);
-    //     writePunctuation(">");
-    //     emitExpression(node.expression);
-    // }
+    function emitTypeAssertionExpression(node: ts.TypeAssertion) {
+        // writePunctuation("<");
+        // emit(node.type);
+        // writePunctuation(">");
+        emitExpression(node.expression);
+    }
 
     function emitParenthesizedExpression(node: ts.ParenthesizedExpression) {
         const openParenPos = emitTokenWithComment(SyntaxKind.OpenParenToken, node.pos, writePunctuation, node);
