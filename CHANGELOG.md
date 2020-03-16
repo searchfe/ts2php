@@ -1,3 +1,10 @@
+# [0.20.0](https://github.com/searchfe/ts2php/compare/v0.19.14...v0.20.0) (2020-03-16)
+
+
+### Features
+
+* 支持 TypeAssertion ([979b19b](https://github.com/searchfe/ts2php/commit/979b19b8a83331403e4d769d86ec789ac75f670a))
+
 ## [0.19.14](https://github.com/searchfe/ts2php/compare/v0.19.13...v0.19.14) (2020-02-29)
 
 
