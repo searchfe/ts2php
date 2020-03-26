@@ -1,3 +1,10 @@
+## [0.23.1](https://github.com/searchfe/ts2php/compare/v0.23.0...v0.23.1) (2020-03-26)
+
+
+### Bug Fixes
+
+* ci error ([a8d6b92](https://github.com/searchfe/ts2php/commit/a8d6b923f1565849ffd2c0256c2a61363a6aa28b))
+
 # [0.23.0](https://github.com/searchfe/ts2php/compare/v0.22.0...v0.23.0) (2020-03-26)
 
 
