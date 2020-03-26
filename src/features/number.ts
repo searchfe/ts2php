@@ -25,7 +25,8 @@ const protoMap = {
     toFixed: method('number_format', {
         end: 1,
         extraArgs: [createStringLiteral('.'), createStringLiteral('')]
-    })
+    }),
+    toString: method('strval')
 };
 
 export default {
