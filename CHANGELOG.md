@@ -1,3 +1,11 @@
+# [0.22.0](https://github.com/searchfe/ts2php/compare/v0.21.0...v0.22.0) (2020-03-26)
+
+
+### Features
+
+* add regexp method error ([0547f5c](https://github.com/searchfe/ts2php/commit/0547f5c4b7cfbb4ffb1a23807d2745a327134e5e))
+* support number.toString ([95264d5](https://github.com/searchfe/ts2php/commit/95264d57cf370dffa95bf3ed3d0bdd83a74d2c78))
+
 # [0.20.0](https://github.com/searchfe/ts2php/compare/v0.19.14...v0.20.0) (2020-03-16)
 
 
