@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import * as ts from 'byots';
 import { compile } from '../index'
 import { normalize, join, resolve, dirname } from 'path'
 import { readdirSync, lstatSync, ensureDirSync, writeFileSync } from 'fs-extra'
@@ -31,7 +32,7 @@ function compileFile(filepath) {
 
     const { errors, phpCode } = compile(filepath, options);
     if (errors.length) {
-        errors.forEach(({file, messageText, start}) => {
+        (errors as ts.Diagnostic[]).forEach(({file, messageText, start}) => {
             const text = typeof messageText === 'string' ? messageText : messageText.messageText
             console.error(`[error] ${text} in ${file.fileName} at ${start}`)
         })
