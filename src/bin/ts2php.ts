@@ -7,7 +7,7 @@ import { readdirSync, lstatSync, ensureDirSync, writeFileSync } from 'fs-extra'
 import yargs = require('yargs')
 
 yargs.usage('ts2php [options] <files ...>')
-    .describe('Transpile TypeScript files to PHP, see: https://github.com/max-team/ts2php')
+    .describe('desc', 'Transpile TypeScript files to PHP, see: https://github.com/max-team/ts2php')
     .example('$0 -c config.js src/index.ts', 'Transpile using a config file')
     .alias('c', 'config').describe('c', 'Specify a config file, see: https://max-team.github.io/ts2php/interfaces/ts2phpoptions.html').string('c')
     .alias('o', 'out').describe('o', 'Output directory, defaults to stdout').string('o')
@@ -19,7 +19,7 @@ const argv = yargs.argv
 
 let options = {};
 if (argv.config) {
-    const configFile = resolve(argv.config)
+    const configFile = resolve(argv.config as string)
     console.error('[options]', configFile)
     options = require(configFile)
 }
@@ -62,5 +62,5 @@ function outPath(filepath: string) {
         const prefix = normalize(argv._[0])
         filepath = filepath.replace(prefix, '')
     }
-    return join(argv.out, filepath).replace(/\.ts$/, '.php')
+    return join(argv.out as string, filepath).replace(/\.ts$/, '.php')
 }
