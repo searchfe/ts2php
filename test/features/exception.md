@@ -6,6 +6,7 @@ exception
 ```ts
 try {
     throw 'error!';
+    throw new Error('error!');
 }
 catch (e) {
     console.log('error' + e.message);
@@ -20,6 +21,7 @@ throw a + '!';
 
 ```php
 try {
+    throw new \Exception("error!");
     throw new \Exception("error!");
 }
 catch (\Exception $e) {

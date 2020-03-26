@@ -1637,15 +1637,24 @@ export function emitFile(
     // }
 
     function emitThrowStatement(node: ts.ThrowStatement) {
-        // 只支持字符串
-        if (!isStringLike(node.expression, typeChecker)) {
-            return;
+        if (isStringLike(node.expression, typeChecker)) {
+            emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
+            emitExpressionWithLeadingSpace(
+                ts.createNew(ts.createIdentifier('\\Exception'), null, [node.expression])
+            );
+            writeSemicolon();
         }
-        emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
-        emitExpressionWithLeadingSpace(
-            ts.createNew(ts.createIdentifier('\\Exception'), null, [node.expression])
-        );
-        writeSemicolon();
+        if (
+            ts.isNewExpression(node.expression)
+            && ts.isIdentifier(node.expression.expression)
+            && node.expression.expression.getText() === 'Error'
+        ) {
+            emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
+            emitExpressionWithLeadingSpace(
+                ts.createNew(ts.createIdentifier('\\Exception'), null, [node.expression.arguments[0]])
+            );
+            writeSemicolon();
+        }
     }
 
     function emitTryStatement(node: ts.TryStatement) {
