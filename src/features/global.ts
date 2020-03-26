@@ -16,7 +16,8 @@ import {
     FunctionExpression,
     isFunctionExpression,
     isStringLiteral,
-    getLiteralText
+    getLiteralText,
+    isNewExpression
 } from 'byots';
 
 import method from '../utilities/method';
@@ -63,6 +64,13 @@ const unSupportedGlobalMethods = new Set([
     'decodeURI', 'escape', 'unescape'
 ]);
 
+const unSupportedGlobalClass = new Set([
+    'Object', 'Function', 'Symbol', 'EvalError',
+    'RangeError', 'ReferenceError', 'SyntaxError',
+    'TypeError', 'URIError', 'Map', 'Set',
+    'Promise', 'Proxy'
+]);
+
 const isDynamicImport = node => isCallExpression(node) && node.expression.kind === SyntaxKind.ImportKeyword;
 
 export default {
@@ -84,8 +92,16 @@ export default {
                     node, state.sourceFile,
                     getUnSupportedMessage(expNode.escapedText)
                 ));
-                return;
+                return false;
             }
+        }
+
+        if (isNewExpression(node) && unSupportedGlobalClass.has(expNode.escapedText)) {
+            state.errors.push(createDiagnostic(
+                node, state.sourceFile,
+                getUnSupportedMessage(`new ${expNode.escapedText}`)
+            ));
+            return false;
         }
 
         if (

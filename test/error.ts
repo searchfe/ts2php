@@ -44,4 +44,12 @@ describe('custom error', function () {
         expect((result.errors[0] as ts.Diagnostic).messageText).toContain('only support 1 argument');
     });
 
+    it('global class', function () {
+        const result = ts2php.compile(__filename, {
+            source: 'const a = new Map();'
+        });
+        expect(result.errors.length).toBe(1);
+        expect((result.errors[0] as ts.Diagnostic).messageText).toContain('new Map');
+    });
+
 });
