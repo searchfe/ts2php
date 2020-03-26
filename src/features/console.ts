@@ -9,7 +9,7 @@ import {
     isIdentifier,
     isCallExpression,
     CallExpression
-} from 'typescript';
+} from 'byots';
 
 import method from '../utilities/method';
 

@@ -12,7 +12,7 @@ import {
     isPropertyAccessExpression,
     isIdentifier,
     isCallExpression
-} from 'typescript';
+} from 'byots';
 
 const methods = {
     stringify(node: CallExpression, {emitExpressionList, writePunctuation}) {

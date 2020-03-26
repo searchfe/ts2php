@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import * as ts from 'byots';
 
 /**
  * Gets a custom text range to use when emitting comments.

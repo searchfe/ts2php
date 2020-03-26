@@ -15,10 +15,10 @@ import {
     FunctionLike,
     createCall,
     createIdentifier
-} from 'typescript';
+} from 'byots';
 
 import method, {formatMethodName} from '../utilities/method';
-import ts = require('typescript');
+import ts = require('byots');
 
 function sort(node: CallExpression, {emitExpressionList, writePunctuation, errors}, {typeChecker}) {
     let expNode = node.expression as PropertyAccessExpression;

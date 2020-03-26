@@ -3,7 +3,7 @@
  * @author meixuguang
  */
 
-import * as ts from 'typescript';
+import * as ts from 'byots';
 
 export function transform(context: ts.TransformationContext) {
 
@@ -29,10 +29,7 @@ export function transform(context: ts.TransformationContext) {
 
     return transformSourceFileOrBundle;
 
-    function transformSourceFileOrBundle(node: ts.SourceFile | ts.Bundle) {
-        if (node.kind === ts.SyntaxKind.Bundle) {
-            return node;
-        }
+    function transformSourceFileOrBundle(node: ts.SourceFile) {
         return transformSourceFile(node);
     }
 

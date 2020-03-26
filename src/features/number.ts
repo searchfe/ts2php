@@ -9,7 +9,7 @@ import {
     isIdentifier,
     isCallExpression,
     createStringLiteral
-} from 'typescript';
+} from 'byots';
 
 import {
     isNumberLike

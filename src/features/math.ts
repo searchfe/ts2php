@@ -8,7 +8,7 @@ import {
     isPropertyAccessExpression,
     isIdentifier,
     isCallExpression
-} from 'typescript';
+} from 'byots';
 
 import method from '../utilities/method';
 

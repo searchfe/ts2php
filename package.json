@@ -10,7 +10,6 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime && chmod a+x dist/bin/*",
-    "sync": "cp ./typescript.d.ts ./node_modules/typescript/lib/typescript.d.ts",
     "test": "mocha",
     "coverage": "nyc _mocha",
     "prepublishOnly": "npm test && npm run build",
@@ -29,10 +28,10 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "byots": "3.9.0-dev.20200325.13.13",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.14",
     "semver": "^6.2.0",
-    "ts-morph": "^3.1.0",
     "yargs": "^13.2.4"
   },
   "nyc": {
@@ -68,7 +67,7 @@
     }
   },
   "peerDependencies": {
-    "typescript": "~3.4.5"
+    "typescript": "^3.7.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.6.1",
@@ -95,7 +94,6 @@
     "eslint-plugin-no-null": "^1.0.2",
     "glob": "^7.1.6",
     "husky": "^1.3.1",
-    "istanbul": "^0.4.5",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
@@ -107,7 +105,7 @@
     "source-map-support": "^0.5.12",
     "ts-node": "^8.2.0",
     "typedoc": "^0.15.3",
-    "typescript": "~3.4.5",
+    "typescript": "^3.7.0",
     "vue": "^2.6.10"
   },
   "release": {

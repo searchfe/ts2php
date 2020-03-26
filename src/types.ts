@@ -1,5 +1,5 @@
 
-import ts from 'typescript';
+import ts from 'byots';
 import {Ts2phpOptions, ErrorInfo} from '../types/index';
 
 export interface CompilerState extends Ts2phpOptions {

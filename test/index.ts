@@ -8,7 +8,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import {compile} from '../src/index';
+import {compile, Ts2Php} from '../src/index';
 import glob from 'glob';
 import {MDGator, Group} from 'mdgator';
 import camelcase from 'camelcase';
@@ -17,6 +17,8 @@ const featuresPath = path.resolve(__dirname, './features');
 const files = glob.sync('**/*.md', {
     cwd: featuresPath
 });
+
+const ts2php = new Ts2Php();
 
 function processTestGroup(group: Group) {
     if (group.children.length > 0) {
@@ -38,7 +40,7 @@ function processTestGroup(group: Group) {
                 }
 
                 const namespace = `test\\case_${camelcase(testItem.name)}`
-                const res = compile(path.resolve(featuresPath, camelcase(testItem.name)), {
+                const res = ts2php.compile(path.resolve(featuresPath, camelcase(testItem.name)), {
                     source: tsContent,
                     namespace,
                     modules: {

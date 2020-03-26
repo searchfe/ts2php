@@ -3,7 +3,7 @@
  * @author meixuguang
  */
 
-import * as ts from 'typescript';
+import * as ts from 'byots';
 import {formatMethodName} from './utilities/method'
 
 import {
@@ -13,11 +13,11 @@ import {
     Symbol,
     Node,
     isImportSpecifier,
-    isBlock
-} from 'typescript';
+    isBlock,
+    createTextWriter
+} from 'byots';
 
 import {
-    createTextWriter,
     nodeIsSynthesized,
     isIdentifier,
     idText,
@@ -85,7 +85,8 @@ export function emitFile(
     let reservedNames: ts.Map<true>; // TempFlags to reserve in nested name generation scopes.
     let write = writeBase;
     reset();
-    const writer = createTextWriter("\n");
+
+    const writer = createTextWriter('\n');
     writer.writeLine();
 
     const typeChecker = state.typeChecker;
@@ -517,7 +518,7 @@ export function emitFile(
                     return emitNewExpression(<ts.NewExpression>node);
                 // case SyntaxKind.TaggedTemplateExpression:
                 //     return emitTaggedTemplateExpression(<TaggedTemplateExpression>node);
-                
+
                 // <string>temp
                 case SyntaxKind.TypeAssertionExpression:
                     return emitTypeAssertionExpression(<ts.TypeAssertion>node);

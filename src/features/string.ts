@@ -22,7 +22,7 @@ import {
     createTrue,
     createFalse,
     createNull
-} from 'typescript';
+} from 'byots';
 
 import {
     isStringLike, isNumberLike, isFunctionLike,

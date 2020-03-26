@@ -12,7 +12,7 @@ import {
     SyntaxKind,
     createCall,
     createIdentifier
-} from 'typescript';
+} from 'byots';
 
 import method from '../utilities/method';
 import {isClassInstance} from '../utilities/nodeTest';

@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import * as ts from 'byots';
 
 export interface ModuleInfo {
 
@@ -115,7 +115,7 @@ export interface Ts2phpCompileOptions {
      * };
      * ```
      */
-    customTransformers?: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[]
+    customTransformers?: ts.TransformerFactory<ts.SourceFile>[]
 }
 
 export interface Ts2phpOptions extends Ts2phpCompileOptions, Ts2phpConstructOptions {}

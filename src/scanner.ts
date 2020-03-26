@@ -9,9 +9,9 @@ import {
 
 import {positionIsSynthesized} from './utilities';
 import {error as pushError} from './state';
-import * as ts from 'typescript';
+import * as ts from 'byots';
 
-import {SyntaxKind} from 'typescript';
+import {SyntaxKind} from 'byots';
 
 export function computeLineStarts(text: string): number[] {
     const result: number[] = new Array();

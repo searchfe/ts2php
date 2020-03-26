@@ -5,7 +5,7 @@ import {
 
 import {
     Node
-} from 'typescript';
+} from 'byots';
 
 /**
  * Type of objects whose values are all of the same type.

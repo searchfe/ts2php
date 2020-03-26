@@ -1,47 +1,43 @@
 // Simple node tests of the form `node.kind === SyntaxKind.Foo`.
 
-import {
-    Node,
-    SyntaxKind
-} from 'typescript';
-import * as ts from 'typescript';
+import * as ts from 'byots';
 import {CompilerState} from '../types';
 
 const shouldAddDollerParentList = new Set([
-    SyntaxKind.VariableDeclaration,
-    SyntaxKind.TemplateSpan,
-    SyntaxKind.ElementAccessExpression,
-    SyntaxKind.Parameter,
-    SyntaxKind.BinaryExpression,
-    SyntaxKind.IfStatement,
-    SyntaxKind.PrefixUnaryExpression,
-    SyntaxKind.PostfixUnaryExpression,
-    SyntaxKind.SwitchStatement,
-    SyntaxKind.ArrayLiteralExpression,
-    SyntaxKind.ReturnStatement,
-    SyntaxKind.ReturnStatement,
-    SyntaxKind.ForInStatement,
-    SyntaxKind.ForOfStatement,
-    SyntaxKind.TypeOfExpression,
-    SyntaxKind.ConditionalExpression,
-    SyntaxKind.ComputedPropertyName,
-    SyntaxKind.ImportSpecifier,
-    SyntaxKind.PropertyDeclaration,
-    SyntaxKind.EnumDeclaration,
-    SyntaxKind.ArrowFunction,
-    SyntaxKind.BindingElement,
-    SyntaxKind.WhileStatement,
-    SyntaxKind.AsExpression,
-    SyntaxKind.SpreadAssignment,
-    SyntaxKind.SpreadElement,
-    SyntaxKind.TypeAssertionExpression
+    ts.SyntaxKind.VariableDeclaration,
+    ts.SyntaxKind.TemplateSpan,
+    ts.SyntaxKind.ElementAccessExpression,
+    ts.SyntaxKind.Parameter,
+    ts.SyntaxKind.BinaryExpression,
+    ts.SyntaxKind.IfStatement,
+    ts.SyntaxKind.PrefixUnaryExpression,
+    ts.SyntaxKind.PostfixUnaryExpression,
+    ts.SyntaxKind.SwitchStatement,
+    ts.SyntaxKind.ArrayLiteralExpression,
+    ts.SyntaxKind.ReturnStatement,
+    ts.SyntaxKind.ReturnStatement,
+    ts.SyntaxKind.ForInStatement,
+    ts.SyntaxKind.ForOfStatement,
+    ts.SyntaxKind.TypeOfExpression,
+    ts.SyntaxKind.ConditionalExpression,
+    ts.SyntaxKind.ComputedPropertyName,
+    ts.SyntaxKind.ImportSpecifier,
+    ts.SyntaxKind.PropertyDeclaration,
+    ts.SyntaxKind.EnumDeclaration,
+    ts.SyntaxKind.ArrowFunction,
+    ts.SyntaxKind.BindingElement,
+    ts.SyntaxKind.WhileStatement,
+    ts.SyntaxKind.AsExpression,
+    ts.SyntaxKind.SpreadAssignment,
+    ts.SyntaxKind.SpreadElement,
+    ts.SyntaxKind.TypeAssertionExpression
 ]);
 
 /**
  * 判断输出 Identier 时，是否需要加 $ 符号
  * @param node 节点
  */
-export function shouldAddDollar(node: Node, state: CompilerState): boolean {
+export function shouldAddDollar(node: ts.Node, state: CompilerState): boolean {
 
     if (isClassLike(node, state.typeChecker)) {
         return false;
@@ -83,7 +79,7 @@ export function shouldAddDollar(node: Node, state: CompilerState): boolean {
     return false;
 }
 
-export function shouldAddDoubleQuote(node: Node): boolean {
+export function shouldAddDoubleQuote(node: ts.Node): boolean {
 
     if (
         node.parent
@@ -169,7 +165,7 @@ export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
         return false;
     }
     return (ts.isImportSpecifier(node.parent) && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()))
-        || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.members.has('prototype' as ts.__String)
+        || ((nodeType as ts.ObjectType).objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.members.has('prototype' as ts.__String)
         || (!nodeSymbol.valueDeclaration && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()) && nodeType.symbol.exports.has('prototype' as ts.__String));
 }
 
@@ -185,7 +181,7 @@ export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
         return false;
     }
     return (nodeType.isClass() && !(nodeSymbol.getFlags() & ts.SymbolFlags.Class))
-        || (nodeType.objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
+        || ((nodeType as ts.ObjectType).objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
 }
 
 // 通过最近的父类来确定是用对象（->）还是数组（[]）
@@ -213,7 +209,8 @@ function getBaseTypeName(nodeType: ts.Type): 'PHPClass' | 'PHPArray' | 'other' {
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = nodeType.getSymbol();
-    return !!nodeSymbol && (nodeSymbol.getFlags() === ts.SymbolFlags.Function || nodeSymbol.getFlags() === ts.SymbolFlags.Method);
+    const symbolFlags = nodeSymbol && nodeSymbol.getFlags();
+    return !!symbolFlags && (symbolFlags & ts.SymbolFlags.Function || symbolFlags & ts.SymbolFlags.Method);
 }
 
 /**
@@ -223,15 +220,15 @@ export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
 export function isVariable(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = nodeType.getSymbol();
-    return nodeSymbol.declarations[0].parent.kind === ts.SyntaxKind.VariableDeclaration;
+    return ts.isVariableDeclaration(nodeSymbol.valueDeclaration.parent)
 }
 
 export function isVisibilityModifier(node: ts.Modifier) {
-    return node.kind === SyntaxKind.PublicKeyword
-        || node.kind === SyntaxKind.PrivateKeyword
-        || node.kind === SyntaxKind.ProtectedKeyword;
+    return node.kind === ts.SyntaxKind.PublicKeyword
+        || node.kind === ts.SyntaxKind.PrivateKeyword
+        || node.kind === ts.SyntaxKind.ProtectedKeyword;
 }
 
 export function isSupportedPropertyModifier(node: ts.Modifier) {
-    return isVisibilityModifier(node) || node.kind === SyntaxKind.StaticKeyword;
+    return isVisibilityModifier(node) || node.kind === ts.SyntaxKind.StaticKeyword;
 }

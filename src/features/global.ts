@@ -15,11 +15,11 @@ import {
     updateCall,
     FunctionExpression,
     isFunctionExpression,
-    isStringLiteral
-} from 'typescript';
+    isStringLiteral,
+    getLiteralText
+} from 'byots';
 
 import method from '../utilities/method';
-import { getLiteralText } from '../utilities';
 
 const map = {
     parseInt: method('intval', {
@@ -92,6 +92,7 @@ export default {
         if (
             isBinaryExpression(node)
             && node.operatorToken.kind === SyntaxKind.EqualsEqualsEqualsToken
+            // @ts-ignore
             && node.right.originalKeywordKind === SyntaxKind.UndefinedKeyword
         ) {
             helpers.writePunctuation('!');
@@ -101,6 +102,7 @@ export default {
         if (
             isBinaryExpression(node)
             && node.operatorToken.kind === SyntaxKind.ExclamationEqualsEqualsToken
+            // @ts-ignore
             && node.right.originalKeywordKind === SyntaxKind.UndefinedKeyword
         ) {
             return helpers.emitExpression(createCall(createIdentifier('isset'), [], [node.left]));

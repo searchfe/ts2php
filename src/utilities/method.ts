@@ -9,7 +9,7 @@ import {
     createNodeArray,
     ListFormat,
     Expression
-} from 'typescript';
+} from 'byots';
 
 interface methodOptions {
 

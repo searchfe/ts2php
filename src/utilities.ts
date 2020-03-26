@@ -16,8 +16,7 @@ import {
     createMapFromTemplate
 } from './core';
 
-import * as ts from 'typescript';
-import {Node} from 'typescript';
+import * as ts from 'byots';
 import {error} from './state';
 import {isClassInstance,isClassLike,isFunctionLike} from './utilities/nodeTest';
 
@@ -32,103 +31,6 @@ export function getIndentString(level: number) {
 export function getIndentSize() {
     return indentStrings[1].length;
 }
-
-export function createTextWriter(newLine: string): ts.EmitTextWriter {
-    let output: string;
-    let indent: number;
-    let lineStart: boolean;
-    let lineCount: number;
-    let linePos: number;
-
-    function updateLineCountAndPosFor(s: string) {
-        const lineStartsOfS = computeLineStarts(s);
-        if (lineStartsOfS.length > 1) {
-            lineCount = lineCount + lineStartsOfS.length - 1;
-            linePos = output.length - s.length + last(lineStartsOfS);
-            lineStart = (linePos - output.length) === 0;
-        }
-        else {
-            lineStart = false;
-        }
-    }
-
-    function write(s: string) {
-        if (s && s.length) {
-            if (lineStart) {
-                s = getIndentString(indent) + s;
-                lineStart = false;
-            }
-            output += s;
-            updateLineCountAndPosFor(s);
-        }
-    }
-
-    function reset(): void {
-        output = "";
-        indent = 0;
-        lineStart = true;
-        lineCount = 0;
-        linePos = 0;
-    }
-
-    function rawWrite(s: string) {
-        if (s !== undefined) {
-            output += s;
-            updateLineCountAndPosFor(s);
-        }
-    }
-
-    function writeLiteral(s: string) {
-        if (s && s.length) {
-            write(s);
-        }
-    }
-
-    function writeLine() {
-        if (!lineStart) {
-            output += newLine;
-            lineCount++;
-            linePos = output.length;
-            lineStart = true;
-        }
-    }
-
-    function writeTextOfNode(text: string, node: ts.Node) {
-
-    }
-
-    reset();
-
-    return {
-        write,
-        rawWrite,
-        writeTextOfNode,
-        writeLiteral,
-        writeLine,
-        increaseIndent: () => { indent++; },
-        decreaseIndent: () => { indent--; },
-        getIndent: () => indent,
-        getTextPos: () => output.length,
-        getLine: () => lineCount,
-        getColumn: () => lineStart ? indent * getIndentSize() : output.length - linePos,
-        getText: () => output,
-        isAtStartOfLine: () => lineStart,
-        clear: reset,
-        reportInaccessibleThisError: noop,
-        reportPrivateInBaseOfClassExpression: noop,
-        reportInaccessibleUniqueSymbolError: noop,
-        trackSymbol: noop,
-        writeKeyword: write,
-        writeOperator: write,
-        writeParameter: write,
-        writeProperty: write,
-        writePunctuation: write,
-        writeSpace: write,
-        writeStringLiteral: write,
-        writeSymbol: write
-    };
-}
-
 
 export function showSymbol(symbol: ts.Symbol): string {
     const symbolFlags = ts.SymbolFlags;
@@ -146,7 +48,7 @@ function showFlags(flags: number, flagsEnum: { [flag: number]: string }): string
     return out.join("|");
 }
 
-export function showSyntaxKind(node: Node): string {
+export function showSyntaxKind(node: ts.Node): string {
     const syntaxKind = ts.SyntaxKind;
     return syntaxKind ? syntaxKind[node.kind] : node.kind.toString();
 }
@@ -154,7 +56,7 @@ export function showSyntaxKind(node: Node): string {
 /**
  * Gets flags that control emit behavior of a node.
  */
-export function getEmitFlags(node: Node): ts.EmitFlags {
+export function getEmitFlags(node: ts.Node): ts.EmitFlags {
     const emitNode = node.emitNode;
     return emitNode && emitNode.flags || 0;
 }
@@ -279,7 +181,7 @@ export function isIdentifier(node: ts.Node): node is ts.Identifier {
 // Binding patterns
 
 /* @internal */
-export function isBindingPattern(node: Node | undefined): node is ts.BindingPattern {
+export function isBindingPattern(node: ts.Node | undefined): node is ts.BindingPattern {
     if (node) {
         const kind = node.kind;
         return kind === ts.SyntaxKind.ArrayBindingPattern
@@ -289,7 +191,7 @@ export function isBindingPattern(node: Node | undefined): node is ts.BindingPatt
     return false;
 }
 
-export function isNodeDescendantOf(node: Node, ancestor: Node): boolean {
+export function isNodeDescendantOf(node: ts.Node, ancestor: ts.Node): boolean {
     while (node) {
         if (node === ancestor) return true;
         node = node.parent;
@@ -298,7 +200,7 @@ export function isNodeDescendantOf(node: Node, ancestor: Node): boolean {
 }
 
 /* @internal */
-export function isAssignmentPattern(node: Node): node is ts.AssignmentPattern {
+export function isAssignmentPattern(node: ts.Node): node is ts.AssignmentPattern {
     const kind = node.kind;
     return kind === ts.SyntaxKind.ArrayLiteralExpression
         || kind === ts.SyntaxKind.ObjectLiteralExpression;
@@ -306,13 +208,13 @@ export function isAssignmentPattern(node: Node): node is ts.AssignmentPattern {
 
 
 /* @internal */
-export function isArrayBindingElement(node: Node): node is ts.ArrayBindingElement {
+export function isArrayBindingElement(node: ts.Node): node is ts.ArrayBindingElement {
     const kind = node.kind;
     return kind === ts.SyntaxKind.BindingElement
         || kind === ts.SyntaxKind.OmittedExpression;
 }
 
-export function isPrologueDirective(node: Node): node is ts.PrologueDirective {
+export function isPrologueDirective(node: ts.Node): node is ts.PrologueDirective {
     return node.kind === ts.SyntaxKind.ExpressionStatement
         && (<ts.ExpressionStatement>node).expression.kind === ts.SyntaxKind.StringLiteral;
 }
@@ -348,7 +250,7 @@ export function isPrologueDirective(node: Node): node is ts.PrologueDirective {
 // code). So the parser will attempt to parse out a type, and will create an actual node.
 // However, this node will be 'missing' in the sense that no actual source-code/tokens are
 // contained within it.
-export function nodeIsMissing(node: Node | undefined): boolean {
+export function nodeIsMissing(node: ts.Node | undefined): boolean {
     if (node === undefined) {
         return true;
     }

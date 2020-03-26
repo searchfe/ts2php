@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import * as ts from 'byots';
 import { CompilerState } from '../types';
 import {map as MATH_MAP} from './math';
 import {formatMethodName} from '../utilities/method';

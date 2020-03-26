@@ -5,7 +5,20 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import {Project, ts, CompilerOptions} from 'ts-morph';
+import {
+    SourceFile,
+    CompilerOptions,
+    Program,
+    CompilerHost,
+    createCompilerHost,
+    createProgram,
+    getPreEmitDiagnostics,
+    flattenDiagnosticMessageText,
+    ScriptTarget,
+    ModuleKind,
+    TransformerFactory
+} from 'byots';
+
 import {upperFirst} from 'lodash';
 import {satisfies} from 'semver';
 
@@ -43,40 +56,86 @@ const getRandomString = n => Array(n)
         return s.charAt(Math.floor(Math.random() * s.length));
     }).join('');
 
+const defaultCompilerOptions = {
+    target: ScriptTarget.ES2016,
+    module: ModuleKind.CommonJS,
+    scrict: true,
+    noImplicitThis: true,
+    noImplicitAny: true,
+    alwaysStrict: true
+};
+
+interface cacheFileInfo {
+    sourceFile?: SourceFile;
+    contents: string;
+}
+
 export class Ts2Php {
-    private project: Project;
+    private sourceFileCache: {[fileName: string]: cacheFileInfo};
+    private compilerOptions: CompilerOptions;
+    private program: Program;
+    private compilerHost: CompilerHost;
 
     constructor ({ compilerOptions }: Ts2phpConstructOptions = {}) {
-        if (!satisfies(ts.version, '~3.4.0')) {
-            throw new TypeError('[ts2php] TypeScript version ' + ts.version + ' is not valid! Please install typescript@~3.4.0!');
+        this.compilerOptions = {
+            ...defaultCompilerOptions,
+            ...compilerOptions
+        };
+
+        this.sourceFileCache = {};
+
+        this.compilerHost = createCompilerHost(this.compilerOptions);
+
+        const originReadFile = this.compilerHost.readFile;
+        this.compilerHost.readFile = (fileName: string) => {
+            if (this.sourceFileCache[fileName]) {
+                return this.sourceFileCache[fileName].contents;
+            }
+            return originReadFile(fileName);
+        };
+
+        const originFileExists = this.compilerHost.fileExists;
+        this.compilerHost.fileExists = (fileName: string) => {
+            if (this.sourceFileCache[fileName]) {
+                return true;
+            }
+            return originFileExists(fileName);
+        };
+    }
+
+    private getSourceFile(filePath: string, contents: string) {
+        contents = contents || fs.readFileSync(filePath, 'utf8');
+
+        if (
+            this.sourceFileCache[filePath]
+            && this.sourceFileCache[filePath].sourceFile
+            && contents === this.sourceFileCache[filePath].contents
+        ) {
+            return this.sourceFileCache[filePath].sourceFile;
         }
 
-        this.project = new Project({
-            compilerOptions: {
-                target: ts.ScriptTarget.ES2016,
-                scrict: true,
-                module: ts.ModuleKind.CommonJS,
-                noImplicitThis: true,
-                noImplicitAny: true,
-                alwaysStrict: true,
-                ...compilerOptions
-            },
-            addFilesFromTsConfig: false,
-            skipFileDependencyResolution: true
+        this.sourceFileCache[filePath] = {
+            contents
+        };
+
+        const program = this.program = createProgram({
+            rootNames: [filePath],
+            oldProgram: this.program,
+            options: this.compilerOptions,
+            host: this.compilerHost
         });
+
+        const sourceFile = this.sourceFileCache[filePath].sourceFile = program.getSourceFile(filePath);
+
+        return sourceFile;
     }
 
     compile (filePath: string, options: Ts2phpCompileOptions = {}) {
-        let sourceFile;
 
-        if (!options.source && fs.existsSync(filePath)) {
-            sourceFile = this.project.addExistingSourceFile(filePath);
-        }
-        else if (options.source) {
+        if (options.source) {
             filePath = /\.ts$/.test(filePath) ? filePath : (filePath + '.ts');
-            sourceFile = this.project.createSourceFile(filePath, options.source, {overwrite: true});
         }
-        else {
+        else if (!fs.existsSync(filePath)) {
             return {
                 phpCode: '',
                 errors: [{
@@ -86,27 +145,38 @@ export class Ts2Php {
             };
         }
 
-        this.project.resolveSourceFileDependencies();
-        const program = this.project.getProgram().compilerObject;
-
         const finalOptions = {
             ...defaultOptions,
             ...options
         };
+
         // avoid change options
         finalOptions.modules = {...options.modules};
 
+        const sourceFile = this.getSourceFile(filePath, options.source);
+        const program = this.program;
         const typeChecker = program.getTypeChecker();
 
-        let diagnostics = this.project.getPreEmitDiagnostics();
+        let diagnostics = getPreEmitDiagnostics(program);
         if (finalOptions.showDiagnostics) {
-            diagnostics = diagnostics.filter(a => a.compilerObject.code !== 2307);
-            const diags = diagnostics.map(a => a.compilerObject);
-            if (diags.length) {
-                console.log(this.project.formatDiagnosticsWithColorAndContext(diagnostics));
+            diagnostics = diagnostics.filter(a => a.code !== 2307);
+            if (diagnostics.length) {
+                diagnostics.forEach(diagnostic => {
+                    if (diagnostic.file) {
+                        let {
+                            line,
+                            character
+                        } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
+                        let message = flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+                        console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+                    }
+                    else {
+                        console.log(flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
+                    }
+                });
                 return {
                     phpCode: '',
-                    errors: diags
+                    errors: diagnostics
                 };
             }
         }
@@ -127,18 +197,16 @@ export class Ts2Php {
 
         setState(state);
 
-        const transformers: ts.TransformerFactory<ts.SourceFile | ts.Bundle>[] = [
+        const transformers: TransformerFactory<SourceFile>[] = [
             transform,
             ...(options.customTransformers || [])
         ];
 
-        const sourceFileNode = sourceFile.compilerNode;
-
         const emitResolver = program.getDiagnosticsProducingTypeChecker()
-            .getEmitResolver(sourceFileNode, undefined);
+            .getEmitResolver(sourceFile, undefined);
 
-        if (sourceFileNode.resolvedModules) {
-            sourceFileNode.resolvedModules.forEach((item, name) => {
+        if (sourceFile.resolvedModules) {
+            sourceFile.resolvedModules.forEach((item, name) => {
                 const moduleIt = state.modules[name] || {} as ModuleInfo;
                 state.modules[name] = {
                     name,
@@ -149,7 +217,7 @@ export class Ts2Php {
             });
         }
 
-        const code = emitter.emitFile(sourceFileNode, state, emitResolver, transformers);
+        const code = emitter.emitFile(sourceFile, state, emitResolver, transformers);
 
         return {
             phpCode: code,
