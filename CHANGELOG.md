@@ -1,3 +1,11 @@
+# [0.23.0](https://github.com/searchfe/ts2php/compare/v0.22.0...v0.23.0) (2020-03-26)
+
+
+### Features
+
+* add warning for unsupported global class ([c9f4cef](https://github.com/searchfe/ts2php/commit/c9f4cef060bc0de8f40e37c5b9dd7e2a8e512891))
+* support new Error ([6c9de43](https://github.com/searchfe/ts2php/commit/6c9de4343046510729a55a67c3367861cada5712))
+
 # [0.22.0](https://github.com/searchfe/ts2php/compare/v0.21.0...v0.22.0) (2020-03-26)
 
 
