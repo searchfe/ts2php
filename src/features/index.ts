@@ -14,6 +14,7 @@ import ConsolePlugin from './console';
 import DatePlugin from './date';
 import ErrorPlugin from './error';
 import CallUserFuncArrayPlugin from './callUserFuncArray';
+import RegExpPlugin from './regexp';
 
 export default [
     StringPligin,
@@ -26,5 +27,6 @@ export default [
     ConsolePlugin,
     DatePlugin,
     ErrorPlugin,
-    CallUserFuncArrayPlugin
+    CallUserFuncArrayPlugin,
+    RegExpPlugin
 ];

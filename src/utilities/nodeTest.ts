@@ -232,3 +232,11 @@ export function isVisibilityModifier(node: ts.Modifier) {
 export function isSupportedPropertyModifier(node: ts.Modifier) {
     return isVisibilityModifier(node) || node.kind === ts.SyntaxKind.StaticKeyword;
 }
+
+export function isRegExp(node: ts.Node, typeChecker: ts.TypeChecker) {
+    if (ts.isRegularExpressionLiteral(node)) {
+        return true;
+    }
+    const nodeType = typeChecker.getTypeAtLocation(node);
+    return nodeType.symbol.getEscapedName() === 'RegExp';
+}

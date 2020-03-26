@@ -181,6 +181,7 @@ For more, see feature test markdowns: [Javascript Syntax](./test/features)
 - Number
   - Number.isInterger
   - Number.prototype.toFixed
+  - Number.prototype.toString
 - Math
   - Math.abs
   - Math.acos
