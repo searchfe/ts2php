@@ -16,7 +16,8 @@ import {
 } from '../utilities/nodeTest';
 
 import {
-    createDiagnostic
+    createDiagnostic,
+    getUnSupportedMessage
 } from '../utilities/error';
 
 const unSupportMembers = new Set([
@@ -40,7 +41,7 @@ export default {
         ) {
             const funcName = state.helpers.getTextOfNode(expNode.name);
             const messageText = unSupportMembers.has(funcName)
-                ? `RegExp.prototype.${funcName} has not supported in ts2php, see https://github.com/searchfe/ts2php`
+                ? getUnSupportedMessage(`RegExp.prototype.${funcName}`)
                 : `${node.getFullText()} is not valid.`
             state.errors.push(
                 createDiagnostic(

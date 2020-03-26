@@ -12,6 +12,11 @@ import {
 
 import method from '../utilities/method';
 
+import {
+    createDiagnostic,
+    getUnSupportedMessage
+} from '../utilities/error';
+
 // think about call_user_func_array before you change this map!
 export const map = {
     abs: 'abs',
@@ -59,10 +64,12 @@ for (let key in map) {
 
 export default {
 
-    emit(hint, node, {helpers, helperNamespace}) {
+    emit(hint, node, state) {
 
         const expNode = node.expression;
         let func;
+
+        let {helpers, helperNamespace} = state;
 
         if (
             hint === EmitHint.Expression
@@ -70,9 +77,17 @@ export default {
             && isPropertyAccessExpression(expNode)
             && isIdentifier(expNode.expression)
             && expNode.expression.escapedText === 'Math'
-            && (func = mapFunc[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, {helperNamespace});
+            const funcName = helpers.getTextOfNode(expNode.name);
+            const func = mapFunc[funcName];
+            if (func) {
+                return func(node, helpers, state);
+            }
+            state.errors.push(createDiagnostic(
+                node, state.sourceFile,
+                getUnSupportedMessage(`Math.${funcName}`)
+            ));
+            return;
         }
 
         return false;

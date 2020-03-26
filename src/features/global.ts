@@ -21,6 +21,11 @@ import {
 
 import method from '../utilities/method';
 
+import {
+    createDiagnostic,
+    getUnSupportedMessage
+} from '../utilities/error';
+
 const map = {
     parseInt: method('intval', {
         self: false,
@@ -53,21 +58,34 @@ const identifierMap = new Map([
     ['___filename', '__FILE__']
 ]);
 
+const unSupportedGlobalMethods = new Set([
+    'eval', 'uneval', 'isFinit',
+    'decodeURI', 'escape', 'unescape'
+]);
+
 const isDynamicImport = node => isCallExpression(node) && node.expression.kind === SyntaxKind.ImportKeyword;
 
 export default {
 
-    emit(hint, node, {helpers, modules, sourceFile, helperNamespace}) {
+    emit(hint, node, state) {
 
         const expNode = node.expression;
         let func;
 
-        if (
-            hint === EmitHint.Expression
-            && isCallExpression(node)
-            && (func = map[expNode.escapedText])
-        ) {
-            return func(node, helpers, {helperNamespace});
+        const {helpers, modules, sourceFile, helperNamespace} = state;
+
+        if (isCallExpression(node)) {
+            func = map[expNode.escapedText];
+            if (func) {
+                return func(node, helpers, {helperNamespace});
+            }
+            if (unSupportedGlobalMethods.has(expNode.escapedText)) {
+                state.errors.push(createDiagnostic(
+                    node, state.sourceFile,
+                    getUnSupportedMessage(expNode.escapedText)
+                ));
+                return;
+            }
         }
 
         if (

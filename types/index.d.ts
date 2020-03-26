@@ -136,13 +136,13 @@ export function compile(filePath: string, options?: Ts2phpOptions): {
     phpCode: string;
 
     /** 错误信息数组 */
-    errors: ErrorInfo[]
+    errors: (ErrorInfo | ts.DiagnosticWithLocation)[]
 };
 
 export class Ts2Php {
     constructor(options?: Ts2phpConstructOptions)
     compile(filePath: string, options?: Ts2phpCompileOptions): {
         phpCode: string;
-        errors: ErrorInfo[];
+        errors: (ErrorInfo | ts.DiagnosticWithLocation)[];
     };
 }

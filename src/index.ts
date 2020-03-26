@@ -16,7 +16,10 @@ import ts, {
     flattenDiagnosticMessageText,
     ScriptTarget,
     ModuleKind,
-    TransformerFactory
+    TransformerFactory,
+    isDiagnosticWithLocation,
+    Diagnostic,
+    DiagnosticWithLocation
 } from 'byots';
 
 import {upperFirst} from 'lodash';
@@ -218,6 +221,18 @@ export class Ts2Php {
         }
 
         const code = emitter.emitFile(sourceFile, state, emitResolver, transformers);
+
+        const customDiags = state.errors.filter(node => isDiagnosticWithLocation(node as DiagnosticWithLocation));
+        if (finalOptions.showDiagnostics && customDiags.length > 0) {
+            (customDiags as DiagnosticWithLocation[]).forEach(diagnostic => {
+                let {
+                    line,
+                    character
+                } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
+                let message = flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+                console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+            });
+        }
 
         return {
             phpCode: code,

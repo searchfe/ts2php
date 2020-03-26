@@ -14,6 +14,10 @@ import {
     isCallExpression
 } from 'byots';
 
+import {
+    createDiagnostic
+} from '../utilities/error';
+
 const methods = {
     stringify(node: CallExpression, {emitExpressionList, writePunctuation}) {
         writePunctuation('json_encode');
@@ -36,10 +40,12 @@ const methods = {
 
 export default {
 
-    emit(hint, node, {helpers, helperNamespace}) {
+    emit(hint, node, state) {
 
         const expNode = node.expression;
         let func;
+
+        const {helpers} = state
 
         if (
             hint === EmitHint.Expression
@@ -49,7 +55,14 @@ export default {
             && expNode.expression.escapedText === 'JSON'
             && (func = methods[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, {helperNamespace});
+            if (node.arguments.length <= 1) {
+                return func(node, helpers);
+            }
+            state.errors.push(createDiagnostic(
+                node, state.sourceFile,
+                `JSON.${helpers.getTextOfNode(expNode.name)} only support 1 argument.`
+            ));
+            return;
         }
 
         return false;

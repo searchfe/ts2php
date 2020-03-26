@@ -20,3 +20,7 @@ export function createDiagnostic(
         }
     );
 }
+
+export function getUnSupportedMessage(name: string) {
+    return `${name} has not supported in ts2php, see https://github.com/searchfe/ts2php`;
+}

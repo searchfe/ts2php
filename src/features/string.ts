@@ -29,12 +29,12 @@ import {
 } from '../utilities/nodeTest';
 
 import method, {formatMethodName} from '../utilities/method';
-import {CompilerState} from '../types';
+import {createDiagnostic, getUnSupportedMessage} from '../utilities/error';
 
 function replace(
     node: CallExpression,
     {getLiteralTextOfNode, emitExpressionList, writePunctuation},
-    {helperNamespace, typeChecker, errors}: CompilerState
+    {helperNamespace, typeChecker, errors}
 ) {
 
     const expNode = node.expression as PropertyAccessExpression;
@@ -63,7 +63,7 @@ function replace(
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
-function split(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
+function split(node: CallExpression, {emitExpressionList, writePunctuation}, state) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
     const isPreg = !isStringLike(pattern, state.typeChecker);
@@ -79,7 +79,7 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
-function match(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
+function match(node: CallExpression, {emitExpressionList, writePunctuation}, state) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
     let isRegularExpressionLiteral = pattern.kind === SyntaxKind.RegularExpressionLiteral;
@@ -125,7 +125,7 @@ const map = {
 
 export default {
 
-    emit(hint, node, state: CompilerState) {
+    emit(hint, node, state) {
 
         const expNode = node.expression;
         const helpers = state.helpers;
@@ -136,10 +136,16 @@ export default {
             && isPropertyAccessExpression(expNode)
             && isStringLike(expNode.expression, state.typeChecker)
         ) {
-            const func = map[helpers.getTextOfNode(expNode.name)];
+            const funcName = helpers.getTextOfNode(expNode.name);
+            const func = map[funcName];
             if (func) {
                 return func(node, helpers, state);
             }
+            state.errors.push(createDiagnostic(
+                node, state.sourceFile,
+                getUnSupportedMessage(`String.prototype.${funcName}`)
+            ));
+            return;
         }
 
         // String.prototype.length
@@ -162,6 +168,8 @@ export default {
             return;
         }
 
+
+        // str[0]
         if (
             hint === EmitHint.Expression
             && isElementAccessExpression(node)
