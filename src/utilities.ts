@@ -5,7 +5,7 @@
 
 import * as ts from 'byots';
 import {error} from './state';
-import {isClassInstance,isClassLike,isFunctionLike} from './utilities/nodeTest';
+import {isClassInstance, isClassLike, isFunctionLike} from './utilities/nodeTest';
 
 const indentStrings: string[] = ["", "    "];
 export function getIndentString(level: number) {
