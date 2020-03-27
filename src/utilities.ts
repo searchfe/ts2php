@@ -3,19 +3,6 @@
  * @author meixuguang
  */
 
-import {
-    computeLineStarts,
-    skipTrivia,
-    getLineAndCharacterOfPosition
-} from './scanner';
-
-import {
-    last,
-    noop,
-    map,
-    createMapFromTemplate
-} from './core';
-
 import * as ts from 'byots';
 import {error} from './state';
 import {isClassInstance,isClassLike,isFunctionLike} from './utilities/nodeTest';
@@ -34,7 +21,7 @@ export function getIndentSize() {
 
 export function showSymbol(symbol: ts.Symbol): string {
     const symbolFlags = ts.SymbolFlags;
-    return `{ flags: ${symbolFlags ? showFlags(symbol.flags, symbolFlags) : symbol.flags}; declarations: ${map(symbol.declarations, showSyntaxKind)} }`;
+    return `{ flags: ${symbolFlags ? showFlags(symbol.flags, symbolFlags) : symbol.flags}; declarations: ${ts.map(symbol.declarations, showSyntaxKind)} }`;
 }
 
 function showFlags(flags: number, flagsEnum: { [flag: number]: string }): string {
@@ -164,10 +151,10 @@ export function rangeEndIsOnSameLineAsRangeStart(range1: ts.TextRange, range2: t
     return positionsAreOnSameLine(range1.end, getStartPositionOfRange(range2, sourceFile), sourceFile);
 }
 export function getLineOfLocalPosition(currentSourceFile: ts.SourceFile, pos: number) {
-    return getLineAndCharacterOfPosition(currentSourceFile, pos).line;
+    return ts.getLineAndCharacterOfPosition(currentSourceFile, pos).line;
 }
 export function getStartPositionOfRange(range: ts.TextRange, sourceFile: ts.SourceFile) {
-    return positionIsSynthesized(range.pos) ? -1 : skipTrivia(sourceFile.text, range.pos);
+    return positionIsSynthesized(range.pos) ? -1 : ts.skipTrivia(sourceFile.text, range.pos);
 }
 
 export function isGeneratedIdentifier(node: ts.Node) {
@@ -298,7 +285,7 @@ function get16BitUnicodeEscapeSequence(charCode: number): string {
 const doubleQuoteEscapedCharsRegExp = /[\\\"\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
 const singleQuoteEscapedCharsRegExp = /[\\\'\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
 const backtickQuoteEscapedCharsRegExp = /[\\\`\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
-const escapedCharsMap = createMapFromTemplate({
+const escapedCharsMap = ts.createMapFromTemplate({
     "\t": "\\t",
     "\v": "\\v",
     "\f": "\\f",

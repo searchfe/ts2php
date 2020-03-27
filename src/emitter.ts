@@ -47,14 +47,6 @@ import {
     shouldUseReference
 } from './utilities/nodeTest';
 
-import {
-    some,
-    cast,
-    lastOrUndefined,
-    singleOrUndefined
-} from './core';
-
-import {tokenToString} from './scanner';
 import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
 
@@ -179,7 +171,7 @@ export function emitFile(
             }
         }
 
-        if (hint === ts.EmitHint.IdentifierName) return emitIdentifier(cast(node, isIdentifier));
+        if (hint === ts.EmitHint.IdentifierName) return emitIdentifier(ts.cast(node, isIdentifier));
         if (hint === ts.EmitHint.Unspecified) {
             switch (node.kind) {
                 // Pseudo-literals
@@ -2836,16 +2828,16 @@ export function emitFile(
     }
 
     function canEmitSimpleArrowHead(parentNode: ts.FunctionTypeNode | ts.ArrowFunction, parameters: ts.NodeArray<ts.ParameterDeclaration>) {
-        const parameter = singleOrUndefined(parameters);
+        const parameter = ts.singleOrUndefined(parameters);
         return parameter
             && parameter.pos === parentNode.pos // may not have parsed tokens between parent and parameter
             && ts.isArrowFunction(parentNode)      // only arrow functions may have simple arrow head
             && !parentNode.type                 // arrow function may not have return type annotation
-            && !some(parentNode.decorators)     // parent may not have decorators
-            && !some(parentNode.modifiers)      // parent may not have modifiers
-            && !some(parentNode.typeParameters) // parent may not have type parameters
-            && !some(parameter.decorators)      // parameter may not have decorators
-            && !some(parameter.modifiers)       // parameter may not have modifiers
+            && !ts.some(parentNode.decorators)     // parent may not have decorators
+            && !ts.some(parentNode.modifiers)      // parent may not have modifiers
+            && !ts.some(parentNode.typeParameters) // parent may not have type parameters
+            && !ts.some(parameter.decorators)      // parameter may not have decorators
+            && !ts.some(parameter.modifiers)       // parameter may not have modifiers
             && !parameter.dotDotDotToken        // parameter may not be rest
             && !parameter.questionToken         // parameter may not be optional
             && !parameter.type                  // parameter may not have a type annotation
@@ -3162,13 +3154,13 @@ export function emitFile(
             writer('parent');
             return;
         }
-        writer(tokenToString(node.kind)!);
+        writer(ts.tokenToString(node.kind)!);
     }
 
     function writeTokenText(token: SyntaxKind, writer: (s: string) => void): void;
     function writeTokenText(token: SyntaxKind, writer: (s: string) => void, pos: number): number;
     function writeTokenText(token: SyntaxKind, writer: (s: string) => void, pos?: number): number {
-        const tokenString = tokenToString(token)!;
+        const tokenString = ts.tokenToString(token)!;
         writer(tokenString);
         return pos! < 0 ? pos! : pos! + tokenString.length;
     }
@@ -3273,7 +3265,7 @@ export function emitFile(
                 return true;
             }
 
-            const lastChild = lastOrUndefined(children);
+            const lastChild = ts.lastOrUndefined(children);
             if (lastChild === undefined) {
                 return !rangeIsOnSingleLine(parentNode, currentSourceFile);
             }

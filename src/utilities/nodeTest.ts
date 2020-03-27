@@ -238,5 +238,5 @@ export function isRegExp(node: ts.Node, typeChecker: ts.TypeChecker) {
         return true;
     }
     const nodeType = typeChecker.getTypeAtLocation(node);
-    return nodeType.symbol.getEscapedName() === 'RegExp';
+    return nodeType.symbol && nodeType.symbol.getEscapedName() === 'RegExp';
 }
