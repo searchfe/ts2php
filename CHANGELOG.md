@@ -1,3 +1,10 @@
+## [0.23.5](https://github.com/searchfe/ts2php/compare/v0.23.4...v0.23.5) (2020-03-27)
+
+
+### Bug Fixes
+
+* nothing ([fd244dd](https://github.com/searchfe/ts2php/commit/fd244dd2932cbc68e56cbfbddf97b36a86fa737d))
+
 ## [0.23.4](https://github.com/searchfe/ts2php/compare/v0.23.3...v0.23.4) (2020-03-27)
 
 
