@@ -47,7 +47,6 @@ import {
     shouldUseReference
 } from './utilities/nodeTest';
 
-import {getStartsOnNewLine} from './factory';
 import {CompilerState} from './types';
 
 let currentSourceFile: SourceFile;
@@ -3252,7 +3251,7 @@ export function emitFile(
             }
         }
         else {
-            return getStartsOnNewLine(nextNode);
+            return ts.getStartsOnNewLine(nextNode);
         }
     }
 
@@ -3283,7 +3282,7 @@ export function emitFile(
 
     function synthesizedNodeStartsOnNewLine(node: Node, format: ts.ListFormat) {
         if (nodeIsSynthesized(node)) {
-            const startsOnNewLine = getStartsOnNewLine(node);
+            const startsOnNewLine = ts.getStartsOnNewLine(node);
             if (startsOnNewLine === undefined) {
                 return (format & ts.ListFormat.PreferNewLine) !== 0;
             }
