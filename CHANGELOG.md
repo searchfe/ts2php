@@ -1,3 +1,10 @@
+## [0.23.3](https://github.com/searchfe/ts2php/compare/v0.23.2...v0.23.3) (2020-03-27)
+
+
+### Bug Fixes
+
+* cannot read property "getEscapedName" of undefined ([71b3aab](https://github.com/searchfe/ts2php/commit/71b3aab9ac12fe4dc0569b12e02f752849c40758))
+
 ## [0.23.2](https://github.com/searchfe/ts2php/compare/v0.23.1...v0.23.2) (2020-03-27)
 
 
