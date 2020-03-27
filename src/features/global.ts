@@ -92,7 +92,6 @@ export default {
                     node, state.sourceFile,
                     getUnSupportedMessage(expNode.escapedText)
                 ));
-                return false;
             }
         }
 
@@ -101,7 +100,6 @@ export default {
                 node, state.sourceFile,
                 getUnSupportedMessage(`new ${expNode.escapedText}`)
             ));
-            return false;
         }
 
         if (

@@ -34,7 +34,7 @@ import {createDiagnostic, getUnSupportedMessage} from '../utilities/error';
 function replace(
     node: CallExpression,
     {getLiteralTextOfNode, emitExpressionList, writePunctuation},
-    {helperNamespace, typeChecker, errors}
+    {helperNamespace, typeChecker, errors, sourceFile}
 ) {
 
     const expNode = node.expression as PropertyAccessExpression;
@@ -43,10 +43,10 @@ function replace(
     let method = '%helper::str_replace_once';
 
     if (isFunctionLike(node.arguments[1], typeChecker)) {
-        errors.push({
-            code: 1,
-            msg: 'Function as second param is not supported yet in String.prototype.replace.'
-        });
+        errors.push(createDiagnostic(
+            node, sourceFile,
+            'Function as second param is not supported yet in String.prototype.replace.'
+        ));
         return;
     }
 
@@ -92,7 +92,7 @@ function match(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     }
     else {
         // mark all match
-        let isAll = pattern.getText().split('/')[2].indexOf('g') != -1;
+        let isAll = pattern.getText(state.sourceFile).split('/')[2].indexOf('g') != -1;
         if (isAll) {
             nodeList.push(createFalse());
             nodeList.push(createTrue());

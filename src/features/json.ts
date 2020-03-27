@@ -62,7 +62,6 @@ export default {
                 node, state.sourceFile,
                 `JSON.${helpers.getTextOfNode(expNode.name)} only support 1 argument.`
             ));
-            return;
         }
 
         return false;

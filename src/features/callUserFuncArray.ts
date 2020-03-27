@@ -50,7 +50,7 @@ function getNameAndMethod(node: ts.StringLiteral) {
     const funcName = node.text;
     let [name, method] = funcName.split('.');
     if (!method) {
-        [,name = undefined, method = undefined] = funcName.match(/(.*)\[['"](.*)['"]\]/) || [];
+        [, name = undefined, method = undefined] = funcName.match(/(.*)\[['"](.*)['"]\]/) || [];
     }
     return {
         name,

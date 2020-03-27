@@ -49,7 +49,6 @@ export default {
                     messageText
                 )
             );
-            return;
         }
 
         return false;

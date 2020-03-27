@@ -87,7 +87,6 @@ export default {
                 node, state.sourceFile,
                 getUnSupportedMessage(`Math.${funcName}`)
             ));
-            return;
         }
 
         return false;

@@ -86,3 +86,5 @@ phpunit
 
 
 .phpunit.*
+
+test.ts

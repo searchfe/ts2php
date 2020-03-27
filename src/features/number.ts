@@ -41,7 +41,6 @@ export default {
             && isCallExpression(node)
             && isPropertyAccessExpression(expNode)
         ) {
-
             if (
                 isIdentifier(expNode.expression)
                 && expNode.expression.escapedText === 'Number'

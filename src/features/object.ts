@@ -16,6 +16,7 @@ import {
 
 import method from '../utilities/method';
 import {isClassInstance} from '../utilities/nodeTest';
+import {createDiagnostic, getUnSupportedMessage} from '../utilities/error';
 
 const staticMap = {
     assign: method('array_merge', {self: false}),
@@ -45,7 +46,7 @@ function emitPropertyExists(objNode, propNode, typeChecker, emitExpression) {
 
 export default {
 
-    emit(hint, node, {helpers, typeChecker, helperNamespace}) {
+    emit(hint, node, {helpers, typeChecker, helperNamespace, errors, sourceFile}) {
 
         const expNode = node.expression;
         let func;
@@ -56,9 +57,21 @@ export default {
             && isPropertyAccessExpression(expNode)
             && isIdentifier(expNode.expression)
             && expNode.expression.escapedText === 'Object'
-            && (func = staticMap[helpers.getTextOfNode(expNode.name)])
         ) {
-            return func(node, helpers, {helperNamespace});
+            const name = helpers.getTextOfNode(expNode.name);
+            func = staticMap[name];
+            if (func) {
+                return func(node, helpers, {helperNamespace});
+            }
+            errors.push(createDiagnostic(node, sourceFile, getUnSupportedMessage(`Object.${name}`)));
+        }
+
+        if (
+            isPropertyAccessExpression(node)
+            && isIdentifier(node.name)
+            && node.name.getText(sourceFile) === 'prototype'
+        ) {
+            errors.push(createDiagnostic(node, sourceFile, 'Xxx.prototype is not supported.'));
         }
 
         if (
