@@ -22,6 +22,8 @@ import ts, {
     DiagnosticWithLocation
 } from 'byots';
 
+import diagnosticFormatter from 'ts-diagnostic-formatter';
+
 import {upperFirst} from 'lodash';
 import {satisfies} from 'semver';
 
@@ -71,6 +73,11 @@ const defaultCompilerOptions = {
 interface cacheFileInfo {
     sourceFile?: SourceFile;
     contents: string;
+}
+
+function printError(e) {
+    console.log(e.file + ':');
+    console.error(e.message);
 }
 
 export class Ts2Php {
@@ -164,19 +171,8 @@ export class Ts2Php {
         if (finalOptions.showDiagnostics) {
             diagnostics = diagnostics.filter(a => a.code !== 2307);
             if (diagnostics.length) {
-                diagnostics.forEach(diagnostic => {
-                    if (diagnostic.file) {
-                        let {
-                            line,
-                            character
-                        } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
-                        let message = flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-                        console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-                    }
-                    else {
-                        console.log(flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
-                    }
-                });
+                // @ts-ignore
+                diagnosticFormatter(diagnostics, 'codeframe').forEach(printError);
                 return {
                     phpCode: '',
                     errors: diagnostics
@@ -224,14 +220,8 @@ export class Ts2Php {
 
         const customDiags = state.errors.filter(node => isDiagnosticWithLocation(node as DiagnosticWithLocation));
         if (finalOptions.showDiagnostics && customDiags.length > 0) {
-            (customDiags as DiagnosticWithLocation[]).forEach(diagnostic => {
-                let {
-                    line,
-                    character
-                } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
-                let message = flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-                console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-            });
+            // @ts-ignore
+            diagnosticFormatter(customDiags, 'codeframe').forEach(printError);
         }
 
         return {
