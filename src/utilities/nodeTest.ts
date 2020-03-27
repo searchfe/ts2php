@@ -181,7 +181,7 @@ export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
         return false;
     }
     return (nodeType.isClass() && !(nodeSymbol.getFlags() & ts.SymbolFlags.Class))
-        || ((nodeType as ts.ObjectType).objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.getEscapedName() === 'Date';
+        || ((nodeType as ts.ObjectType).objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol && nodeType.symbol.getEscapedName() === 'Date';
 }
 
 // 通过最近的父类来确定是用对象（->）还是数组（[]）
