@@ -1,3 +1,10 @@
+## [0.23.2](https://github.com/searchfe/ts2php/compare/v0.23.1...v0.23.2) (2020-03-27)
+
+
+### Bug Fixes
+
+* format diagnostic error ([d1ea0ee](https://github.com/searchfe/ts2php/commit/d1ea0eeef2e0ac020372348b6c7039e7fdd4db2e))
+
 ## [0.23.1](https://github.com/searchfe/ts2php/compare/v0.23.0...v0.23.1) (2020-03-26)
 
 
