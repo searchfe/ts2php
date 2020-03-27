@@ -1,3 +1,10 @@
+## [0.23.6](https://github.com/searchfe/ts2php/compare/v0.23.5...v0.23.6) (2020-03-27)
+
+
+### Bug Fixes
+
+* support date api warning ([2c6ac95](https://github.com/searchfe/ts2php/commit/2c6ac95e636c0e5963ebc06449de0836350521ba))
+
 ## [0.23.5](https://github.com/searchfe/ts2php/compare/v0.23.4...v0.23.5) (2020-03-27)
 
 
