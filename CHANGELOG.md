@@ -1,3 +1,10 @@
+## [0.23.4](https://github.com/searchfe/ts2php/compare/v0.23.3...v0.23.4) (2020-03-27)
+
+
+### Bug Fixes
+
+* remove factory.ts ([8c786fa](https://github.com/searchfe/ts2php/commit/8c786fa3ab32c6ee83c59b6dd067cd895e8fb195))
+
 ## [0.23.3](https://github.com/searchfe/ts2php/compare/v0.23.2...v0.23.3) (2020-03-27)
 
 
