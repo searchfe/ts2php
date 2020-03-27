@@ -30,11 +30,6 @@ export interface ModuleInfo {
     required?: boolean;
 }
 
-export interface ErrorInfo {
-    code: number;
-    msg: string;
-}
-
 export interface Ts2phpConstructOptions {
     /**
      * TypeScript 编译配置
@@ -136,13 +131,13 @@ export function compile(filePath: string, options?: Ts2phpOptions): {
     phpCode: string;
 
     /** 错误信息数组 */
-    errors: (ErrorInfo | ts.DiagnosticWithLocation)[]
+    errors: ts.DiagnosticWithLocation[]
 };
 
 export class Ts2Php {
     constructor(options?: Ts2phpConstructOptions)
     compile(filePath: string, options?: Ts2phpCompileOptions): {
         phpCode: string;
-        errors: (ErrorInfo | ts.DiagnosticWithLocation)[];
+        errors: ts.DiagnosticWithLocation[];
     };
 }

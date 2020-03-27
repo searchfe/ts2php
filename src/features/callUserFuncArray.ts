@@ -4,7 +4,7 @@ import {map as MATH_MAP} from './math';
 import {formatMethodName} from '../utilities/method';
 
 export default {
-    emit(hint: ts.EmitHint, node: ts.Node, {helpers, helperNamespace, errors}: CompilerState) {
+    emit(hint: ts.EmitHint, node: ts.Node, {helpers, helperNamespace, errors, sourceFile}: CompilerState) {
         if (
             ts.isCallExpression(node)
             && ts.isIdentifier(node.expression)
@@ -30,10 +30,12 @@ export default {
                     return true;
                 }
 
-                errors.push({
-                    code: 1,
-                    msg: `Spread expression in ${res.name}.${res.method} is not supported yet!`
-                });
+                errors.push(ts.createDiagnosticForNodeInSourceFile(sourceFile, node, {
+                    category: ts.DiagnosticCategory.Error,
+                    message: `Spread expression in ${res.name}.${res.method} is not supported yet!`,
+                    code: 5555,
+                    key: 'ts2php'
+                }));
             }
         }
 

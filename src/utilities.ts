@@ -89,10 +89,12 @@ export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFi
             return node.text;
     }
 
-    error({
-        code: 1,
-        msg: `Literal kind '${node.kind}' not accounted for.`
-    });
+    error(ts.createDiagnosticForNodeInSourceFile(sourceFile, node, {
+        category: ts.DiagnosticCategory.Error,
+        message: `Literal kind '${node.kind}' not accounted for.`,
+        code: 5555,
+        key: 'ts2php'
+    }));
 
     return '';
 }

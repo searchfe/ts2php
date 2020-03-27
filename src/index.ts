@@ -218,10 +218,9 @@ export class Ts2Php {
 
         const code = emitter.emitFile(sourceFile, state, emitResolver, transformers);
 
-        const customDiags = state.errors.filter(node => isDiagnosticWithLocation(node as DiagnosticWithLocation));
-        if (finalOptions.showDiagnostics && customDiags.length > 0) {
+        if (finalOptions.showDiagnostics && state.errors.length > 0) {
             // @ts-ignore
-            diagnosticFormatter(customDiags, 'codeframe').forEach(printError);
+            diagnosticFormatter(state.errors, 'codeframe').forEach(printError);
         }
 
         return {

@@ -1375,10 +1375,12 @@ export function emitFile(
         // emitExpression(node.expression);
 
         // if (node.parent && node.parent.kind === ts.SyntaxKind.CallExpression) {
-        state.errors.push({
-            code: 1,
-            msg: 'Spread expression is not supported yet!'
-        });
+        state.errors.push(ts.createDiagnosticForNodeInSourceFile(sourceFile, node, {
+            category: ts.DiagnosticCategory.Error,
+            message: 'Spread expression is not supported yet!',
+            code: 5555,
+            key: 'ts2php'
+        }));
         // }
     }
 
@@ -1798,10 +1800,12 @@ export function emitFile(
                         line,
                         character
                     } = state.sourceFile.getLineAndCharacterOfPosition(node.getStart(state.sourceFile));
-                    state.errors.push({
-                        code: 1,
-                        msg: `Function declaration can not use outside variables, use anonymous function instead. At pos: ${line + 1}, ${character}.`
-                    });
+                    state.errors.push(ts.createDiagnosticForNodeInSourceFile(sourceFile, node, {
+                        category: ts.DiagnosticCategory.Error,
+                        message: `Function declaration can not use outside variables, use anonymous function instead.`,
+                        code: 5555,
+                        key: 'ts2php'
+                    }));
                     return;
                 }
 

@@ -3,14 +3,15 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
-import {ErrorInfo} from '../types/index';
+import {DiagnosticWithLocation} from 'byots';
+import {CompilerState} from './types';
 
-let globalState;
+let globalState: CompilerState;
 
 export function setState(state) {
     globalState = state;
 }
 
-export function error(error: ErrorInfo) {
+export function error(error: DiagnosticWithLocation) {
     globalState.errors.push(error);
 }
