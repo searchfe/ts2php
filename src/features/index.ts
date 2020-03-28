@@ -15,6 +15,7 @@ import DatePlugin from './date';
 import ErrorPlugin from './error';
 import CallUserFuncArrayPlugin from './callUserFuncArray';
 import RegExpPlugin from './regexp';
+import AnyPlugin from './any';
 
 export default [
     StringPligin,
@@ -28,5 +29,6 @@ export default [
     DatePlugin,
     ErrorPlugin,
     CallUserFuncArrayPlugin,
-    RegExpPlugin
+    RegExpPlugin,
+    AnyPlugin
 ];
