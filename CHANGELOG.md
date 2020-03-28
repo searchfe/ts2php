@@ -1,3 +1,10 @@
+# [0.24.0](https://github.com/searchfe/ts2php/compare/v0.23.6...v0.24.0) (2020-03-28)
+
+
+### Features
+
+* prevent any type calling ([c3518ca](https://github.com/searchfe/ts2php/commit/c3518ca7e61139d2e61ff138e47dcc6864e6013e))
+
 ## [0.23.6](https://github.com/searchfe/ts2php/compare/v0.23.5...v0.23.6) (2020-03-27)
 
 
