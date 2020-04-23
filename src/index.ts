@@ -64,6 +64,7 @@ const getRandomString = n => Array(n)
 const defaultCompilerOptions = {
     target: ScriptTarget.ES2016,
     module: ModuleKind.CommonJS,
+    skipLibCheck: true,
     scrict: true,
     noImplicitThis: true,
     noImplicitAny: true,
