@@ -28,7 +28,7 @@ function processTestGroup(group: Group) {
     describe(group.name, () => {
         group.tests.forEach(testItem => {
             it(testItem.name, function () {
-                this.timeout(5000);
+                this.timeout(10000);
                 const phpContent = testItem.values.get('php')[0];
                 const tsContent = testItem.values.get('ts')[0];
 

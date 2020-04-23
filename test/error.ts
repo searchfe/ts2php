@@ -11,10 +11,9 @@ const ts2php = new Ts2Php();
 
 describe('custom error', function () {
 
-    this.timeout(5000);
+    this.timeout(15000);
 
     it('regexp methods', function () {
-        this.timeout(10000);
         const result1 = ts2php.compile(__filename, {
             source: 'const a = /$xx/.test("xx");'
         });

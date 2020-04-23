@@ -148,6 +148,9 @@ export function transform(context: ts.TransformationContext) {
             case ts.SyntaxKind.ArrayLiteralExpression:
                 return visitArrayLiteralExpression(<ts.ArrayLiteralExpression>node);
 
+            case ts.SyntaxKind.ExpressionStatement:
+                return visitExpressionStatement(<ts.ExpressionStatement>node);
+
             case ts.SyntaxKind.ClassDeclaration:
                 return visitClassDeclaration(<ts.ClassDeclaration>node);
 
@@ -155,6 +158,64 @@ export function transform(context: ts.TransformationContext) {
                 return node;
         }
 
+    }
+
+    function visitExpressionStatement(node: ts.ExpressionStatement) {
+        if (
+            !ts.isBinaryExpression(node.expression)
+            || node.expression.operatorToken.kind !== ts.SyntaxKind.EqualsToken
+            || !ts.isArrayLiteralExpression(node.expression.left)
+        ) {
+            return node;
+        }
+
+        const initializer = node.expression.right;
+
+        const arrayLiteral: ts.ArrayLiteralExpression = node.expression.left;
+        const declarations = arrayLiteral.elements.reduce((prev, e, index) => {
+
+            if (!ts.isIdentifier(e) && !ts.isBinaryExpression(e)) {
+                return prev;
+            }
+
+            const access = ts.createElementAccess(initializer, index);
+            ts.setTextRange(access, initializer);
+
+            let variable: ts.VariableDeclaration;
+
+            if (ts.isIdentifier(e)) {
+                variable = ts.createVariableDeclaration(e.getText(), undefined, access);
+            }
+            else {
+                const variableName = (<ts.BinaryExpression>e).left.getText();
+                variable = ts.createVariableDeclaration(
+                    variableName,
+                    undefined,
+                    ts.createConditional(
+                        ts.createCall(ts.createIdentifier('isset'), [], [access]),
+                        access,
+                        (<ts.BinaryExpression>e).right
+                    )
+                );
+            }
+
+            variable.initializer.parent = variable;
+            variable.name.parent = variable;
+
+            ts.setTextRange(variable, e);
+            prev.push(variable);
+
+            return prev;
+
+        }, [] as ts.VariableDeclaration[]);
+
+        const list = ts.createVariableDeclarationList(declarations, ts.NodeFlags.Let);
+        const statement = ts.createVariableStatement(undefined, list);
+        statement.declarationList.parent = statement;
+
+        ts.setTextRange(list, node.expression);
+
+        return statement;
     }
 
     function transformSpread(

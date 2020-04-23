@@ -13,9 +13,11 @@ let c = [
     b
 ];
 
-const [, e, f] = a;
+let [, e, f] = a;
 
 const g = [...a, 'a', 'b', ...c, 1];
+
+[, e, f = 1] = a;
 ```
 
 ```php
@@ -33,4 +35,5 @@ $g = array_merge(array(), $a, array(
 ), $c, array(
     1
 ));
+$e = $a[1]; $f = isset($a[2]) ? $a[2] : 1;
 ```
