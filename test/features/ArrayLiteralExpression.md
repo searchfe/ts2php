@@ -35,5 +35,5 @@ $g = array_merge(array(), $a, array(
 ), $c, array(
     1
 ));
-$e = $a[1]; $f = isset($a[2]) ? $a[2] : 1;
+$destruct_temp_1 = &$a; $e = $destruct_temp_1[1]; $f = isset($destruct_temp_1[2]) ? $destruct_temp_1[2] : 1;
 ```

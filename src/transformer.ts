@@ -11,6 +11,8 @@ export function transform(context: ts.TransformationContext) {
         startLexicalEnvironment
     } = context;
 
+    let destruct_temp_id = 0;
+
     const resolver = context.getEmitResolver();
 
     // Set new transformation hooks.
@@ -169,7 +171,14 @@ export function transform(context: ts.TransformationContext) {
             return node;
         }
 
-        const initializer = node.expression.right;
+        const initializerName = 'destruct_temp_' + (++destruct_temp_id);
+        const temp = ts.createVariableDeclaration(
+            initializerName, undefined,
+            // @ts-ignore
+            visitTypeScript(<ts.Node>node.expression.right)
+        );
+        temp.name.parent = temp;
+        ts.setTextRange(temp, node.expression.right);
 
         const arrayLiteral: ts.ArrayLiteralExpression = node.expression.left;
         const declarations = arrayLiteral.elements.reduce((prev, e, index) => {
@@ -178,8 +187,11 @@ export function transform(context: ts.TransformationContext) {
                 return prev;
             }
 
+            const initializer = ts.createIdentifier(initializerName);
+
             const access = ts.createElementAccess(initializer, index);
             ts.setTextRange(access, initializer);
+            access.expression.parent = access;
 
             let variable: ts.VariableDeclaration;
 
@@ -188,14 +200,23 @@ export function transform(context: ts.TransformationContext) {
             }
             else {
                 const variableName = (<ts.BinaryExpression>e).left.getText();
+                const call = ts.createCall(ts.createIdentifier('isset'), [], [access]);
+                call.expression.parent = call;
+                call.arguments.forEach(a => {
+                    a.parent = call;
+                });
+                const conditional = ts.createConditional(
+                    call,
+                    access,
+                    (<ts.BinaryExpression>e).right
+                );
+                conditional.forEachChild(e => {
+                    e.parent = conditional;
+                });
                 variable = ts.createVariableDeclaration(
                     variableName,
                     undefined,
-                    ts.createConditional(
-                        ts.createCall(ts.createIdentifier('isset'), [], [access]),
-                        access,
-                        (<ts.BinaryExpression>e).right
-                    )
+                    conditional
                 );
             }
 
@@ -207,7 +228,7 @@ export function transform(context: ts.TransformationContext) {
 
             return prev;
 
-        }, [] as ts.VariableDeclaration[]);
+        }, [temp] as ts.VariableDeclaration[]);
 
         const list = ts.createVariableDeclarationList(declarations, ts.NodeFlags.Let);
         const statement = ts.createVariableStatement(undefined, list);
