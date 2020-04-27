@@ -85,7 +85,7 @@ ts2php-check <pattern> <old-version> <new-version> [destination]
 
 - [`for`/`for of`/`for in`](./test/features/ForStatement.md)
 - [`if`/`else if`/`else`](./test/features/IfStatement.md)
-- [`swtich`](./test/features/SwitchStatement.md)
+- [`switch`](./test/features/SwitchStatement.md)
 - [`while`/`do while`](./test/features/WhileStatement.md)
 - [`Class`](./test/features/Class.md)
 - [`typeof`](./test/features/GlobalApi.md)
