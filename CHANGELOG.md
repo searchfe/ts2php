@@ -1,3 +1,10 @@
+## [0.25.2](https://github.com/searchfe/ts2php/compare/v0.25.1...v0.25.2) (2020-06-04)
+
+
+### Bug Fixes
+
+* trans undefined to null, close [#116](https://github.com/searchfe/ts2php/issues/116) ([0afb140](https://github.com/searchfe/ts2php/commit/0afb1409f8f009cc1b572048c67760828908f272))
+
 ## [0.25.1](https://github.com/searchfe/ts2php/compare/v0.25.0...v0.25.1) (2020-04-26)
 
 
