@@ -4,7 +4,7 @@ FunctionDeclaration
 ## FunctionDeclaration
 
 ```ts
-function aaa(a: string, b: string, c: string) {
+function aaa(a: string, b: string, c: string = undefined) {
     const d = 123;
     const e = b + 123;
     return `1${a}2${e}3${c}4${d}`;
@@ -42,7 +42,7 @@ if (b) {
 ```
 
 ```php
-function aaa($a, $b, $c) {
+function aaa($a, $b, $c = null) {
     $d = 123;
     $e = $b . 123;
     return "1" . $a . "2" . $e . "3" . $c . "4" . $d;

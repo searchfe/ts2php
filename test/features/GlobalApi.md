@@ -23,9 +23,9 @@ $b = floatval("1.2");
 
 ## typeof
 
-> 由于 php 中没有 `undefined` 关键字，故不支持返回 `undefined`
+> 由于 php 中没有 `undefined` 关键字，故不支持返回 `undefined`，如果你写了，会被转成 `null`
 
-> There is no `undefined` in PHP
+> There is no `undefined` in PHP. It will be transformed to `null` if you use it.
 
 ```ts
 const a = parseInt('1.2');

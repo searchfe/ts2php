@@ -3332,6 +3332,10 @@ export function emitFile(
 
             const text = idText(<ts.Identifier>node);
 
+            if (text === 'undefined') {
+                return 'null';
+            }
+
             // 需要加 $
             if (shouldAddDollar(node, state)) {
                 return '$' + text;
