@@ -1,3 +1,10 @@
+## [0.25.3](https://github.com/searchfe/ts2php/compare/v0.25.2...v0.25.3) (2020-06-04)
+
+
+### Bug Fixes
+
+* add default initializer for unrequired parameter, close [#115](https://github.com/searchfe/ts2php/issues/115) ([9050165](https://github.com/searchfe/ts2php/commit/9050165a185a5a610e1ff87a830f4ae6a4497d83))
+
 ## [0.25.2](https://github.com/searchfe/ts2php/compare/v0.25.1...v0.25.2) (2020-06-04)
 
 
