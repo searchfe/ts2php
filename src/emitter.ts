@@ -742,6 +742,9 @@ export function emitFile(
         else {
             emitTypeAnnotation(node.type);
         }
+        if (node.questionToken && !node.initializer) {
+            node.initializer = ts.createIdentifier('null');
+        }
         // The comment position has to fallback to any present node within the parameterdeclaration because as it turns out, the parser can make parameter declarations with _just_ an initializer.
         emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name ? node.name.end : node.modifiers ? node.modifiers.end : node.decorators ? node.decorators.end : node.pos, node);
     }

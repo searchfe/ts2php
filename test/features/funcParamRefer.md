@@ -25,7 +25,7 @@ $b = array(
     "a" => 1
 );
 $c = "123";
-function aaa($m, $n, $k, $d) {
+function aaa($m, $n, $k, $d = null) {
     array_push($m, 4);
     $n["b"] = 2;
     $k .= "4";
