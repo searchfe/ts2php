@@ -23,6 +23,11 @@ export interface ModuleInfo {
     namespace?: string | false;
 
     /**
+     * 是否已经 use 过
+     */
+    used?: boolean;
+
+    /**
      * 是否已经被引入，如果是 true，不会输出 require_once
      *
      * @default false
