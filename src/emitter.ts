@@ -2187,6 +2187,9 @@ export function emitFile(
             const moduleName = getImportModuleName(importNode);
             node.forEachChild((element: ts.ImportSpecifier) => {
                 if (isClassLike(element.name, typeChecker)) {
+                    if (state.modules[moduleName] && state.modules[moduleName].used) {
+                        return;
+                    }
                     writePunctuation("use");
                     writeSpace();
                     const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
