@@ -1,3 +1,10 @@
+# [0.26.0](https://github.com/searchfe/ts2php/compare/v0.25.3...v0.26.0) (2020-06-19)
+
+
+### Features
+
+* support not emitting `use` ([b9831ff](https://github.com/searchfe/ts2php/commit/b9831ffe33a856ac189601c0398795275863b7be))
+
 ## [0.25.3](https://github.com/searchfe/ts2php/compare/v0.25.2...v0.25.3) (2020-06-04)
 
 
