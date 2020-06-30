@@ -1,3 +1,10 @@
+## [0.26.1](https://github.com/searchfe/ts2php/compare/v0.26.0...v0.26.1) (2020-06-30)
+
+
+### Bug Fixes
+
+* keep extension name in import specifier ([30cdc2d](https://github.com/searchfe/ts2php/commit/30cdc2d99a3de11770ab461e509b278e18be8447))
+
 # [0.26.0](https://github.com/searchfe/ts2php/compare/v0.25.3...v0.26.0) (2020-06-19)
 
 
