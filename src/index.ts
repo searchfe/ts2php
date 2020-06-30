@@ -42,8 +42,7 @@ const defaultOptions = {
             return JSON.stringify(moduleIt.path);
         }
         const isRelative = /^\./.test(name);
-        const ext = path.extname(name);
-        const outPath = ext ? (name.replace(new RegExp(ext + '$'), '') + '.php') : (isRelative ? (name + '.php') : name);
+        const outPath = isRelative ? (name + '.php') : name;
         const pathCode = JSON.stringify(outPath);
         return isRelative ? `dirname(__FILE__) . '/' . ${pathCode}` : pathCode;
     },
