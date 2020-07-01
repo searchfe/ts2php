@@ -2061,7 +2061,11 @@ export function emitFile(
 
         const isType = node => {
             const typeNode = node.symbol ? typeChecker.getDeclaredTypeOfSymbol(node.symbol) : null;
-            if (!typeNode || typeNode.aliasSymbol) {
+            if (!typeNode) {
+                validImportMember = true;
+                return
+            }
+            if (typeNode.aliasSymbol) {
                 return;
             }
             const symbolFlags = typeNode.symbol ? typeNode.symbol.getFlags() : true;

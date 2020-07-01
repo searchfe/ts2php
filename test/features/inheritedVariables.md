@@ -82,6 +82,7 @@ function noError() {
 ```php
 require_once(dirname(__FILE__) . '/' . "./helper/Class.php");
 use \someModule\Article as Art;
+require_once(dirname(__FILE__) . '/' . "./helper/export.php");
 $a = array(
     "b" => "123456"
 );
