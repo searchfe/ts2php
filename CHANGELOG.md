@@ -1,3 +1,10 @@
+## [0.26.2](https://github.com/searchfe/ts2php/compare/v0.26.1...v0.26.2) (2020-07-01)
+
+
+### Bug Fixes
+
+* emit require_once when target not typed ([7ff8e80](https://github.com/searchfe/ts2php/commit/7ff8e805d9174d01ed854536f7385fc1aebad311))
+
 ## [0.26.1](https://github.com/searchfe/ts2php/compare/v0.26.0...v0.26.1) (2020-06-30)
 
 
