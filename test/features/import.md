@@ -7,6 +7,7 @@ import
 import {Other_Utils as Util} from './helper/some-utils';
 import {Some_Utils, func as func1} from './helper/some-utils';
 import {foo} from './helper/foo.bar'
+import Bar from './helper/bar'
 
 import {SomeType, SomeAlias} from './helper/some-types';
 
@@ -44,6 +45,7 @@ require_once(dirname(__FILE__) . '/' . "./helper/some-utils.php");
 use \someModule\Other_Utils as Util;
 use \someModule\Some_Utils;
 require_once(dirname(__FILE__) . '/' . "./helper/foo.bar.php");
+require_once(dirname(__FILE__) . '/' . "./helper/bar.php");
 \someModule\foo();
 $tplData = array();
 $tplData["src"] = Some_Utils::makeTcLink("url");
