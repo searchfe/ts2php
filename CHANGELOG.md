@@ -1,3 +1,10 @@
+# [0.27.0](https://github.com/searchfe/ts2php/compare/v0.26.2...v0.27.0) (2020-07-17)
+
+
+### Features
+
+* array_filter 需要使用 array_value 来包裹 ([17983e8](https://github.com/searchfe/ts2php/commit/17983e84aef52ddd4d342df666bd9307a8367ad3))
+
 ## [0.26.2](https://github.com/searchfe/ts2php/compare/v0.26.1...v0.26.2) (2020-07-01)
 
 
