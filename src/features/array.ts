@@ -84,7 +84,7 @@ function splice(node: CallExpression, {emitExpressionList, writePunctuation}, {h
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
-
+const filterMethod = method('array_filter', {end: 1});
 const map = {
     push: method('array_push'),
     pop: method('array_pop', {end: 0}),
@@ -105,7 +105,11 @@ const map = {
         end: 1,
         selfLast: true
     }),
-    filter: method('array_filter', {end: 1}),
+    filter(node: CallExpression, {emitExpressionList, writePunctuation}, {helperNamespace}) {
+        writePunctuation('array_values(');
+        filterMethod(node, {emitExpressionList, writePunctuation}, {helperNamespace});
+        writePunctuation(')');
+    },
     slice: method('%helper::arraySlice', {end:2}),
     find: method('%helper::array_find', {
         self: false,

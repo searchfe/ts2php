@@ -92,9 +92,9 @@ array_map($fn2, $b);
 $e = array_walk($b, function ($value, $index) {
     $a = $value;
 });
-$g = array_filter($b, function ($value, $index) {
+$g = array_values(array_filter($b, function ($value, $index) {
     return $value;
-});
+}));
 $w = \Ts2Php_Helper::array_every($b, function ($value, $index) {
     return !!$value;
 });
