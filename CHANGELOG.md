@@ -1,3 +1,10 @@
+# [0.28.0](https://github.com/searchfe/ts2php/compare/v0.27.0...v0.28.0) (2020-07-21)
+
+
+### Features
+
+* support import module/path ([ea2b6c1](https://github.com/searchfe/ts2php/commit/ea2b6c1722ea9501a7c158e5579d58e584580959))
+
 # [0.27.0](https://github.com/searchfe/ts2php/compare/v0.26.2...v0.27.0) (2020-07-17)
 
 
