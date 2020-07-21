@@ -48,6 +48,7 @@ import {
 } from './utilities/nodeTest';
 
 import {CompilerState} from './types';
+import { isRelativePath } from './utilities/index';
 
 let currentSourceFile: SourceFile;
 
@@ -2054,7 +2055,10 @@ export function emitFile(
         // emitTokenWithComment(SyntaxKind.ImportKeyword, node.modifiers ? node.modifiers.end : node.pos, writeKeyword, node);
         // writeSpace();
 
-        const moduleName = getImportModuleName(node);
+        const {
+            moduleName,
+            modulePath
+        } = getImportModuleName(node);
         const moduleIt = state.modules[moduleName];
 
         let validImportMember = false;
@@ -2063,7 +2067,7 @@ export function emitFile(
             const typeNode = node.symbol ? typeChecker.getDeclaredTypeOfSymbol(node.symbol) : null;
             if (!typeNode) {
                 validImportMember = true;
-                return
+                return;
             }
             if (typeNode.aliasSymbol) {
                 return;
@@ -2084,7 +2088,7 @@ export function emitFile(
         }
 
         if (moduleIt && !moduleIt.required && validImportMember) {
-            writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)})`);
+            writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)}${modulePath})`);
             writeSemicolon();
             writeLine();
             moduleIt.required = true;
@@ -2152,10 +2156,13 @@ export function emitFile(
             // emitTokenWithComment(SyntaxKind.FromKeyword, fromPos, writeKeyword, node);
             // writeSpace();
             // emitExpression(node.moduleSpecifier);
-            const moduleName = getImportModuleName(node);
+            const {
+                moduleName,
+                modulePath
+            } = getImportModuleName(node);
             const moduleIt = state.modules[moduleName];
             if (moduleIt && !moduleIt.required) {
-                writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)})`);
+                writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)}${modulePath})`);
                 writeSemicolon();
                 writeLine();
                 moduleIt.required = true;
@@ -2188,7 +2195,9 @@ export function emitFile(
         const importNode = node.parent.parent;
 
         if (ts.isImportDeclaration(importNode)) {
-            const moduleName = getImportModuleName(importNode);
+            const {
+                moduleName
+            } = getImportModuleName(importNode);
             node.forEachChild((element: ts.ImportSpecifier) => {
                 if (isClassLike(element.name, typeChecker)) {
                     if (state.modules[moduleName] && state.modules[moduleName].used) {
@@ -3391,7 +3400,14 @@ export function emitFile(
     }
 
     function getImportModuleName(node: ts.ImportDeclaration | ts.ExportDeclaration) {
-        return node.moduleSpecifier.getText().replace(/'|"/g, '');
+        const moduleUri = node.moduleSpecifier.getText().replace(/'|"/g, '');
+        const isRelative = isRelativePath(moduleUri);
+        const moduleName = isRelative ? moduleUri : moduleUri.split('/')[0];
+        const modulePath = moduleUri.replace(moduleName, '');
+        return {
+            moduleName,
+            modulePath
+        };
     }
 
     /**

@@ -10,6 +10,9 @@ import {foo} from './helper/foo.bar'
 import Bar from './helper/bar'
 
 import {SomeType, SomeAlias} from './helper/some-types';
+import camelcase from 'camelcase/index';
+
+camelcase('aaa-bbb-ccc');
 
 foo();
 
@@ -46,6 +49,8 @@ use \someModule\Other_Utils as Util;
 use \someModule\Some_Utils;
 require_once(dirname(__FILE__) . '/' . "./helper/foo.bar.php");
 require_once(dirname(__FILE__) . '/' . "./helper/bar.php");
+require_once(bbb-camelcase/index);
+camelcase("aaa-bbb-ccc");
 \someModule\foo();
 $tplData = array();
 $tplData["src"] = Some_Utils::makeTcLink("url");
