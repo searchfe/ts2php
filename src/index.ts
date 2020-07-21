@@ -33,6 +33,7 @@ import {setState} from './state';
 import buildInPlugins from './features/index';
 import {transform} from './transformer';
 import {Ts2phpOptions, Ts2phpConstructOptions, Ts2phpCompileOptions, ModuleInfo} from '../types/index';
+import { isRelativePath } from './utilities/index';
 
 const defaultOptions = {
     showDiagnostics: true,
@@ -41,7 +42,7 @@ const defaultOptions = {
         if (moduleIt && moduleIt.path) {
             return JSON.stringify(moduleIt.path);
         }
-        const isRelative = /^\./.test(name);
+        const isRelative = isRelativePath(name);
         const outPath = isRelative ? (name + '.php') : name;
         const pathCode = JSON.stringify(outPath);
         return isRelative ? `dirname(__FILE__) . '/' . ${pathCode}` : pathCode;

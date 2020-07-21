@@ -46,6 +46,9 @@ function processTestGroup(group: Group) {
                     modules: {
                         'vue': {
                             required: true
+                        },
+                        'camelcase': {
+                            path: 'bbb-camelcase'
                         }
                     },
                     getModuleNamespace(name) {
