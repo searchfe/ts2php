@@ -11,6 +11,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc && mkdir -p dist/runtime && cp src/runtime/*.php dist/runtime && chmod a+x dist/bin/*",
     "test": "mocha",
+    "lint": "eslint src/*.ts",
     "coverage": "nyc _mocha",
     "prepublishOnly": "npm test && npm run build",
     "test:feature": "ts-node ./src/bin/ts2php.ts",

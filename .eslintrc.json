@@ -41,19 +41,19 @@
         "@typescript-eslint/unified-signatures": "error",
 
         // scripts/eslint/rules
-        "object-literal-surrounding-space": "error",
-        "no-type-assertion-whitespace": "error",
-        "type-operator-spacing": "error",
-        "only-arrow-functions": ["error", {
-            "allowNamedFunctions": true ,
-            "allowDeclarations": true
-        }],
-        "no-double-space": "error",
-        "boolean-trivia": "error",
-        "no-in-operator": "error",
-        "simple-indent": "error",
-        "debug-assert": "error",
-        "no-keywords": "error",
+        // "object-literal-surrounding-space": "error",
+        // "no-type-assertion-whitespace": "error",
+        // "type-operator-spacing": "error",
+        // "only-arrow-functions": ["error", {
+        //     "allowNamedFunctions": true ,
+        //     "allowDeclarations": true
+        // }],
+        // "no-double-space": "error",
+        // "boolean-trivia": "error",
+        // "no-in-operator": "error",
+        // "simple-indent": "error",
+        // "debug-assert": "error",
+        // "no-keywords": "error",
 
         // eslint-plugin-import
         "import/no-extraneous-dependencies": ["error", { "optionalDependencies": false }],
@@ -74,7 +74,7 @@
         "new-parens": "error",
         "no-caller": "error",
         "no-duplicate-case": "error",
-        "no-duplicate-imports": "error",
+        "no-duplicate-imports": "off",
         "no-empty": "error",
         "no-eval": "error",
         "no-extra-bind": "error",
@@ -96,7 +96,10 @@
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
         "no-unsafe-finally": "error",
-        "no-unused-expressions": ["error", { "allowTernary": true }],
+        "no-unused-expressions": ["error", {
+            "allowTernary": true,
+            "allowShortCircuit": true
+        }],
         "no-unused-labels": "error",
         "no-var": "error",
         "object-shorthand": "error",

@@ -7,7 +7,7 @@ import * as ts from 'byots';
 import {error} from './state';
 import {isClassInstance, isClassLike, isFunctionLike} from './utilities/nodeTest';
 
-const indentStrings: string[] = ["", "    "];
+const indentStrings: string[] = ['', '    '];
 export function getIndentString(level: number) {
     if (indentStrings[level] === undefined) {
         indentStrings[level] = getIndentString(level - 1) + indentStrings[1];
@@ -32,7 +32,7 @@ function showFlags(flags: number, flagsEnum: { [flag: number]: string }): string
             out.push(flagsEnum[n]);
         }
     }
-    return out.join("|");
+    return out.join('|');
 }
 
 export function showSyntaxKind(node: ts.Node): string {
@@ -74,7 +74,7 @@ export function getLiteralText(node: ts.LiteralLikeNode, sourceFile: ts.SourceFi
             return '"' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '"';
         case ts.SyntaxKind.TemplateHead:
             // tslint:disable-next-line no-invalid-template-strings
-            return '"' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '" ' + ".";
+            return '"' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '" ' + '.';
         case ts.SyntaxKind.TemplateMiddle:
             // tslint:disable-next-line no-invalid-template-strings
             return ' . "' + escapeText(node.text, ts.CharacterCodes.doubleQuote) + '" .';
@@ -265,18 +265,18 @@ function getReplacement(c: string, offset: number, input: string) {
         const lookAhead = input.charCodeAt(offset + c.length);
         if (lookAhead >= ts.CharacterCodes._0 && lookAhead <= ts.CharacterCodes._9) {
             // If the null character is followed by digits, print as a hex escape to prevent the result from parsing as an octal (which is forbidden in strict mode)
-            return "\\x00";
+            return '\\x00';
         }
         // Otherwise, keep printing a literal \0 for the null character
-        return "\\0";
+        return '\\0';
     }
     return escapedCharsMap.get(c) || get16BitUnicodeEscapeSequence(c.charCodeAt(0));
 }
 
 function get16BitUnicodeEscapeSequence(charCode: number): string {
     const hexCharCode = charCode.toString(16).toUpperCase();
-    const paddedHexCode = ("0000" + hexCharCode).slice(-4);
-    return "\\u" + paddedHexCode;
+    const paddedHexCode = ('0000' + hexCharCode).slice(-4);
+    return '\\u' + paddedHexCode;
 }
 
 // This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,
@@ -288,19 +288,19 @@ const doubleQuoteEscapedCharsRegExp = /[\\\"\u0000-\u001f\t\v\f\b\r\n\u2028\u202
 const singleQuoteEscapedCharsRegExp = /[\\\'\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
 const backtickQuoteEscapedCharsRegExp = /[\\\`\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
 const escapedCharsMap = ts.createMapFromTemplate({
-    "\t": "\\t",
-    "\v": "\\v",
-    "\f": "\\f",
-    "\b": "\\b",
-    "\r": "\\r",
-    "\n": "\\n",
-    "\\": "\\\\",
-    "\"": "\\\"",
+    '\t': '\\t',
+    '\v': '\\v',
+    '\f': '\\f',
+    '\b': '\\b',
+    '\r': '\\r',
+    '\n': '\\n',
+    '\\': '\\\\',
+    '"': '\\"',
     "\'": "\\\'",
-    "\`": "\\\`",
-    "\u2028": "\\u2028", // lineSeparator
-    "\u2029": "\\u2029", // paragraphSeparator
-    "\u0085": "\\u0085"  // nextLine
+    '\`': '\\\`',
+    '\u2028': '\\u2028', // lineSeparator
+    '\u2029': '\\u2029', // paragraphSeparator
+    '\u0085': '\\u0085'  // nextLine
 });
 
 const nonAsciiCharacters = /[^\u0000-\u007F]/g;
@@ -317,7 +317,7 @@ export function escapeNonAsciiString(s: string, quoteChar?: ts.CharacterCodes.do
  * Returns a value indicating whether a name is unique globally or within the current file.
  * Note: This does not consider whether a name appears as a free identifier or not, so at the expression `x.y` this includes both `x` and `y`.
  */
-export function isFileLevelUniqueName(sourceFile: ts.SourceFile, name: string, hasGlobalName?: ts.PrintHandlers["hasGlobalName"]): boolean {
+export function isFileLevelUniqueName(sourceFile: ts.SourceFile, name: string, hasGlobalName?: ts.PrintHandlers['hasGlobalName']): boolean {
     return !(hasGlobalName && hasGlobalName(name)) && !sourceFile.identifiers.has(name);
 }
 
@@ -330,10 +330,10 @@ export function getLastExpression(node: ts.Node) {
 }
 
 export function getDescendantIdentifiers(node: ts.Node) {
-    const identifiers:ts.Identifier[] = [];
+    const identifiers: ts.Identifier[] = [];
     const stack = [node];
     while(stack.length > 0) {
-        let cur = stack.pop();
+        const cur = stack.pop();
         cur.forEachChild(child => {
             if (child.kind === ts.SyntaxKind.Identifier) {
                 if (!child.parent || !ts.isTypeNode(child.parent)) {
@@ -368,7 +368,7 @@ export function getAccessPrefixAndSuffix(node: ts.PropertyAccessExpression | ts.
         suffix = '"]';
     }
 
-    let expression = getRealExpression(node.expression);
+    const expression = getRealExpression(node.expression);
     if (
         // $this->func();
         expression.kind === ts.SyntaxKind.ThisKeyword

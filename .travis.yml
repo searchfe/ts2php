@@ -6,6 +6,10 @@ install:
   - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
 jobs:
   include:
+    - stage: lint
+      name: 'Lint using eslint'
+      script:
+        - npm run lint
     - stage: test
       name: 'Unit on Node.js10 / PHP5.6'
       script:

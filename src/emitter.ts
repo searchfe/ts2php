@@ -4,7 +4,7 @@
  */
 
 import * as ts from 'byots';
-import {formatMethodName} from './utilities/method'
+import {formatMethodName} from './utilities/method';
 
 import {
     SyntaxKind,
@@ -142,10 +142,10 @@ export function emitFile(
 
     function createBracketsMap() {
         const brackets: string[][] = [];
-        brackets[ts.ListFormat.Braces] = ["{", "}"];
-        brackets[ts.ListFormat.Parenthesis] = ["(", ")"];
-        brackets[ts.ListFormat.AngleBrackets] = ["<", ">"];
-        brackets[ts.ListFormat.SquareBrackets] = ["[", "]"];
+        brackets[ts.ListFormat.Braces] = ['{', '}'];
+        brackets[ts.ListFormat.Parenthesis] = ['(', ')'];
+        brackets[ts.ListFormat.AngleBrackets] = ['<', '>'];
+        brackets[ts.ListFormat.SquareBrackets] = ['[', ']'];
         return brackets;
     }
 
@@ -697,9 +697,9 @@ export function emitFile(
     // }
 
     function emitComputedPropertyName(node: ts.ComputedPropertyName) {
-        writePunctuation("(");
+        writePunctuation('(');
         emitExpression(node.expression);
-        writePunctuation(")");
+        writePunctuation(')');
     }
 
     // //
@@ -770,8 +770,8 @@ export function emitFile(
 
     function emitPropertyDeclaration(node: ts.PropertyDeclaration) {
         // emitDecorators(node, node.decorators);
-        let modifiers = (node.modifiers || [] as any as ts.NodeArray<ts.Modifier>)
-            .filter(isSupportedPropertyModifier) as any as ts.NodeArray<ts.Modifier>
+        const modifiers = (node.modifiers || [] as any as ts.NodeArray<ts.Modifier>)
+            .filter(isSupportedPropertyModifier) as any as ts.NodeArray<ts.Modifier>;
 
         const hasVisibilityModifier = modifiers.some(isVisibilityModifier);
         if (!hasVisibilityModifier) {
@@ -805,18 +805,18 @@ export function emitFile(
         emitModifiers(node, node.modifiers);
         // emit(node.asteriskToken);
         if (ts.isClassDeclaration(node.parent || node.original.parent)) {
-            writeKeyword("function");
+            writeKeyword('function');
             writeSpace();
             emit(node.name);
         }
         else {
-            writer.write("\"");
+            writer.write('"');
             emit(node.name);
-            writer.write("\"");
+            writer.write('"');
             writeSpace();
-            writer.write("=>");
+            writer.write('=>');
             writeSpace();
-            writeKeyword("function");
+            writeKeyword('function');
             writeSpace();
         }
         // emit(node.questionToken);
@@ -825,9 +825,9 @@ export function emitFile(
 
     function emitConstructor(node: ts.ConstructorDeclaration) {
         // emitModifiers(node, node.modifiers);
-        writeKeyword("function");
+        writeKeyword('function');
         writeSpace();
-        writeKeyword("__construct");
+        writeKeyword('__construct');
         emitSignatureAndBody(node, emitSignatureHead);
     }
 
@@ -1102,9 +1102,9 @@ export function emitFile(
     // }
 
     function emitArrayBindingPattern(node: ts.ArrayBindingPattern) {
-        writePunctuation("list(");
+        writePunctuation('list(');
         emitList(node, node.elements, ListFormat.ArrayBindingPatternElements);
-        writePunctuation(")");
+        writePunctuation(')');
     }
 
     function emitBindingElement(node: ts.BindingElement) {
@@ -1190,10 +1190,10 @@ export function emitFile(
             ts.isIdentifier(node.expression)
             && isFunctionLike(node.expression, typeChecker)
             && isVariable(node.expression, typeChecker)) {
-            writeBase("$");
+            writeBase('$');
         }
 
-        let writeNamespace = emitIdentifierFromImport(node.expression);
+        const writeNamespace = emitIdentifierFromImport(node.expression);
         if (!writeNamespace) {
             emitWithHint(ts.EmitHint.Expression, node.expression);
         }
@@ -1254,7 +1254,7 @@ export function emitFile(
 
     function emitArrowFunctionHead(node: ts.ArrowFunction) {
         // emitTypeParameters(node, node.typeParameters);
-        writeKeyword("function");
+        writeKeyword('function');
         writeSpace();
         emitParametersForArrow(node, node.parameters);
         // emitTypeAnnotation(node.type);
@@ -1269,7 +1269,7 @@ export function emitFile(
     }
 
     function emitTypeOfExpression(node: ts.TypeOfExpression) {
-        const funcName = formatMethodName('%helper::typeof', state.helperNamespace)
+        const funcName = formatMethodName('%helper::typeof', state.helperNamespace);
         writePunctuation(`${funcName}(`);
         emitExpression(node.expression);
         writePunctuation(')');
@@ -1326,10 +1326,10 @@ export function emitFile(
             node.operatorToken.kind === ts.SyntaxKind.PlusEqualsToken
             && (isStringLike(node.left, typeChecker) || isStringLike(node.right, typeChecker))
         ) {
-            writePunctuation(".=");
+            writePunctuation('.=');
         }
         else if (node.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
-            writePunctuation("?:");
+            writePunctuation('?:');
         }
         else {
             writeTokenNode(node.operatorToken, writeOperator, node.left, node.right);
@@ -1345,17 +1345,17 @@ export function emitFile(
         const indentAfterColon = needsIndentation(node, node.colonToken, node.whenFalse);
 
         emitExpression(node.condition);
-        increaseIndentIf(indentBeforeQuestion, " ");
+        increaseIndentIf(indentBeforeQuestion, ' ');
         // emit(node.questionToken);
         writePunctuation('?');
-        increaseIndentIf(indentAfterQuestion, " ");
+        increaseIndentIf(indentAfterQuestion, ' ');
         emitExpression(node.whenTrue);
         decreaseIndentIf(indentBeforeQuestion, indentAfterQuestion);
 
-        increaseIndentIf(indentBeforeColon, " ");
+        increaseIndentIf(indentBeforeColon, ' ');
         // emit(node.colonToken);
         writePunctuation(':');
-        increaseIndentIf(indentAfterColon, " ");
+        increaseIndentIf(indentAfterColon, ' ');
         emitExpression(node.whenFalse);
         decreaseIndentIf(indentBeforeColon, indentAfterColon);
     }
@@ -1425,7 +1425,7 @@ export function emitFile(
 
     function emitTemplateSpan(node: ts.TemplateSpan) {
         writeSpace();
-        let needQuote = (
+        const needQuote = (
             !ts.isIdentifier(node.expression)
             && !ts.isElementAccessExpression(node.expression)
             && !ts.isPropertyAccessExpression(node.expression)
@@ -1433,11 +1433,11 @@ export function emitFile(
             && !ts.isParenthesizedExpression(node.expression)
         );
         if (needQuote) {
-            writePunctuation("(");
+            writePunctuation('(');
         }
         emitExpression(node.expression);
         if (needQuote) {
-            writePunctuation(")");
+            writePunctuation(')');
         }
         emit(node.literal);
     }
@@ -1510,7 +1510,7 @@ export function emitFile(
             writeLineOrSpace(node);
         }
         emitWhileClause(node, node.statement.end);
-        writePunctuation(";");
+        writePunctuation(';');
     }
 
     function emitWhileStatement(node: ts.WhileStatement) {
@@ -1637,7 +1637,7 @@ export function emitFile(
         if (isStringLike(node.expression, typeChecker)) {
             emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
             emitExpressionWithLeadingSpace(
-                ts.createNew(ts.createIdentifier('\\Exception'), null, [node.expression])
+                ts.createNew(ts.createIdentifier('\\Exception'), undefined, [node.expression])
             );
             writeSemicolon();
         }
@@ -1648,7 +1648,7 @@ export function emitFile(
         ) {
             emitTokenWithComment(SyntaxKind.ThrowKeyword, node.pos, writeKeyword, node);
             emitExpressionWithLeadingSpace(
-                ts.createNew(ts.createIdentifier('\\Exception'), null, [node.expression.arguments[0]])
+                ts.createNew(ts.createIdentifier('\\Exception'), undefined, [node.expression.arguments[0]])
             );
             writeSemicolon();
         }
@@ -1696,7 +1696,7 @@ export function emitFile(
     function emitFunctionDeclarationOrExpression(node: ts.FunctionDeclaration | ts.FunctionExpression) {
         // emitDecorators(node, node.decorators);
         // emitModifiers(node, node.modifiers);
-        writeKeyword("function");
+        writeKeyword('function');
         // emit(node.asteriskToken);
         writeSpace();
         emitIdentifierName(node.name!); // TODO: GH#18217
@@ -1732,14 +1732,14 @@ export function emitFile(
             else {
                 emitSignatureHead(node);
                 emitInheritedVariables(node);
-                writePunctuation("{");
+                writePunctuation('{');
                 writeLine();
-                writeKeyword("return");
+                writeKeyword('return');
                 writeSpace();
                 emitExpression(body);
                 writeSemicolon();
                 writeLine();
-                writePunctuation("}");
+                writePunctuation('}');
             }
         }
         else {
@@ -1763,7 +1763,7 @@ export function emitFile(
             const nodeStart = node.getStart(state.sourceFile);
             const nodeEnd = node.getEnd();
 
-            let names = {};
+            const names = {};
             identifiers.forEach(item => {
                 if (
                     item.parent
@@ -1815,7 +1815,7 @@ export function emitFile(
 
                 writeSpace();
                 write('use');
-                writePunctuation('(')
+                writePunctuation('(');
                 inheritedVariables.forEach((item, index) => {
                     const text = item.getText();
                     write(`&$${text}`);
@@ -1823,7 +1823,7 @@ export function emitFile(
                         write(', ');
                     }
                 });
-                writePunctuation(')')
+                writePunctuation(')');
                 writeSpace();
             }
         }
@@ -1875,7 +1875,7 @@ export function emitFile(
 
     function emitBlockFunctionBody(body: ts.Block) {
         writeSpace();
-        writePunctuation("{");
+        writePunctuation('{');
         increaseIndent();
 
         const emitBlockFunctionBody = shouldEmitBlockFunctionBodyOnSingleLine(body)
@@ -1922,7 +1922,7 @@ export function emitFile(
         }
 
         emitModifiers(node, node.modifiers);
-        writeKeyword("class");
+        writeKeyword('class');
         if (node.name) {
             writeSpace();
             emitIdentifierName(node.name);
@@ -1946,9 +1946,9 @@ export function emitFile(
         }
 
         writeSpace();
-        writePunctuation("{");
+        writePunctuation('{');
         emitList(node, node.members, ListFormat.ClassMembers);
-        writePunctuation("}");
+        writePunctuation('}');
 
         if (indentedFlag) {
             decreaseIndent();
@@ -2064,7 +2064,7 @@ export function emitFile(
         let validImportMember = false;
 
         const isType = node => {
-            const typeNode = node.symbol ? typeChecker.getDeclaredTypeOfSymbol(node.symbol) : null;
+            const typeNode = node.symbol ? typeChecker.getDeclaredTypeOfSymbol(node.symbol) : undefined;
             if (!typeNode) {
                 validImportMember = true;
                 return;
@@ -2203,7 +2203,7 @@ export function emitFile(
                     if (state.modules[moduleName] && state.modules[moduleName].used) {
                         return;
                     }
-                    writePunctuation("use");
+                    writePunctuation('use');
                     writeSpace();
                     const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
                     namespace && writeBase(namespace);
@@ -2395,11 +2395,11 @@ export function emitFile(
             emit(node.name);
         }
         writeSpace();
-        writePunctuation("=>");
+        writePunctuation('=>');
         writeSpace();
         if (isFunctionLike(node.initializer, typeChecker) && !isVariable(node.initializer, typeChecker) && !ts.isFunctionLikeDeclaration(node.initializer)) {
             writeBase('"');
-            let fromImport = emitIdentifierFromImport(node.initializer);
+            const fromImport = emitIdentifierFromImport(node.initializer);
             if (!fromImport) {
                 emit(node.initializer);
             }
@@ -2416,23 +2416,23 @@ export function emitFile(
         writeBase('"');
         if (node.objectAssignmentInitializer) {
             writeSpace();
-            writePunctuation("=");
+            writePunctuation('=');
             writeSpace();
             emitExpression(node.objectAssignmentInitializer);
         }
         else {
             writeSpace();
-            writePunctuation("=>");
+            writePunctuation('=>');
             writeSpace();
 
             if (isFunctionLike(node, typeChecker) && !isVariable(node, typeChecker)) {
                 writeBase('"');
-                let fromImport = emitIdentifierFromImport(node.name);
+                const fromImport = emitIdentifierFromImport(node.name);
                 !fromImport && emit(node.name);
                 writeBase('"');
             }
             else {
-                writeBase("$");
+                writeBase('$');
                 emit(node.name);
             }
 
@@ -2691,7 +2691,7 @@ export function emitFile(
      * Emits any prologue directives at the start of a Statement list, returning the
      * number of prologue directives written to the output.
      */
-    function emitPrologueDirectives(statements: ReadonlyArray<ts.Node>, startWithNewLine?: boolean, seenPrologueDirectives?: ts.Map<true>): number {
+    function emitPrologueDirectives(statements: readonly ts.Node[], startWithNewLine?: boolean, seenPrologueDirectives?: ts.Map<true>): number {
         for (let i = 0; i < statements.length; i++) {
             const statement = statements[i];
             if (isPrologueDirective(statement)) {
@@ -2782,7 +2782,7 @@ export function emitFile(
             writeSpace();
 
             if (shouldUseReference(node, typeChecker)) {
-                writeBase("&");
+                writeBase('&');
             }
 
             emitExpression(node);
@@ -2891,7 +2891,7 @@ export function emitFile(
     function writeDelimiter(format: ts.ListFormat) {
 
         if (format === ts.ListFormat.VariableDeclarationList) {
-            writePunctuation(";");
+            writePunctuation(';');
             return;
         }
 
@@ -2899,20 +2899,20 @@ export function emitFile(
             case ts.ListFormat.None:
                 break;
             case ts.ListFormat.CommaDelimited:
-                writePunctuation(",");
+                writePunctuation(',');
                 break;
             case ts.ListFormat.BarDelimited:
                 writeSpace();
-                writePunctuation("|");
+                writePunctuation('|');
                 break;
             case ts.ListFormat.AsteriskDelimited:
                 writeSpace();
-                writePunctuation("*");
+                writePunctuation('*');
                 writeSpace();
                 break;
             case ts.ListFormat.AmpersandDelimited:
                 writeSpace();
-                writePunctuation("&");
+                writePunctuation('&');
                 break;
         }
     }
@@ -3016,7 +3016,7 @@ export function emitFile(
             // Write a trailing comma, if requested.
             const hasTrailingComma = (format & ts.ListFormat.AllowTrailingComma) && children!.hasTrailingComma;
             if (format & ts.ListFormat.CommaDelimited && hasTrailingComma) {
-                writePunctuation(",");
+                writePunctuation(',');
             }
 
 
@@ -3111,7 +3111,7 @@ export function emitFile(
     // }
 
     function writeSemicolon() {
-        writer.writePunctuation(";");
+        writer.writePunctuation(';');
     }
 
     function writeKeyword(s: string) {

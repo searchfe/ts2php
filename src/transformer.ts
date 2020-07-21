@@ -11,7 +11,7 @@ export function transform(context: ts.TransformationContext) {
         startLexicalEnvironment
     } = context;
 
-    let destruct_temp_id = 0;
+    let destructTempId = 0;
 
     const resolver = context.getEmitResolver();
 
@@ -171,7 +171,7 @@ export function transform(context: ts.TransformationContext) {
             return node;
         }
 
-        const initializerName = 'destruct_temp_' + (++destruct_temp_id);
+        const initializerName = 'destruct_temp_' + (++destructTempId);
         const temp = ts.createVariableDeclaration(
             initializerName, undefined,
             // @ts-ignore
@@ -346,7 +346,7 @@ export function transform(context: ts.TransformationContext) {
         }
 
         let newDeclarations = [];
-        let start = 0
+        let start = 0;
 
         pendingMap.forEach((declarations, index) => {
             newDeclarations = [
@@ -380,7 +380,7 @@ export function transform(context: ts.TransformationContext) {
 
             const suffix = argus.slice(index + 1);
 
-            let newArgus = [
+            const newArgus = [
                 leadingArgu,
                 spreadName,
             ];
@@ -514,7 +514,7 @@ export function transform(context: ts.TransformationContext) {
             ]);
         }
         else {
-            let list = parameters
+            const list = parameters
                 .slice(0, parameters.length - 1)
                 .map((parameter, index) =>
                     ts.createVariableDeclaration(
@@ -650,7 +650,7 @@ export function transform(context: ts.TransformationContext) {
     }
 
     function visitClassDeclaration(node: ts.ClassDeclaration): ts.VisitResult<ts.Node> {
-        let initAfter: {key: ts.PropertyName, initializer: ts.Expression}[] = [];
+        const initAfter: {key: ts.PropertyName, initializer: ts.Expression}[] = [];
         node.members.forEach(item => {
             if (
                 item.kind === ts.SyntaxKind.PropertyDeclaration
@@ -667,7 +667,7 @@ export function transform(context: ts.TransformationContext) {
             }
 
         });
-        let res = [];
+        const res = [];
         res.push(node);
         initAfter.forEach(item => {
             const init = ts.createExpressionStatement(ts.createBinary(

@@ -57,7 +57,7 @@ const s = 'abcdefghijklmnopqrstuvwxyz';
 const getRandomString = n => Array(n)
     .join()
     .split(',')
-    .map(function() {
+    .map(() => {
         return s.charAt(Math.floor(Math.random() * s.length));
     }).join('');
 
@@ -71,7 +71,7 @@ const defaultCompilerOptions = {
     alwaysStrict: true
 };
 
-interface cacheFileInfo {
+interface CacheFileInfo {
     sourceFile?: SourceFile;
     contents: string;
 }
@@ -82,7 +82,7 @@ function printError(e) {
 }
 
 export class Ts2Php {
-    private sourceFileCache: {[fileName: string]: cacheFileInfo};
+    private sourceFileCache: {[fileName: string]: CacheFileInfo};
     private compilerOptions: CompilerOptions;
     private program: Program;
     private compilerHost: CompilerHost;
@@ -162,7 +162,7 @@ export class Ts2Php {
         };
 
         // avoid change options
-        finalOptions.modules = {...options.modules};
+        finalOptions.modules = { ...options.modules };
 
         const sourceFile = this.getSourceFile(filePath, options.source);
         const program = this.program;
@@ -203,7 +203,7 @@ export class Ts2Php {
         ];
 
         const emitResolver = program.getDiagnosticsProducingTypeChecker()
-            .getEmitResolver(sourceFile, undefined);
+            .getEmitResolver(sourceFile, /* cancellationToken */ undefined);
 
         if (sourceFile.resolvedModules) {
             sourceFile.resolvedModules.forEach((item, name) => {
