@@ -10,9 +10,6 @@ import {foo} from './helper/foo.bar'
 import Bar from './helper/bar'
 
 import {SomeType, SomeAlias} from './helper/some-types';
-import camelcase from 'camelcase/index';
-
-camelcase('aaa-bbb-ccc');
 
 foo();
 
@@ -49,8 +46,6 @@ use \someModule\Other_Utils as Util;
 use \someModule\Some_Utils;
 require_once(dirname(__FILE__) . '/' . "./helper/foo.bar.php");
 require_once(dirname(__FILE__) . '/' . "./helper/bar.php");
-require_once(bbb-camelcase/index);
-camelcase("aaa-bbb-ccc");
 \someModule\foo();
 $tplData = array();
 $tplData["src"] = Some_Utils::makeTcLink("url");
@@ -65,4 +60,24 @@ $c = "isset";
 require_once(dirname(__FILE__) . '/' . ("./" . $c) . '.php');
 require_once(dirname(__FILE__) . '/' . "./Class.php");
 $y = 1;;
+```
+
+## modules
+
+```ts
+import camelcase from 'camelcase/index';
+import aaa from 'aaa';
+import {Article} from './helper/module-class';
+
+new Article('');
+camelcase('aaa-bbb-ccc');
+```
+
+```php
+require_once("bbb-camelcase/index.php");
+require_once("abcdef.php");
+require_once(dirname(__FILE__) . '/' . "./helper/module-class.php");
+use \some\moduleClass\namespace\Article;
+new Article("");
+camelcase("aaa-bbb-ccc");
 ```

@@ -49,6 +49,12 @@ function processTestGroup(group: Group) {
                         },
                         'camelcase': {
                             path: 'bbb-camelcase'
+                        },
+                        'aaa': {
+                            path: 'abcdef'
+                        },
+                        './helper/module-class': {
+                            namespace: '\\some\\moduleClass\\namespace\\'
                         }
                     },
                     getModuleNamespace(name) {

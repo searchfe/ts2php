@@ -49,6 +49,7 @@ import {
 
 import {CompilerState} from './types';
 import { isRelativePath } from './utilities/index';
+import { getRequireOnceCode } from './utilities/makeCode';
 
 let currentSourceFile: SourceFile;
 
@@ -2088,7 +2089,7 @@ export function emitFile(
         }
 
         if (moduleIt && !moduleIt.required && validImportMember) {
-            writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)}${modulePath})`);
+            writeBase(getRequireOnceCode(moduleName, modulePath, moduleIt));
             writeSemicolon();
             writeLine();
             moduleIt.required = true;
@@ -2162,7 +2163,7 @@ export function emitFile(
             } = getImportModuleName(node);
             const moduleIt = state.modules[moduleName];
             if (moduleIt && !moduleIt.required) {
-                writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)}${modulePath})`);
+                writeBase(getRequireOnceCode(moduleName, modulePath, moduleIt));
                 writeSemicolon();
                 writeLine();
                 moduleIt.required = true;
