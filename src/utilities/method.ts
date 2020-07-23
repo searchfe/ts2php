@@ -11,7 +11,7 @@ import {
     Expression
 } from 'byots';
 
-interface methodOptions {
+interface MethodOptions {
 
     /** Self as args */
     self?: boolean;
@@ -26,7 +26,7 @@ interface methodOptions {
     extraArgs?: Expression[];
 }
 
-export default function (method: string, options?: methodOptions) {
+export default function (method: string, options?: MethodOptions) {
     const {
         self = true,
         end = undefined,

@@ -32,7 +32,7 @@ export interface ModuleInfo {
      *
      * @default false
      */
-    required?: boolean;
+    required?: boolean | Record<string, boolean>;
 }
 
 export interface Ts2phpConstructOptions {

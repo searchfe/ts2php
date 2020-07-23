@@ -55,6 +55,9 @@ function processTestGroup(group: Group) {
                         },
                         './helper/module-class': {
                             namespace: '\\some\\moduleClass\\namespace\\'
+                        },
+                        '@aaa/bbb': {
+                            path: 'aaa/bbb'
                         }
                     },
                     getModuleNamespace(name) {

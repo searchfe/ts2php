@@ -48,7 +48,7 @@ import {
 } from './utilities/nodeTest';
 
 import {CompilerState} from './types';
-import { isRelativePath } from './utilities/index';
+import { isRelativePath, hasRequired, markRequired } from './utilities/index';
 import { getRequireOnceCode } from './utilities/makeCode';
 
 let currentSourceFile: SourceFile;
@@ -2088,11 +2088,12 @@ export function emitFile(
             }
         }
 
-        if (moduleIt && !moduleIt.required && validImportMember) {
+        if (moduleIt && !hasRequired(moduleIt, moduleName, modulePath) && validImportMember) {
             writeBase(getRequireOnceCode(moduleName, modulePath, moduleIt));
             writeSemicolon();
             writeLine();
-            moduleIt.required = true;
+
+            markRequired(moduleIt, moduleName, modulePath);
         }
 
         if (node.importClause) {
@@ -2162,11 +2163,12 @@ export function emitFile(
                 modulePath
             } = getImportModuleName(node);
             const moduleIt = state.modules[moduleName];
-            if (moduleIt && !moduleIt.required) {
+            if (moduleIt && !hasRequired(moduleIt, moduleName, modulePath)) {
                 writeBase(getRequireOnceCode(moduleName, modulePath, moduleIt));
                 writeSemicolon();
                 writeLine();
-                moduleIt.required = true;
+
+                markRequired(moduleIt, moduleName, modulePath);
             }
         }
         // writeSemicolon();
@@ -3403,7 +3405,17 @@ export function emitFile(
     function getImportModuleName(node: ts.ImportDeclaration | ts.ExportDeclaration) {
         const moduleUri = node.moduleSpecifier.getText().replace(/'|"/g, '');
         const isRelative = isRelativePath(moduleUri);
-        const moduleName = isRelative ? moduleUri : moduleUri.split('/')[0];
+        let moduleName = moduleUri;
+        if (!isRelative) {
+            const arr = moduleUri.split('/');
+            moduleName = arr[0];
+
+            // if "@aaa/bbb/ccc", set "@aaa/bbb" as moduleName
+            if (moduleName[0] === '@') {
+                moduleName += '/';
+                moduleName += arr[1];
+            }
+        }
         const modulePath = moduleUri.replace(moduleName, '');
         return {
             moduleName,

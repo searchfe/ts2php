@@ -81,3 +81,19 @@ use \some\moduleClass\namespace\Article;
 new Article("");
 camelcase("aaa-bbb-ccc");
 ```
+
+## same moduleName different modulePath
+
+```ts
+import { XList } from 'aaa/multi-component-files/list';
+import { square } from 'aaa/multi-files/square';
+import { a } from '@aaa/bbb';
+import { c } from '@aaa/bbb/ccc';
+```
+
+```php
+require_once("abcdef/multi-component-files/list.php");
+require_once("abcdef/multi-files/square.php");
+require_once("aaa/bbb.php");
+require_once("aaa/bbb/ccc.php");
+```
