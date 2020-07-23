@@ -1,3 +1,10 @@
+## [0.28.2](https://github.com/searchfe/ts2php/compare/v0.28.1...v0.28.2) (2020-07-23)
+
+
+### Bug Fixes
+
+* use full path to mark module required ([8c9849d](https://github.com/searchfe/ts2php/commit/8c9849d2375dbcd9d8577dbea4ed995fb8f1f0cd))
+
 ## [0.28.1](https://github.com/searchfe/ts2php/compare/v0.28.0...v0.28.1) (2020-07-22)
 
 
