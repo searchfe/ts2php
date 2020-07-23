@@ -96,8 +96,8 @@ export function shouldAddDoubleQuote(node: ts.Node): boolean {
 }
 
 
-const baseArrayBrackets = ["array(", ")"];
-const newLineArrayBrackets = ["array(", ")"];
+const baseArrayBrackets = ['array(', ')'];
+const newLineArrayBrackets = ['array(', ')'];
 const arrayBracketsMap = {
     [ts.ListFormat.ObjectLiteralExpressionProperties]: baseArrayBrackets,
     [ts.ListFormat.ObjectLiteralExpressionProperties | ts.ListFormat.PreferNewLine]: newLineArrayBrackets,
@@ -173,9 +173,9 @@ export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = typeChecker.getSymbolAtLocation(node);
 
-    const baseTypeName = getBaseTypeName(nodeType)
-    if (baseTypeName === 'PHPClass') return true
-    if (baseTypeName === 'PHPArray') return false
+    const baseTypeName = getBaseTypeName(nodeType);
+    if (baseTypeName === 'PHPClass') return true;
+    if (baseTypeName === 'PHPArray') return false;
 
     if (!nodeSymbol) {
         return false;
@@ -187,23 +187,23 @@ export function isClassInstance(node: ts.Node, typeChecker: ts.TypeChecker) {
 // 通过最近的父类来确定是用对象（->）还是数组（[]）
 // 优化：遍历父类有的方法来确定用哪个父类
 function getBaseTypeName(nodeType: ts.Type): 'PHPClass' | 'PHPArray' | 'other' {
-    const queue = [nodeType]
+    const queue = [nodeType];
 
     while(queue.length) {
-        const nodeType = queue.shift()
-        const baseTypes = nodeType.getBaseTypes()
-        if (!baseTypes) continue
+        const nodeType = queue.shift();
+        const baseTypes = nodeType.getBaseTypes();
+        if (!baseTypes) continue;
 
         for (const baseType of baseTypes) {
-            const baseSymbol = baseType.getSymbol()
-            if (!baseSymbol) continue
+            const baseSymbol = baseType.getSymbol();
+            if (!baseSymbol) continue;
 
-            const name = baseSymbol.getName()
-            if (name === 'PHPClass' || name === 'PHPArray') return name
-            else queue.push(baseType)
+            const name = baseSymbol.getName();
+            if (name === 'PHPClass' || name === 'PHPArray') return name;
+            else queue.push(baseType);
         }
     }
-    return 'other'
+    return 'other';
 }
 
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
@@ -220,7 +220,7 @@ export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
 export function isVariable(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     const nodeSymbol = nodeType.getSymbol();
-    return ts.isVariableDeclaration(nodeSymbol.valueDeclaration.parent)
+    return ts.isVariableDeclaration(nodeSymbol.valueDeclaration.parent);
 }
 
 export function isVisibilityModifier(node: ts.Modifier) {
