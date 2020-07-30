@@ -39,7 +39,7 @@ function replace(
 
     const expNode = node.expression as PropertyAccessExpression;
 
-    let nodeList = [...node.arguments, expNode.expression];
+    const nodeList = [...node.arguments, expNode.expression];
     let method = '%helper::str_replace_once';
 
     if (isFunctionLike(node.arguments[1], typeChecker)) {
@@ -54,7 +54,7 @@ function replace(
         method = 'preg_replace';
         const firstArg = node.arguments[0] as RegularExpressionLiteral;
         if (!/gi?$/.test(getLiteralTextOfNode(firstArg, true))) {
-            nodeList.push(createNumericLiteral("1"));
+            nodeList.push(createNumericLiteral('1'));
         }
     }
 
@@ -68,7 +68,7 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     const pattern = node.arguments[0];
     const isPreg = !isStringLike(pattern, state.typeChecker);
     const method = isPreg ? 'preg_split' : '%helper::strSplit';
-    let nodeList = [node.arguments[0], expNode.expression];
+    const nodeList = [node.arguments[0], expNode.expression];
 
     if (isPreg) {
         nodeList.push(createNull(), createIdentifier('PREG_SPLIT_DELIM_CAPTURE'));
@@ -82,9 +82,9 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
 function match(node: CallExpression, {emitExpressionList, writePunctuation}, state) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    let isRegularExpressionLiteral = pattern.kind === SyntaxKind.RegularExpressionLiteral;
-    let method = '%helper::match';
-    let nodeList = [node.arguments[0], expNode.expression];
+    const isRegularExpressionLiteral = pattern.kind === SyntaxKind.RegularExpressionLiteral;
+    const method = '%helper::match';
+    const nodeList = [node.arguments[0], expNode.expression];
 
     if (!isRegularExpressionLiteral) {
         // mark is string
@@ -92,7 +92,7 @@ function match(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     }
     else {
         // mark all match
-        let isAll = pattern.getText(state.sourceFile).split('/')[2].indexOf('g') != -1;
+        const isAll = pattern.getText(state.sourceFile).split('/').pop().indexOf('g') !== -1;
         if (isAll) {
             nodeList.push(createFalse());
             nodeList.push(createTrue());
