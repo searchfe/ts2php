@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ts2phpCompileOptions | ts2php - v0.28.2</title>
+	<title>Ts2phpCompileOptions | ts2php - v0.28.3</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2335,7 +2335,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">ts2php - v0.28.2</a></strong>
+					<strong><a href="../index.html">ts2php - v0.28.3</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2470,7 +2470,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">custom<wbr>Transformers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ts.TransformerFactory</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SourceFile</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L118">index.d.ts:118</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L119">index.d.ts:119</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2488,7 +2488,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">emit<wbr>Header<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L82">index.d.ts:82</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L82">index.d.ts:82</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2510,7 +2510,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">get<wbr>Module<wbr>Namespace<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L107">index.d.ts:107</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L108">index.d.ts:108</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2564,7 +2564,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">get<wbr>Module<wbr>Path<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L97">index.d.ts:97</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L98">index.d.ts:98</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2579,6 +2579,9 @@ img {
 						<dt>params</dt>
 						<dd><p>module 模块相关信息</p>
 						</dd>
+						<dt>params</dt>
+						<dd><p>dirname 当前文件所在目录</p>
+						</dd>
 						<dt>returns</dt>
 						<dd><p>路径代码</p>
 						</dd>
@@ -2589,7 +2592,7 @@ img {
 					<ul class="tsd-parameters">
 						<li class="tsd-parameter-siganture">
 							<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
-								<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>importPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, module<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ResolvedModuleFull</span>, moduleIt<span class="tsd-signature-symbol">?: </span><a href="moduleinfo.html" class="tsd-signature-type">ModuleInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+								<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>importPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, module<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ResolvedModuleFull</span>, moduleIt<span class="tsd-signature-symbol">?: </span><a href="moduleinfo.html" class="tsd-signature-type">ModuleInfo</a>, dirname<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 							</ul>
 							<ul class="tsd-descriptions">
 								<li class="tsd-description">
@@ -2603,6 +2606,9 @@ img {
 										</li>
 										<li>
 											<h5><span class="tsd-flag ts-flagOptional">Optional</span> moduleIt: <a href="moduleinfo.html" class="tsd-signature-type">ModuleInfo</a></h5>
+										</li>
+										<li>
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> dirname: <span class="tsd-signature-type">string</span></h5>
 										</li>
 									</ul>
 									<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -2618,7 +2624,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">get<wbr>Namespace<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L65">index.d.ts:65</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L65">index.d.ts:65</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2654,7 +2660,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">helper<wbr>Namespace<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L62">index.d.ts:62</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L62">index.d.ts:62</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2669,7 +2675,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">modules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L54">index.d.ts:54</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L54">index.d.ts:54</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2692,7 +2698,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">namespace<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L59">index.d.ts:59</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L59">index.d.ts:59</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2707,7 +2713,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">plugins<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L70">index.d.ts:70</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L70">index.d.ts:70</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2722,7 +2728,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">show<wbr>Diagnostics<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L87">index.d.ts:87</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L87">index.d.ts:87</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2737,7 +2743,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">source<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/5c11fbd/types/index.d.ts#L51">index.d.ts:51</a></li>
+						<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/12376d4/types/index.d.ts#L51">index.d.ts:51</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
