@@ -1,3 +1,10 @@
+## [0.28.4](https://github.com/searchfe/ts2php/compare/v0.28.3...v0.28.4) (2020-08-04)
+
+
+### Bug Fixes
+
+* import from dir ([52859a0](https://github.com/searchfe/ts2php/commit/52859a065b2426157ab72deec86503d0b6d13d90))
+
 ## [0.28.3](https://github.com/searchfe/ts2php/compare/v0.28.2...v0.28.3) (2020-07-30)
 
 
