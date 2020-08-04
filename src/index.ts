@@ -38,11 +38,20 @@ import { isRelativePath } from './utilities/index';
 const defaultOptions = {
     showDiagnostics: true,
     emitHeader: true,
-    getModulePathCode: (name, _, moduleIt) => {
+    getModulePathCode: (name, _, moduleIt, dirname) => {
         if (moduleIt && moduleIt.path) {
             return JSON.stringify(moduleIt.path);
         }
         const isRelative = isRelativePath(name);
+        if (isRelative && _) {
+            const { resolvedFileName, extension } = _;
+            name = path
+                .relative(dirname, resolvedFileName)
+                .replace(new RegExp(`${extension}$`, 'i'), '');
+            if (name[0] !== '.') {
+                name = './' + name;
+            }
+        }
         const outPath = isRelative ? (name + '.php') : name;
         const pathCode = JSON.stringify(outPath);
         return isRelative ? `dirname(__FILE__) . '/' . ${pathCode}` : pathCode;
@@ -206,11 +215,16 @@ export class Ts2Php {
             .getEmitResolver(sourceFile, /* cancellationToken */ undefined);
 
         if (sourceFile.resolvedModules) {
+            let fileName = sourceFile.fileName;
+            if (!path.isAbsolute(fileName)) {
+                fileName = path.resolve(fileName);
+            }
+            const dirname = path.dirname(fileName);
             sourceFile.resolvedModules.forEach((item, name) => {
                 const moduleIt = state.modules[name] || {} as ModuleInfo;
                 state.modules[name] = {
                     name,
-                    pathCode: state.getModulePathCode(name, item, moduleIt),
+                    pathCode: state.getModulePathCode(name, item, moduleIt, dirname),
                     namespace: state.getModuleNamespace(name, item, moduleIt),
                     ...moduleIt
                 };
