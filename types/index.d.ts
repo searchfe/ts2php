@@ -92,9 +92,10 @@ export interface Ts2phpCompileOptions {
      *
      * @params importPath 模块引入路径
      * @params module 模块相关信息
+     * @params dirname 当前文件所在目录
      * @returns 路径代码
      */
-    getModulePathCode?: (importPath: string, module?: ts.ResolvedModuleFull, moduleIt?: ModuleInfo) => string;
+    getModulePathCode?: (importPath: string, module?: ts.ResolvedModuleFull, moduleIt?: ModuleInfo, dirname?: string) => string;
 
     /**
      * 获取外部模块的命名空间

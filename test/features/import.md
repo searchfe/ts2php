@@ -97,3 +97,15 @@ require_once("abcdef/multi-files/square.php");
 require_once("aaa/bbb.php");
 require_once("aaa/bbb/ccc.php");
 ```
+
+## import path is a directory
+
+```ts
+import foo from './helper/foo';
+foo();
+```
+
+```php
+require_once(dirname(__FILE__) . '/' . "./helper/foo/index.php");
+foo();
+```
