@@ -1,3 +1,10 @@
+# [0.29.0](https://github.com/searchfe/ts2php/compare/v0.28.4...v0.29.0) (2020-08-17)
+
+
+### Features
+
+* copy options.modules in case of pollution ([0a3fe26](https://github.com/searchfe/ts2php/commit/0a3fe26524d4454c5359dc85282366a7f1384173))
+
 ## [0.28.4](https://github.com/searchfe/ts2php/compare/v0.28.3...v0.28.4) (2020-08-04)
 
 
