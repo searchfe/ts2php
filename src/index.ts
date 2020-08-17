@@ -171,7 +171,12 @@ export class Ts2Php {
         };
 
         // avoid change options
-        finalOptions.modules = { ...options.modules };
+        try {
+            finalOptions.modules = options.modules ? JSON.parse(JSON.stringify(options.modules)) : {};
+        }
+        catch (e) {
+            throw Error('Failed to JSON.stringify [options.modules], options.modules must can be copied.');
+        }
 
         const sourceFile = this.getSourceFile(filePath, options.source);
         const program = this.program;

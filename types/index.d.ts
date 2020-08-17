@@ -1,5 +1,9 @@
 import * as ts from 'byots';
 
+/**
+ * ModuleInfo is used as a state while compiling
+ * The type of it's property can't be Function
+ */
 export interface ModuleInfo {
 
     /** 模块名称 */
