@@ -745,7 +745,7 @@ export function emitFile(
             emitTypeAnnotation(node.type);
         }
         if (node.questionToken && !node.initializer) {
-            node.initializer = ts.createIdentifier('null');
+            node.initializer = ts.createNull();
             node.initializer.parent = node;
             ts.setTextRange(node.initializer, node);
         }
