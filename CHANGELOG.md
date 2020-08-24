@@ -1,3 +1,16 @@
+# [0.30.0](https://github.com/searchfe/ts2php/compare/v0.29.0...v0.30.0) (2020-08-24)
+
+
+### Bug Fixes
+
+* [#128](https://github.com/searchfe/ts2php/issues/128) ([d9f28b4](https://github.com/searchfe/ts2php/commit/d9f28b453e913827c2db31e958e8fffccd51fa1b))
+* test case ([2cde59e](https://github.com/searchfe/ts2php/commit/2cde59ec30f9922eace75462f9e44e9a8276a001))
+
+
+### Features
+
+* update typescript to 3.9 ([303ae02](https://github.com/searchfe/ts2php/commit/303ae02794f8044cf2b21b3e6a0e1368757b1d87))
+
 # [0.29.0](https://github.com/searchfe/ts2php/compare/v0.28.4...v0.29.0) (2020-08-17)
 
 
