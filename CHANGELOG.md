@@ -1,3 +1,10 @@
+## [0.30.1](https://github.com/searchfe/ts2php/compare/v0.30.0...v0.30.1) (2020-10-15)
+
+
+### Bug Fixes
+
+* imported function report unsupport ([010ef00](https://github.com/searchfe/ts2php/commit/010ef00a423f0d18eafb67cd211be26c6516c35d))
+
 # [0.30.0](https://github.com/searchfe/ts2php/compare/v0.29.0...v0.30.0) (2020-08-24)
 
 
