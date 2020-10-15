@@ -74,3 +74,16 @@ const h = __filename;
 $g = dirname(__FILE__);
 $h = __FILE__;
 ```
+
+## escape
+
+```ts
+import {escape} from './helper/export';
+
+escape();
+```
+
+```php
+require_once(dirname(__FILE__) . '/' . "./helper/export.php");
+\someModule\escape();
+```

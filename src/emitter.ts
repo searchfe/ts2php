@@ -44,7 +44,8 @@ import {
     isClassInstance,
     isFunctionLike,
     isVariable,
-    shouldUseReference
+    shouldUseReference,
+    isFromImport
 } from './utilities/nodeTest';
 
 import {CompilerState} from './types';
@@ -3059,25 +3060,19 @@ export function emitFile(
      * identifier from import may need add namespace
      */
     function emitIdentifierFromImport(node: ts.Node): boolean {
-        if (ts.isIdentifier(node)) {
-            const type = typeChecker.getTypeAtLocation(node);
-            const symbol = typeChecker.getSymbolAtLocation(node);
-
-            if (symbol) {
-                const declarations = symbol.getDeclarations();
-
-                if (declarations.length && ts.isImportSpecifier(declarations[0])) {
-                    const specifier = declarations[0] as ts.ImportSpecifier;
-                    const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
-                    const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
-                    const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
-                    namespace && writeBase(namespace);
-                    emitExpression(specifier.propertyName || specifier.name);
-                    return true;
-                }
-            }
-
+        if (!(ts.isIdentifier(node) && isFromImport(node, typeChecker))) {
+            return false;
         }
+
+        const symbol = typeChecker.getSymbolAtLocation(node);
+        const declarations = symbol.getDeclarations();
+        const specifier = declarations[0] as ts.ImportSpecifier;
+        const declaration = specifier.parent.parent.parent as ts.ImportDeclaration;
+        const moduleName = declaration.moduleSpecifier.getText().replace(/^['"]/, '').replace(/['"]$/, '');
+        const namespace = state.modules[moduleName] && state.modules[moduleName].namespace;
+        namespace && writeBase(namespace);
+        emitExpression(specifier.propertyName || specifier.name);
+        return true;
     }
 
     // function commitPendingSemicolonInternal() {

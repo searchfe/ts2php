@@ -3,7 +3,7 @@
  * @author cxtom(cxtom2008@gmail.com)
  */
 
-import {
+import ts, {
     EmitHint,
     isCallExpression,
     isPropertyAccessExpression,
@@ -26,6 +26,8 @@ import {
     createDiagnostic,
     getUnSupportedMessage
 } from '../utilities/error';
+import { isFromImport } from '../utilities/nodeTest';
+import { CompilerState } from '../types';
 
 const map = {
     parseInt: method('intval', {
@@ -75,8 +77,9 @@ const isDynamicImport = node => isCallExpression(node) && node.expression.kind =
 
 export default {
 
-    emit(hint, node, state) {
+    emit(hint: ts.EmitHint, node: ts.Node, state: CompilerState) {
 
+        // @ts-ignore
         const expNode = node.expression;
         let func;
 
@@ -87,7 +90,7 @@ export default {
             if (func) {
                 return func(node, helpers, {helperNamespace});
             }
-            if (unSupportedGlobalMethods.has(expNode.escapedText)) {
+            if (!isFromImport(expNode, state.typeChecker) && unSupportedGlobalMethods.has(expNode.escapedText)) {
                 state.errors.push(createDiagnostic(
                     node, state.sourceFile,
                     getUnSupportedMessage(expNode.escapedText)
@@ -141,7 +144,7 @@ export default {
         }
 
         if (isDynamicImport(node)) {
-            const argu = node.arguments[0];
+            const argu = (node as ts.CallExpression).arguments[0];
             if (isStringLiteral(argu)) {
                 const moduleName = argu.text;
                 const moduleIt = modules[moduleName];

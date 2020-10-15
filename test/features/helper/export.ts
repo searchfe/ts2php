@@ -4,3 +4,5 @@ export default function run(a: string) {
 }
 
 export {Some_Utils} from './some-utils';
+
+export function escape() {}

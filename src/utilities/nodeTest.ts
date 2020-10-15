@@ -240,3 +240,13 @@ export function isRegExp(node: ts.Node, typeChecker: ts.TypeChecker) {
     const nodeType = typeChecker.getTypeAtLocation(node);
     return nodeType.symbol?.getEscapedName() === 'RegExp';
 }
+
+export function isFromImport(node: ts.Node, typeChecker: ts.TypeChecker) {
+    const symbol = typeChecker.getSymbolAtLocation(node);
+    if (!symbol) {
+        return false;
+    }
+
+    const declarations = symbol.getDeclarations();
+    return declarations.length && ts.isImportSpecifier(declarations[0]);
+}
