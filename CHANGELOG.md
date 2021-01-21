@@ -1,3 +1,10 @@
+## [0.30.2](https://github.com/searchfe/ts2php/compare/v0.30.1...v0.30.2) (2021-01-21)
+
+
+### Bug Fixes
+
+* dependabot alerts,update @commitlint/cli ([3b30c8a](https://github.com/searchfe/ts2php/commit/3b30c8ab6bded1ac086c1823f4d8fc75f34e2cb6))
+
 ## [0.30.1](https://github.com/searchfe/ts2php/compare/v0.30.0...v0.30.1) (2020-10-15)
 
 
