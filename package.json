@@ -17,7 +17,7 @@
     "test:feature": "ts-node ./src/bin/ts2php.ts",
     "test:runtime": "sh ./test/runtime/run.sh",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "doc": "typedoc --out docs --theme minimal --includeDeclarations --excludeNotExported --excludeExternals --mode file ./types/index.d.ts"
+    "doc": "typedoc --out docs --theme minimal --entryPoints ./types/index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -107,7 +107,7 @@
     "rimraf": "^2.6.3",
     "source-map-support": "^0.5.12",
     "ts-node": "^8.2.0",
-    "typedoc": "^0.15.3",
+    "typedoc": "^0.20.16",
     "typescript": "^3.9.7",
     "vue": "^2.6.10"
   },
