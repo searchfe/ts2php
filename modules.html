@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PHPArray | ts2php</title>
+	<title>ts2php | ts2php</title>
 	<meta name="description" content="Documentation for ts2php">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2646,7 +2646,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">ts2php</a></strong>
+					<strong><a href="index.html">ts2php</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2677,40 +2677,357 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class=" tsd-kind-class">
-			<a href="../classes/ts2php.html" class="tsd-kind-icon">Ts2<wbr>Php</a>
+			<a href="classes/ts2php.html" class="tsd-kind-icon">Ts2<wbr>Php</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="moduleinfo.html" class="tsd-kind-icon">Module<wbr>Info</a>
-		</li>
-		<li class="current tsd-kind-interface">
-			<a href="phparray.html" class="tsd-kind-icon">PHPArray</a>
+			<a href="interfaces/moduleinfo.html" class="tsd-kind-icon">Module<wbr>Info</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="phpclass.html" class="tsd-kind-icon">PHPClass</a>
+			<a href="interfaces/phparray.html" class="tsd-kind-icon">PHPArray</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="ts2phpcompileoptions.html" class="tsd-kind-icon">Ts2php<wbr>Compile<wbr>Options</a>
+			<a href="interfaces/phpclass.html" class="tsd-kind-icon">PHPClass</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="ts2phpconstructoptions.html" class="tsd-kind-icon">Ts2php<wbr>Construct<wbr>Options</a>
+			<a href="interfaces/ts2phpcompileoptions.html" class="tsd-kind-icon">Ts2php<wbr>Compile<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="ts2phpoptions.html" class="tsd-kind-icon">Ts2php<wbr>Options</a>
+			<a href="interfaces/ts2phpconstructoptions.html" class="tsd-kind-icon">Ts2php<wbr>Construct<wbr>Options</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="interfaces/ts2phpoptions.html" class="tsd-kind-icon">Ts2php<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-function">
-			<a href="../modules.html#compile" class="tsd-kind-icon">compile</a>
+			<a href="modules.html#compile" class="tsd-kind-icon">compile</a>
 		</li>
 	</ul>
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
-		<section class="tsd-panel tsd-hierarchy">
-			<h3>Hierarchy</h3>
-			<ul class="tsd-hierarchy">
-				<li>
-					<span class="target">PHPArray</span>
+		<div class="tsd-panel tsd-typography">
+			<a href="#ts2php" id="ts2php" style="color: inherit; text-decoration: none;">
+				<h1>ts2php</h1>
+			</a>
+			<p><strong>under development</strong></p>
+			<p>TypeScript 转 PHP</p>
+			<p>A Compiler which can compile TypeScript to PHP.</p>
+			<p><img src="https://img.shields.io/badge/-TypeScript-blue.svg" alt="Language">
+				<a href="https://travis-ci.org/searchfe/ts2php"><img src="https://travis-ci.com/searchfe/ts2php.svg?branch=master" alt="Build Status"></a>
+				<a href="https://www.npmjs.org/package/ts2php"><img src="https://img.shields.io/npm/v/ts2php.svg" alt="npm package"></a>
+				<a href="https://www.npmjs.org/package/ts2php"><img src="http://img.shields.io/npm/dm/ts2php.svg" alt="npm downloads"></a>
+			<a href="https://github.com/searchfe/ts2php"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release"></a></p>
+			<ul>
+				<li><a href="#ts2php">ts2php</a><ul>
+						<li><a href="#usage">Usage</a><ul>
+								<li><a href="#compiler">compiler</a></li>
+								<li><a href="#runtime">runtime</a></li>
+								<li><a href="#cli">CLI</a></li>
+								<li><a href="#update-ts2php-version">update ts2php version</a></li>
+							</ul>
+						</li>
+						<li><a href="#features">Features</a><ul>
+								<li><a href="#javascript-syntax">Javascript Syntax</a></li>
+								<li><a href="#core-javascript-api">Core JavaScript API</a></li>
+							</ul>
+						</li>
+						<li><a href="#thanks-to">Thanks to</a></li>
+					</ul>
 				</li>
 			</ul>
+			<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+				<h2>Usage</h2>
+			</a>
+			<a href="#compiler" id="compiler" style="color: inherit; text-decoration: none;">
+				<h3>compiler</h3>
+			</a>
+			<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">compile</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;ts2php&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">result</span><span style="color: #000000"> = </span><span style="color: #795E26">compile</span><span style="color: #000000">(</span><span style="color: #001080">filePath</span><span style="color: #000000">, </span><span style="color: #001080">options</span><span style="color: #000000">);</span>
+</code></pre>
+			<a href="#runtime" id="runtime" style="color: inherit; text-decoration: none;">
+				<h3>runtime</h3>
+			</a>
+			<blockquote>
+				<p>部分功能依赖一个 PHP 的类库，需要在 PHP 工程中引入</p>
+			</blockquote>
+			<blockquote>
+				<p>Some features are implemented by a PHP helper class, which need to be included in your PHP
+				code.</p>
+			</blockquote>
+			<pre><code class="language-php"><span style="color: #795E26">require_once</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;/path/to/ts2php/dist/runtime/Ts2Php_Helper.php&quot;</span><span style="color: #000000">);</span>
+</code></pre>
+			<a href="#cli" id="cli" style="color: inherit; text-decoration: none;">
+				<h3>CLI</h3>
+			</a>
+			<p>Quick Start：</p>
+			<pre><code class="language-bash"><span style="color: #000000">$ npm i -g ts2php</span>
+<span style="color: #000000">$ ts2php ./a.ts                   </span><span style="color: #008000"># 编译输出到 stdout</span>
+</code></pre>
+			<p>使用<a href="https://searchfe.github.io/ts2php/interfaces/ts2phpoptions.html">配置</a>并输出到文件：</p>
+			<pre><code class="language-bash"><span style="color: #000000">$ cat config.js</span>
+<span style="color: #000000">module.exports = {</span>
+<span style="color: #000000">  emitHeader: </span><span style="color: #795E26">false</span>
+<span style="color: #000000">};</span>
+<span style="color: #000000">$ ts2php -c config.js src/ -o output/</span>
+</code></pre>
+			<p>更多选项：</p>
+			<pre><code class="language-bash"><span style="color: #000000">$ ts2php --show-diagnostics       </span><span style="color: #008000"># 输出诊断信息</span>
+<span style="color: #000000">$ ts2php --emit-header            </span><span style="color: #008000"># 输出头部信息</span>
+<span style="color: #000000">$ ts2php -h                       </span><span style="color: #008000"># 更多功能请查看帮助</span>
+</code></pre>
+			<a href="#update-ts2php-version" id="update-ts2php-version" style="color: inherit; text-decoration: none;">
+				<h3>update ts2php version</h3>
+			</a>
+			<p>Same TS code with different version of ts2php may result to different PHP code. When updating the version of ts2php, we should check the result PHP code manually. To simplify this process, we recommend to use <a href="https://github.com/meixg/ts2php-diff-checker">ts2php-diff-checker</a>. Specify two version of ts2php, and some source TS code, <a href="https://github.com/meixg/ts2php-diff-checker">ts2php-diff-checker</a> will generate diff info directly.</p>
+			<pre><code class="language-sh"><span style="color: #000000">ts2php-check &lt;pattern&gt; &lt;old-version&gt; &lt;new-version&gt; [destination]</span>
+</code></pre>
+			<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+				<h2>Features</h2>
+			</a>
+			<a href="#javascript-syntax" id="javascript-syntax" style="color: inherit; text-decoration: none;">
+				<h3>Javascript Syntax</h3>
+			</a>
+			<ul>
+				<li><a href="./test/features/ForStatement.md"><code>for</code>/<code>for of</code>/<code>for in</code></a></li>
+				<li><a href="./test/features/IfStatement.md"><code>if</code>/<code>else if</code>/<code>else</code></a></li>
+				<li><a href="./test/features/SwitchStatement.md"><code>switch</code></a></li>
+				<li><a href="./test/features/WhileStatement.md"><code>while</code>/<code>do while</code></a></li>
+				<li><a href="./test/features/Class.md"><code>Class</code></a></li>
+				<li><a href="./test/features/GlobalApi.md"><code>typeof</code></a></li>
+				<li><a href="./test/features/GlobalApi.md"><code>delete</code></a></li>
+				<li><a href="./test/features/Destructuring.md"><code>destructuring</code></a></li>
+				<li><a href="./test/features/template.md"><code>template string</code></a></li>
+				<li><a href="./test/features/ComputedPropertyName.md"><code>object computed property</code></a></li>
+				<li><a href="./test/features/ShorthandPropertyAssignment.md"><code>object shorthand property</code></a></li>
+				<li><a href="./test/features/EnumDeclaration.md"><code>enum</code></a></li>
+				<li><a href="./test/features/inheritedVariables.md"><code>anonymous function inherit variables</code></a></li>
+				<li><a href="./test/features/spreadExpression.md"><code>rest function arguments</code></a></li>
+				<li><a href="./test/features/spreadExpression.md"><code>spread</code></a></li>
+				<li><a href="./test/features/exception.md"><code>exception</code></a></li>
+			</ul>
+			<p>For more, see feature test markdowns: <a href="./test/features">Javascript Syntax</a></p>
+			<a href="#core-javascript-api" id="core-javascript-api" style="color: inherit; text-decoration: none;">
+				<h3>Core JavaScript API</h3>
+			</a>
+			<ul>
+				<li>parseInt <strong>只接收一个参数</strong></li>
+				<li>parseFloat</li>
+				<li>encodeURIComponent</li>
+				<li>decodeURIComponent</li>
+				<li>encodeURI</li>
+				<li>__dirname</li>
+				<li>__filename</li>
+				<li>Date<ul>
+						<li>Date.now</li>
+						<li>Date.prototype.getTime</li>
+						<li>Date.prototype.getDate</li>
+						<li>Date.prototype.getDay</li>
+						<li>Date.prototype.getFullYear</li>
+						<li>Date.prototype.getHours</li>
+						<li>Date.prototype.getMinutes</li>
+						<li>Date.prototype.getMonth</li>
+						<li>Date.prototype.getSeconds</li>
+						<li>Date.prototype.setDate</li>
+						<li>Date.prototype.setFullYear</li>
+						<li>Date.prototype.setHours</li>
+						<li>Date.prototype.setMinutes</li>
+						<li>Date.prototype.setMonth</li>
+						<li>Date.prototype.setSeconds</li>
+						<li>Date.prototype.setTime</li>
+					</ul>
+				</li>
+				<li>Object<ul>
+						<li>Object.assign</li>
+						<li>Object.keys</li>
+						<li>Object.values</li>
+						<li>Object.freeze</li>
+						<li>Object.prototype.hasOwnProperty</li>
+					</ul>
+				</li>
+				<li>JSON<ul>
+						<li>JSON.stringify <strong>只接收一个参数</strong></li>
+						<li>JSON.parse <strong>只接收一个参数</strong></li>
+					</ul>
+				</li>
+				<li>console<ul>
+						<li>console.log</li>
+						<li>console.info <strong>转成 var_dump</strong></li>
+						<li>console.error</li>
+					</ul>
+				</li>
+				<li>String<ul>
+						<li>String.prototype.replace <strong>第二个参数只支持 string，不支持 Function</strong></li>
+						<li>String.prototype.trim</li>
+						<li>String.prototype.trimRight</li>
+						<li>String.prototype.trimLeft</li>
+						<li>String.prototype.toUpperCase</li>
+						<li>String.prototype.toLowerCase</li>
+						<li>String.prototype.split</li>
+						<li>String.prototype.indexOf</li>
+						<li>String.prototype.substring</li>
+						<li>String.prototype.repeat</li>
+						<li>String.prototype.startsWidth</li>
+						<li>String.prototype.endsWidth</li>
+						<li>String.prototype.includes</li>
+						<li>String.prototype.padStart</li>
+						<li>String.prototype.match <strong>只支持正则和字符串匹配</strong></li>
+					</ul>
+				</li>
+				<li>Array<ul>
+						<li>Array.isArray</li>
+						<li>Array.prototype.length</li>
+						<li>Array.prototype.filter <strong>回调函数只接收第一个参数</strong></li>
+						<li>Array.prototype.push</li>
+						<li>Array.prototype.pop</li>
+						<li>Array.prototype.shift</li>
+						<li>Array.prototype.unshift</li>
+						<li>Array.prototype.concat</li>
+						<li>Array.prototype.reverse</li>
+						<li>Array.prototype.splice</li>
+						<li>Array.prototype.reverse</li>
+						<li>Array.prototype.map</li>
+						<li>Array.prototype.forEach</li>
+						<li>Array.prototype.indexOf</li>
+						<li>Array.prototype.join</li>
+						<li>Array.prototype.some</li>
+						<li>Array.prototype.every</li>
+						<li>Array.prototype.find</li>
+						<li>Array.prototype.findIndex</li>
+						<li>Array.prototype.sort</li>
+					</ul>
+				</li>
+				<li>Number<ul>
+						<li>Number.isInterger</li>
+						<li>Number.prototype.toFixed</li>
+						<li>Number.prototype.toString</li>
+					</ul>
+				</li>
+				<li>Math<ul>
+						<li>Math.abs</li>
+						<li>Math.acos</li>
+						<li>Math.acosh</li>
+						<li>Math.asin</li>
+						<li>Math.asinh</li>
+						<li>Math.atan</li>
+						<li>Math.atanh</li>
+						<li>Math.atan2</li>
+						<li>Math.cbrt</li>
+						<li>Math.ceil</li>
+						<li>Math.clz32</li>
+						<li>Math.cos</li>
+						<li>Math.cosh</li>
+						<li>Math.exp</li>
+						<li>Math.expm1</li>
+						<li>Math.floor</li>
+						<li>Math.hypot</li>
+						<li>Math.log</li>
+						<li>Math.log1p</li>
+						<li>Math.log10</li>
+						<li>Math.max</li>
+						<li>Math.min</li>
+						<li>Math.pow</li>
+						<li>Math.random</li>
+						<li>Math.round</li>
+						<li>Math.sin</li>
+						<li>Math.sinh</li>
+						<li>Math.sqrt</li>
+						<li>Math.tan</li>
+						<li>Math.tanh</li>
+					</ul>
+				</li>
+			</ul>
+			<a href="#thanks-to" id="thanks-to" style="color: inherit; text-decoration: none;">
+				<h2>Thanks to</h2>
+			</a>
+			<p>Based on <a href="https://github.com/Microsoft/TypeScript">Typescript</a> compiler</p>
+		</div>
+		<section class="tsd-panel-group tsd-index-group">
+			<h2>Index</h2>
+			<section class="tsd-panel tsd-index-panel">
+				<div class="tsd-index-content">
+					<section class="tsd-index-section ">
+						<h3>Classes</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-class"><a href="classes/ts2php.html" class="tsd-kind-icon">Ts2<wbr>Php</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section ">
+						<h3>Interfaces</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-interface"><a href="interfaces/moduleinfo.html" class="tsd-kind-icon">Module<wbr>Info</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/phparray.html" class="tsd-kind-icon">PHPArray</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/phpclass.html" class="tsd-kind-icon">PHPClass</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/ts2phpcompileoptions.html" class="tsd-kind-icon">Ts2php<wbr>Compile<wbr>Options</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/ts2phpconstructoptions.html" class="tsd-kind-icon">Ts2php<wbr>Construct<wbr>Options</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/ts2phpoptions.html" class="tsd-kind-icon">Ts2php<wbr>Options</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section ">
+						<h3>Functions</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-function"><a href="modules.html#compile" class="tsd-kind-icon">compile</a></li>
+						</ul>
+					</section>
+				</div>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Functions</h2>
+			<section class="tsd-panel tsd-member tsd-kind-function">
+				<a name="compile" class="tsd-anchor"></a>
+				<h3>compile</h3>
+				<ul class="tsd-signatures tsd-kind-function">
+					<li class="tsd-signature tsd-kind-icon">compile<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="interfaces/ts2phpoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">Ts2phpOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>errors<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ts.DiagnosticWithLocation</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>phpCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/searchfe/ts2php/blob/b0a909c/types/index.d.ts#L138">index.d.ts:138</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>编译入口</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>filePath: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>文件地址，如果 <code>options.source</code> 有值，可以是一个虚拟地址</p>
+								</div>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="interfaces/ts2phpoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">Ts2phpOptions</a></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>编译配置项</p>
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>errors<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ts.DiagnosticWithLocation</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>phpCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>errors<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ts.DiagnosticWithLocation</span><span class="tsd-signature-symbol">[]</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<div class="lead">
+										<p>错误信息数组</p>
+									</div>
+								</div>
+							</li>
+							<li class="tsd-parameter">
+								<h5>php<wbr>Code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<div class="lead">
+										<p>编译生成的 PHP 代码</p>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
 		</section>
 		<footer class="with-border-bottom">
 			<div class="container">
