@@ -1,3 +1,10 @@
+## [0.30.3](https://github.com/searchfe/ts2php/compare/v0.30.2...v0.30.3) (2021-01-21)
+
+
+### Bug Fixes
+
+* dependabot alerts,update typedoc ([b0a909c](https://github.com/searchfe/ts2php/commit/b0a909c1acfeeaad7b6624ee9d5b0662f6671671))
+
 ## [0.30.2](https://github.com/searchfe/ts2php/compare/v0.30.1...v0.30.2) (2021-01-21)
 
 
