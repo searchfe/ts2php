@@ -21,20 +21,23 @@ import {
     SyntaxKind,
     createTrue,
     createFalse,
-    createNull
+    createNull,
+    isIdentifier,
+    isVariableDeclaration
 } from 'byots';
 
 import {
-    isStringLike, isNumberLike, isFunctionLike,
+    isStringLike, isNumberLike, isFunctionLike, isRegExp,
 } from '../utilities/nodeTest';
 
 import method, {formatMethodName} from '../utilities/method';
 import {createDiagnostic, getUnSupportedMessage} from '../utilities/error';
+import type {CompilerState} from '../types';
 
 function replace(
     node: CallExpression,
     {getLiteralTextOfNode, emitExpressionList, writePunctuation},
-    {helperNamespace, typeChecker, errors, sourceFile}
+    {helperNamespace, typeChecker, errors, sourceFile}: CompilerState
 ) {
 
     const expNode = node.expression as PropertyAccessExpression;
@@ -79,20 +82,35 @@ function split(node: CallExpression, {emitExpressionList, writePunctuation}, sta
     emitExpressionList(node, args, ListFormat.CallExpressionArguments);
 }
 
-function match(node: CallExpression, {emitExpressionList, writePunctuation}, state) {
+function match(node: CallExpression, {emitExpressionList, writePunctuation}, state: CompilerState) {
     const expNode = node.expression as PropertyAccessExpression;
     const pattern = node.arguments[0];
-    const isRegularExpressionLiteral = pattern.kind === SyntaxKind.RegularExpressionLiteral;
     const method = '%helper::match';
     const nodeList = [node.arguments[0], expNode.expression];
 
-    if (!isRegularExpressionLiteral) {
+    if (!isRegExp(pattern, state.typeChecker)) {
         // mark is string
         nodeList.push(createTrue());
     }
     else {
         // mark all match
-        const isAll = pattern.getText(state.sourceFile).split('/').pop().indexOf('g') !== -1;
+        let patternDeclaration = pattern;
+        while (isIdentifier(patternDeclaration)) {
+            const declaration = state.typeChecker.getSymbolAtLocation(patternDeclaration).getDeclarations()[0];
+            if (isVariableDeclaration(declaration)) {
+                patternDeclaration = declaration.initializer;
+            }
+        }
+
+        if (!isRegularExpressionLiteral(patternDeclaration)) {
+            state.errors.push(createDiagnostic(
+                node, state.sourceFile,
+                'Regular Expression Literal is not found.'
+            ));
+            return;
+        }
+
+        const isAll = patternDeclaration.getText(state.sourceFile).split('/').pop().indexOf('g') !== -1;
         if (isAll) {
             nodeList.push(createFalse());
             nodeList.push(createTrue());
@@ -125,7 +143,7 @@ const map = {
 
 export default {
 
-    emit(hint, node, state) {
+    emit(hint, node, state: CompilerState) {
 
         const expNode = node.expression;
         const helpers = state.helpers;
