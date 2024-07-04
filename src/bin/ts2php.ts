@@ -24,7 +24,7 @@ if (argv.config) {
     options = require(configFile)
 }
 
-const stripPrefix = argv._.length === 1 && lstatSync(argv._[0]).isDirectory()
+const stripPrefix = argv._.length === 1 && lstatSync(argv._[0] as string).isDirectory()
 argv._.forEach(compilePath)
 
 function compileFile(filepath) {
@@ -59,7 +59,7 @@ function compilePath(path) {
 function outPath(filepath: string) {
     if (stripPrefix) {
         filepath = normalize(filepath)
-        const prefix = normalize(argv._[0])
+        const prefix = normalize(argv._[0] as string)
         filepath = filepath.replace(prefix, '')
     }
     return join(argv.out as string, filepath).replace(/\.ts$/, '.php')
