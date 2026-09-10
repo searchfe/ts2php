@@ -106,7 +106,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "mdgator": "^1.1.2",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "nyc": "^14.1.1",
     "rimraf": "^2.6.3",
     "source-map-support": "^0.5.12",
