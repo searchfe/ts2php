@@ -287,21 +287,21 @@ function get16BitUnicodeEscapeSequence(charCode: number): string {
 const doubleQuoteEscapedCharsRegExp = /[\\\"\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
 const singleQuoteEscapedCharsRegExp = /[\\\'\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
 const backtickQuoteEscapedCharsRegExp = /[\\\`\u0000-\u001f\t\v\f\b\r\n\u2028\u2029\u0085]/g;
-const escapedCharsMap = ts.createMapFromTemplate({
-    '\t': '\\t',
-    '\v': '\\v',
-    '\f': '\\f',
-    '\b': '\\b',
-    '\r': '\\r',
-    '\n': '\\n',
-    '\\': '\\\\',
-    '"': '\\"',
-    "\'": "\\\'",
-    '\`': '\\\`',
-    '\u2028': '\\u2028', // lineSeparator
-    '\u2029': '\\u2029', // paragraphSeparator
-    '\u0085': '\\u0085'  // nextLine
-});
+const escapedCharsMap = new Map<string, string>([
+    ['\t', '\\t'],
+    ['\v', '\\v'],
+    ['\f', '\\f'],
+    ['\b', '\\b'],
+    ['\r', '\\r'],
+    ['\n', '\\n'],
+    ['\\', '\\\\'],
+    ['"', '\\"'],
+    ["\'", "\\\'"],
+    ['\`', '\\\`'],
+    ['\u2028', '\\u2028'],
+    ['\u2029', '\\u2029'],
+    ['\u0085', '\\u0085']
+]);
 
 const nonAsciiCharacters = /[^\u0000-\u007F]/g;
 export function escapeNonAsciiString(s: string, quoteChar?: ts.CharacterCodes.doubleQuote | ts.CharacterCodes.singleQuote | ts.CharacterCodes.backtick): string {
@@ -391,7 +391,7 @@ export function getAccessPrefixAndSuffix(node: ts.PropertyAccessExpression | ts.
         }
         if (!ts.isPropertyAccessExpression(node) && ts.isLiteralExpression(node.argumentExpression)) {
             // should not emit quote, set as NumericLiteral
-            node.argumentExpression.kind = ts.SyntaxKind.NumericLiteral;
+        (node.argumentExpression as any).kind = ts.SyntaxKind.NumericLiteral;
         }
     }
 

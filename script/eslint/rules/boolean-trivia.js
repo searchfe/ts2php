@@ -1,7 +1,7 @@
 "use strict";
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const utils_1 = require("./utils");
-module.exports = utils_1.createRule({
+const utils_1 = require("@typescript-eslint/utils");
+const rule_utils_1 = require("./utils");
+module.exports = rule_utils_1.createRule({
     name: "boolean-trivia",
     meta: {
         docs: {
@@ -22,18 +22,18 @@ module.exports = utils_1.createRule({
         const sourceCodeText = sourceCode.getText();
         const isSetOrAssert = (name) => name.startsWith("set") || name.startsWith("assert");
         const isTrivia = (node) => {
-            if (node.type === experimental_utils_1.AST_NODE_TYPES.Identifier) {
+            if (node.type === utils_1.AST_NODE_TYPES.Identifier) {
                 return node.name === "undefined";
             }
-            if (node.type === experimental_utils_1.AST_NODE_TYPES.Literal) {
+            if (node.type === utils_1.AST_NODE_TYPES.Literal) {
                 // eslint-disable-next-line no-null/no-null
                 return node.value === null || node.value === true || node.value === false;
             }
             return false;
         };
         const shouldIgnoreCalledExpression = (node) => {
-            if (node.callee && node.callee.type === experimental_utils_1.AST_NODE_TYPES.MemberExpression) {
-                const methodName = node.callee.property.type === experimental_utils_1.AST_NODE_TYPES.Identifier
+            if (node.callee && node.callee.type === utils_1.AST_NODE_TYPES.MemberExpression) {
+                const methodName = node.callee.property.type === utils_1.AST_NODE_TYPES.Identifier
                     ? node.callee.property.name
                     : "";
                 if (isSetOrAssert(methodName)) {
@@ -41,7 +41,7 @@ module.exports = utils_1.createRule({
                 }
                 return ["apply", "call", "equal", "fail", "isTrue", "output", "stringify", "push"].indexOf(methodName) >= 0;
             }
-            if (node.callee && node.callee.type === experimental_utils_1.AST_NODE_TYPES.Identifier) {
+            if (node.callee && node.callee.type === utils_1.AST_NODE_TYPES.Identifier) {
                 const functionName = node.callee.name;
                 if (isSetOrAssert(functionName)) {
                     return true;

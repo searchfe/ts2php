@@ -1,7 +1,7 @@
 "use strict";
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const utils_1 = require("./utils");
-module.exports = utils_1.createRule({
+const utils_1 = require("@typescript-eslint/utils");
+const rule_utils_1 = require("./utils");
+module.exports = rule_utils_1.createRule({
     name: "no-double-space",
     meta: {
         docs: {
@@ -20,12 +20,12 @@ module.exports = utils_1.createRule({
         const sourceCode = context.getSourceCode();
         const lines = sourceCode.getLines();
         const isStringLiteral = (node) => {
-            return !!(node && ((node.type === experimental_utils_1.AST_NODE_TYPES.TemplateElement) ||
-                (node.type === experimental_utils_1.AST_NODE_TYPES.TemplateLiteral && node.quasis) ||
-                (node.type === experimental_utils_1.AST_NODE_TYPES.Literal && typeof node.value === "string")));
+            return !!(node && ((node.type === utils_1.AST_NODE_TYPES.TemplateElement) ||
+                (node.type === utils_1.AST_NODE_TYPES.TemplateLiteral && node.quasis) ||
+                (node.type === utils_1.AST_NODE_TYPES.Literal && typeof node.value === "string")));
         };
         const isRegexLiteral = (node) => {
-            return !!(node && node.type === experimental_utils_1.AST_NODE_TYPES.Literal && node.regex);
+            return !!(node && node.type === utils_1.AST_NODE_TYPES.Literal && node.regex);
         };
         const checkDoubleSpace = (node) => {
             lines.forEach((line, index) => {

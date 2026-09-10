@@ -15,7 +15,7 @@ yargs.usage('ts2php [options] <files ...>')
     .help('h').alias('h', 'help')
     .argv;
 
-const argv = yargs.argv
+const argv = yargs.parseSync()
 
 let options = {};
 if (argv.config) {
@@ -24,8 +24,9 @@ if (argv.config) {
     options = require(configFile)
 }
 
-const stripPrefix = argv._.length === 1 && lstatSync(argv._[0]).isDirectory()
-argv._.forEach(compilePath)
+const inputPaths = argv._.map(String)
+const stripPrefix = inputPaths.length === 1 && lstatSync(inputPaths[0]).isDirectory()
+inputPaths.forEach(compilePath)
 
 function compileFile(filepath) {
     console.error(`[compile] ${filepath}...`)
@@ -59,7 +60,7 @@ function compilePath(path) {
 function outPath(filepath: string) {
     if (stripPrefix) {
         filepath = normalize(filepath)
-        const prefix = normalize(argv._[0])
+        const prefix = normalize(inputPaths[0])
         filepath = filepath.replace(prefix, '')
     }
     return join(argv.out as string, filepath).replace(/\.ts$/, '.php')

@@ -3,6 +3,7 @@
  * @author meixuguang
  */
 
+import './byots-compat';
 import fs from 'fs-extra';
 import path from 'path';
 import ts, {
@@ -21,8 +22,6 @@ import ts, {
     Diagnostic,
     DiagnosticWithLocation
 } from 'byots';
-
-import diagnosticFormatter from 'ts-diagnostic-formatter';
 
 import {upperFirst} from 'lodash';
 import {satisfies} from 'semver';
@@ -85,9 +84,14 @@ interface CacheFileInfo {
     contents: string;
 }
 
-function printError(e) {
-    console.log(e.file + ':');
-    console.error(e.message);
+function printDiagnostic(diagnostic: Diagnostic) {
+    const message = flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+    if (diagnostic.file && typeof diagnostic.start === 'number') {
+        const {line, character} = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+        console.error(`${diagnostic.file.fileName}:${line + 1}:${character + 1} - ${message}`);
+        return;
+    }
+    console.error(message);
 }
 
 export class Ts2Php {
@@ -186,8 +190,7 @@ export class Ts2Php {
         if (finalOptions.showDiagnostics) {
             diagnostics = diagnostics.filter(a => a.code !== 2307);
             if (diagnostics.length) {
-                // @ts-ignore
-                diagnosticFormatter(diagnostics, 'codeframe').forEach(printError);
+                diagnostics.forEach(printDiagnostic);
                 return {
                     phpCode: '',
                     errors: diagnostics
@@ -216,7 +219,7 @@ export class Ts2Php {
             ...(options.customTransformers || [])
         ];
 
-        const emitResolver = program.getDiagnosticsProducingTypeChecker()
+        const emitResolver = program.getTypeChecker()
             .getEmitResolver(sourceFile, /* cancellationToken */ undefined);
 
         if (sourceFile.resolvedModules) {
@@ -226,11 +229,13 @@ export class Ts2Php {
             }
             const dirname = path.dirname(fileName);
             sourceFile.resolvedModules.forEach((item, name) => {
+                const resolvedModule = (item as any).resolvedModule || item;
+                if (!resolvedModule || !resolvedModule.resolvedFileName) return;
                 const moduleIt = state.modules[name] || {} as ModuleInfo;
                 state.modules[name] = {
                     name,
-                    pathCode: state.getModulePathCode(name, item, moduleIt, dirname),
-                    namespace: state.getModuleNamespace(name, item, moduleIt),
+                    pathCode: state.getModulePathCode(name, resolvedModule, moduleIt, dirname),
+                    namespace: state.getModuleNamespace(name, resolvedModule, moduleIt),
                     ...moduleIt
                 };
             });
@@ -239,8 +244,7 @@ export class Ts2Php {
         const code = emitter.emitFile(sourceFile, state, emitResolver, transformers);
 
         if (finalOptions.showDiagnostics && state.errors.length > 0) {
-            // @ts-ignore
-            diagnosticFormatter(state.errors, 'codeframe').forEach(printError);
+            state.errors.forEach(printDiagnostic);
         }
 
         return {

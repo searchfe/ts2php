@@ -1,7 +1,7 @@
 "use strict";
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const utils_1 = require("./utils");
-module.exports = utils_1.createRule({
+const utils_1 = require("@typescript-eslint/utils");
+const rule_utils_1 = require("./utils");
+module.exports = rule_utils_1.createRule({
     name: "no-keywords",
     meta: {
         docs: {
@@ -41,8 +41,8 @@ module.exports = utils_1.createRule({
         const checkProperties = (node) => {
             node.properties.forEach(property => {
                 if (property &&
-                    property.type === experimental_utils_1.AST_NODE_TYPES.Property &&
-                    property.key.type === experimental_utils_1.AST_NODE_TYPES.Identifier &&
+                    property.type === utils_1.AST_NODE_TYPES.Property &&
+                    property.key.type === utils_1.AST_NODE_TYPES.Identifier &&
                     isKeyword(property.key.name)) {
                     report(property.key);
                 }
@@ -51,7 +51,7 @@ module.exports = utils_1.createRule({
         const checkElements = (node) => {
             node.elements.forEach(element => {
                 if (element &&
-                    element.type === experimental_utils_1.AST_NODE_TYPES.Identifier &&
+                    element.type === utils_1.AST_NODE_TYPES.Identifier &&
                     isKeyword(element.name)) {
                     report(element);
                 }
@@ -63,7 +63,7 @@ module.exports = utils_1.createRule({
             }
             node.params.forEach(param => {
                 if (param &&
-                    param.type === experimental_utils_1.AST_NODE_TYPES.Identifier &&
+                    param.type === utils_1.AST_NODE_TYPES.Identifier &&
                     isKeyword(param.name)) {
                     report(param);
                 }
@@ -71,13 +71,13 @@ module.exports = utils_1.createRule({
         };
         return {
             VariableDeclarator(node) {
-                if (node.id.type === experimental_utils_1.AST_NODE_TYPES.ObjectPattern) {
+                if (node.id.type === utils_1.AST_NODE_TYPES.ObjectPattern) {
                     checkProperties(node.id);
                 }
-                if (node.id.type === experimental_utils_1.AST_NODE_TYPES.ArrayPattern) {
+                if (node.id.type === utils_1.AST_NODE_TYPES.ArrayPattern) {
                     checkElements(node.id);
                 }
-                if (node.id.type === experimental_utils_1.AST_NODE_TYPES.Identifier &&
+                if (node.id.type === utils_1.AST_NODE_TYPES.Identifier &&
                     isKeyword(node.id.name)) {
                     report(node.id);
                 }

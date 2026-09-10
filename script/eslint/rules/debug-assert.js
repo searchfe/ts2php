@@ -1,7 +1,7 @@
 "use strict";
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const utils_1 = require("./utils");
-module.exports = utils_1.createRule({
+const utils_1 = require("@typescript-eslint/utils");
+const rule_utils_1 = require("./utils");
+module.exports = rule_utils_1.createRule({
     name: "debug-assert",
     meta: {
         docs: {
@@ -18,16 +18,16 @@ module.exports = utils_1.createRule({
     },
     defaultOptions: [],
     create(context) {
-        const isArrowFunction = (node) => node.type === experimental_utils_1.AST_NODE_TYPES.ArrowFunctionExpression;
-        const isStringLiteral = (node) => ((node.type === experimental_utils_1.AST_NODE_TYPES.Literal && typeof node.value === "string") || node.type === experimental_utils_1.AST_NODE_TYPES.TemplateLiteral);
-        const isDebugAssert = (node) => (node.object.type === experimental_utils_1.AST_NODE_TYPES.Identifier
+        const isArrowFunction = (node) => node.type === utils_1.AST_NODE_TYPES.ArrowFunctionExpression;
+        const isStringLiteral = (node) => ((node.type === utils_1.AST_NODE_TYPES.Literal && typeof node.value === "string") || node.type === utils_1.AST_NODE_TYPES.TemplateLiteral);
+        const isDebugAssert = (node) => (node.object.type === utils_1.AST_NODE_TYPES.Identifier
             && node.object.name === "Debug"
-            && node.property.type === experimental_utils_1.AST_NODE_TYPES.Identifier
+            && node.property.type === utils_1.AST_NODE_TYPES.Identifier
             && node.property.name === "assert");
         const checkDebugAssert = (node) => {
             const args = node.arguments;
             const argsLen = args.length;
-            if (!(node.callee.type === experimental_utils_1.AST_NODE_TYPES.MemberExpression && isDebugAssert(node.callee)) || argsLen < 2) {
+            if (!(node.callee.type === utils_1.AST_NODE_TYPES.MemberExpression && isDebugAssert(node.callee)) || argsLen < 2) {
                 return;
             }
             const message1Node = args[1];

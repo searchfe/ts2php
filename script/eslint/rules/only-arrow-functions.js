@@ -1,7 +1,7 @@
 "use strict";
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const utils_1 = require("./utils");
-module.exports = utils_1.createRule({
+const utils_1 = require("@typescript-eslint/utils");
+const rule_utils_1 = require("./utils");
+module.exports = rule_utils_1.createRule({
     name: "only-arrow-functions",
     meta: {
         docs: {
@@ -27,17 +27,17 @@ module.exports = utils_1.createRule({
             allowDeclarations: false,
         }],
     create(context, [{ allowNamedFunctions, allowDeclarations }]) {
-        const isThisParameter = (node) => (node.params.length && !!node.params.find(param => param.type === experimental_utils_1.AST_NODE_TYPES.Identifier && param.name === "this"));
+        const isThisParameter = (node) => (node.params.length && !!node.params.find(param => param.type === utils_1.AST_NODE_TYPES.Identifier && param.name === "this"));
         const isMethodType = (node) => {
             const types = [
-                experimental_utils_1.AST_NODE_TYPES.MethodDefinition,
-                experimental_utils_1.AST_NODE_TYPES.Property,
+                utils_1.AST_NODE_TYPES.MethodDefinition,
+                utils_1.AST_NODE_TYPES.Property,
             ];
             const parent = node.parent;
             if (!parent) {
                 return false;
             }
-            return node.type === experimental_utils_1.AST_NODE_TYPES.FunctionExpression && types.includes(parent.type);
+            return node.type === utils_1.AST_NODE_TYPES.FunctionExpression && types.includes(parent.type);
         };
         const stack = [];
         const enterFunction = () => {
@@ -50,7 +50,7 @@ module.exports = utils_1.createRule({
         };
         const exitFunction = (node) => {
             const methodUsesThis = stack.pop();
-            if (node.type === experimental_utils_1.AST_NODE_TYPES.FunctionDeclaration && allowDeclarations) {
+            if (node.type === utils_1.AST_NODE_TYPES.FunctionDeclaration && allowDeclarations) {
                 return;
             }
             if ((allowNamedFunctions && node.id !== null) || isMethodType(node)) { // eslint-disable-line no-null/no-null
