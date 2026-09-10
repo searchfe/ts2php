@@ -147,8 +147,13 @@ export default {
             const argu = (node as ts.CallExpression).arguments[0];
             if (isStringLiteral(argu)) {
                 const moduleName = argu.text;
-                const moduleIt = modules[moduleName];
-                return helpers.writeBase(`require_once(${moduleIt.path || moduleIt.pathCode || JSON.stringify(moduleName)})`);
+                const moduleIt = modules[moduleName] || {};
+                const pathCode = moduleIt.path || moduleIt.pathCode || (
+                    moduleName.startsWith('.')
+                        ? `dirname(__FILE__) . '/' . ${JSON.stringify(moduleName + '.php')}`
+                        : JSON.stringify(moduleName)
+                );
+                return helpers.writeBase(`require_once(${pathCode})`);
             }
             helpers.writeBase(`require_once(dirname(__FILE__) . '/' . (`);
             helpers.emitExpression(argu);

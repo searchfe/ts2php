@@ -9,12 +9,12 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import {compile, Ts2Php} from '../src/index';
-import glob from 'glob';
+import {globSync} from 'glob';
 import {MDGator, Group} from 'mdgator';
 import camelcase from 'camelcase';
 
 const featuresPath = path.resolve(__dirname, './features');
-const files = glob.sync('**/*.md', {
+const files = globSync('**/*.md', {
     cwd: featuresPath
 });
 
@@ -119,4 +119,3 @@ describe('other features', () => {
         assert.equal(res.errors.length, 1);
     })
 });
-

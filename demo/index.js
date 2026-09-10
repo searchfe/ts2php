@@ -6,7 +6,7 @@
 const Koa = require('koa');
 const fs = require('fs');
 const path = require('path');
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const bodyParser = require('koa-bodyparser');
 const {ts2php} = require(path.resolve(__dirname, '../dist/index.js'));
 

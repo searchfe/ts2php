@@ -1,7 +1,7 @@
 "use strict";
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const utils_1 = require("./utils");
-module.exports = utils_1.createRule({
+const utils_1 = require("@typescript-eslint/utils");
+const rule_utils_1 = require("./utils");
+module.exports = rule_utils_1.createRule({
     name: "type-operator-spacing",
     meta: {
         docs: {
@@ -23,7 +23,7 @@ module.exports = utils_1.createRule({
         const checkTypeOperatorSpacing = (node) => {
             node.types.forEach(node => {
                 const token = sourceCode.getTokenBefore(node);
-                if (!!token && token.type === experimental_utils_1.AST_TOKEN_TYPES.Punctuator && tokens.indexOf(token.value) >= 0) {
+                if (!!token && token.type === utils_1.AST_TOKEN_TYPES.Punctuator && tokens.indexOf(token.value) >= 0) {
                     const [start, end] = token.range;
                     if (/\S/.test(text[start - 1]) || /\S/.test(text[end])) {
                         context.report({ messageId: "typeOperatorSpacingError", node: token });

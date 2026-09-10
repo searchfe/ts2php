@@ -1,8 +1,8 @@
 language: node_js
-node_js: "10"
+node_js: "22"
 php: 5.6
 install:
-  - npm install
+  - npm ci
   - wget -O ./test/runtime/phpunit https://phar.phpunit.de/phpunit-5.phar
 jobs:
   include:
@@ -11,9 +11,10 @@ jobs:
       script:
         - npm run lint
     - stage: test
-      name: 'Unit on Node.js10 / PHP5.6'
+      name: 'Unit on Node.js22 / PHP5.6'
       script:
         - npm test
+        - npm run build
         - npm run test:runtime
     - stage: release
       if: branch = master

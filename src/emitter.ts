@@ -101,7 +101,7 @@ export function emitFile(
         writeBase
     };
 
-    const transform = ts.transformNodes(resolver, undefined, {}, [sourceFile], transformers!, /* allowDtsFiles */ false);
+    const transform = ts.transformNodes(resolver, undefined, ts.factory, {}, [sourceFile], transformers!, /* allowDtsFiles */ false);
 
     state.sourceFile = (transform.transformed[0] as SourceFile);
 
@@ -746,12 +746,12 @@ export function emitFile(
             emitTypeAnnotation(node.type);
         }
         if (node.questionToken && !node.initializer) {
-            node.initializer = ts.createNull();
-            node.initializer.parent = node;
+            (node as any).initializer = ts.factory.createNull();
+            (node.initializer as any).parent = node;
             ts.setTextRange(node.initializer, node);
         }
         // The comment position has to fallback to any present node within the parameterdeclaration because as it turns out, the parser can make parameter declarations with _just_ an initializer.
-        emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name ? node.name.end : node.modifiers ? node.modifiers.end : node.decorators ? node.decorators.end : node.pos, node);
+        emitInitializer(node.initializer, node.type ? node.type.end : node.questionToken ? node.questionToken.end : node.name ? node.name.end : node.pos, node);
     }
 
     // function emitDecorator(decorator: Decorator) {
@@ -806,7 +806,7 @@ export function emitFile(
 
     function emitMethodDeclaration(node: ts.MethodDeclaration) {
         // emitDecorators(node, node.decorators);
-        emitModifiers(node, node.modifiers);
+        emitModifiers(node, node.modifiers as any);
         // emit(node.asteriskToken);
         if (ts.isClassDeclaration(node.parent || node.original.parent)) {
             writeKeyword('function');
@@ -1920,7 +1920,7 @@ export function emitFile(
         // emitDecorators(node, node.decorators);
 
         if (node.modifiers) {
-            node.modifiers = ts.createNodeArray(node.modifiers.filter(m => {
+            (node as any).modifiers = ts.createNodeArray(node.modifiers.filter(m => {
                 return m.kind === ts.SyntaxKind.AbstractKeyword;
             }));
         }
@@ -1938,7 +1938,7 @@ export function emitFile(
         }
 
         if (node.heritageClauses) {
-            node.heritageClauses = ts.createNodeArray(node.heritageClauses.filter(hc => {
+            (node as any).heritageClauses = ts.createNodeArray(node.heritageClauses.filter(hc => {
                 return hc.token !== ts.SyntaxKind.ImplementsKeyword;
             }));
         }
@@ -2766,9 +2766,9 @@ export function emitFile(
         write = savedWrite;
     }
 
-    function emitModifiers(node: Node, modifiers: ts.NodeArray<ts.Modifier> | undefined) {
+    function emitModifiers(node: Node, modifiers: readonly ts.ModifierLike[] | undefined) {
         if (modifiers && modifiers.length) {
-            emitList(node, modifiers, ts.ListFormat.Modifiers);
+            emitList(node, modifiers as any, ts.ListFormat.Modifiers);
             writeSpace();
         }
     }

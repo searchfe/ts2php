@@ -119,7 +119,7 @@ export function transform(context: ts.TransformationContext) {
         const originalNode = node;
         node = ts.visitEachChild(node, visitTypeScript, context);
         if (node !== originalNode) {
-            node.parent = originalNode.parent;
+            (node as any).parent = originalNode.parent;
             ts.setOriginalNode(node, originalNode);
             ts.setTextRange(node, originalNode);
         }
@@ -177,7 +177,7 @@ export function transform(context: ts.TransformationContext) {
             // @ts-ignore
             visitTypeScript(<ts.Node>node.expression.right)
         );
-        temp.name.parent = temp;
+        (temp.name as any).parent = temp;
         ts.setTextRange(temp, node.expression.right);
 
         const arrayLiteral: ts.ArrayLiteralExpression = node.expression.left;
@@ -191,7 +191,7 @@ export function transform(context: ts.TransformationContext) {
 
             const access = ts.createElementAccess(initializer, index);
             ts.setTextRange(access, initializer);
-            access.expression.parent = access;
+            (access.expression as any).parent = access;
 
             let variable: ts.VariableDeclaration;
 
@@ -201,9 +201,9 @@ export function transform(context: ts.TransformationContext) {
             else {
                 const variableName = (<ts.BinaryExpression>e).left.getText();
                 const call = ts.createCall(ts.createIdentifier('isset'), [], [access]);
-                call.expression.parent = call;
+                (call.expression as any).parent = call;
                 call.arguments.forEach(a => {
-                    a.parent = call;
+                    (a as any).parent = call;
                 });
                 const conditional = ts.createConditional(
                     call,
@@ -211,7 +211,7 @@ export function transform(context: ts.TransformationContext) {
                     (<ts.BinaryExpression>e).right
                 );
                 conditional.forEachChild(e => {
-                    e.parent = conditional;
+                    (e as any).parent = conditional;
                 });
                 variable = ts.createVariableDeclaration(
                     variableName,
@@ -220,8 +220,8 @@ export function transform(context: ts.TransformationContext) {
                 );
             }
 
-            variable.initializer.parent = variable;
-            variable.name.parent = variable;
+            (variable.initializer as any).parent = variable;
+            (variable.name as any).parent = variable;
 
             ts.setTextRange(variable, e);
             prev.push(variable);
@@ -232,7 +232,7 @@ export function transform(context: ts.TransformationContext) {
 
         const list = ts.createVariableDeclarationList(declarations, ts.NodeFlags.Let);
         const statement = ts.createVariableStatement(undefined, list);
-        statement.declarationList.parent = statement;
+        (statement.declarationList as any).parent = statement;
 
         ts.setTextRange(list, node.expression);
 
@@ -409,10 +409,10 @@ export function transform(context: ts.TransformationContext) {
         );
 
         if (index > 0) {
-            spreadName.parent = argument;
+            (spreadName as any).parent = argument;
         }
         else {
-            spreadName.parent = returnNode;
+            (spreadName as any).parent = returnNode;
         }
 
         return returnNode;
@@ -496,7 +496,7 @@ export function transform(context: ts.TransformationContext) {
             : ts.createTempVariable(/*recordTempVariable*/ undefined);
 
         const parameters = [...node.parameters];
-        node.parameters = ts.createNodeArray([]);
+        (node as any).parameters = ts.createNodeArray([]);
 
         let variableDeclarationList: ts.VariableDeclarationList;
 
@@ -574,7 +574,7 @@ export function transform(context: ts.TransformationContext) {
         const containerName = getNamespaceContainerName(node);
 
         // `exportName` is the expression used within this node's container for any exported references.
-        const exportName = ts.getLocalName(node, /*allowComments*/ false, /*allowSourceMaps*/ true);
+        const exportName = node.name;
 
         const enumStatement = ts.createVariableStatement(
             undefined,
@@ -663,17 +663,24 @@ export function transform(context: ts.TransformationContext) {
                     key: item.name,
                     initializer: (item as ts.PropertyDeclaration).initializer
                 });
-                (item as ts.PropertyDeclaration).initializer = undefined;
+                ((item as ts.PropertyDeclaration) as any).initializer = undefined;
             }
 
         });
         const res = [];
         res.push(node);
         initAfter.forEach(item => {
+            const initializerExpression = ts.isAsExpression(item.initializer)
+                ? item.initializer.expression
+                : item.initializer;
+            const initializer = ts.isArrayLiteralExpression(initializerExpression)
+                && initializerExpression.elements.length === 0
+                ? ts.factory.createParenthesizedExpression(initializerExpression)
+                : item.initializer;
             const init = ts.createExpressionStatement(ts.createBinary(
                 ts.createPropertyAccess(node.name, item.key.getText()),
                 ts.createToken(ts.SyntaxKind.EqualsToken),
-                item.initializer
+                initializer
             ));
             res.push(init);
         });
@@ -690,5 +697,3 @@ export function transform(context: ts.TransformationContext) {
         return saveStateAndInvoke(node, visitTypeScript);
     }
 }
-
-

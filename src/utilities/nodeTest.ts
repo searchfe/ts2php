@@ -117,7 +117,25 @@ export function shouldUseArray(format: ts.ListFormat) {
  * @param node node
  */
 export function shouldUseReference(node: ts.Node, typeChecker: ts.TypeChecker) {
-    const nodeType = typeChecker.getTypeAtLocation(node);
+    if (
+        node
+        && ts.isIdentifier(node)
+        && node.parent
+        && ts.isVariableDeclaration(node.parent)
+        && ts.isIdentifier(node.parent.name)
+        && String(node.parent.name.escapedText).startsWith('destruct_temp_')
+    ) {
+        return true;
+    }
+    if (!node || node.pos < 0 || !node.parent || node.parent.pos < 0) {
+        return false;
+    }
+    let nodeType: ts.Type;
+    try {
+        nodeType = typeChecker.getTypeAtLocation(node);
+    } catch (_error) {
+        return false;
+    }
     return ts.isIdentifier(node) && !isFunctionLike(node, typeChecker) && (nodeType.flags === ts.TypeFlags.Object);
 }
 
@@ -153,7 +171,15 @@ export function isNumberLike(node: ts.Node, typeChecker: ts.TypeChecker) {
 }
 
 export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
-    const nodeType = typeChecker.getTypeAtLocation(node);
+    if (!node || node.pos < 0 || !node.parent || node.parent.pos < 0) {
+        return false;
+    }
+    let nodeType: ts.Type;
+    try {
+        nodeType = typeChecker.getTypeAtLocation(node);
+    } catch (_error) {
+        return false;
+    }
     const nodeSymbol = typeChecker.getSymbolAtLocation(node);
     if (!nodeSymbol) {
         return false;
@@ -164,7 +190,7 @@ export function isClassLike(node: ts.Node, typeChecker: ts.TypeChecker) {
     if (!nodeType.symbol) {
         return false;
     }
-    return (ts.isImportSpecifier(node.parent) && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()))
+    return (node.parent && ts.isImportSpecifier(node.parent) && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()))
         || ((nodeType as ts.ObjectType).objectFlags & ts.ObjectFlags.Interface) && nodeType.symbol.members.has('prototype' as ts.__String)
         || (!nodeSymbol.valueDeclaration && (ts.SymbolFlags.Class & nodeType.symbol.getFlags()) && nodeType.symbol.exports.has('prototype' as ts.__String));
 }
@@ -207,7 +233,15 @@ function getBaseTypeName(nodeType: ts.Type): 'PHPClass' | 'PHPArray' | 'other' {
 }
 
 export function isFunctionLike(node: ts.Node, typeChecker: ts.TypeChecker) {
-    const nodeType = typeChecker.getTypeAtLocation(node);
+    if (!node || node.pos < 0 || !node.parent || node.parent.pos < 0) {
+        return false;
+    }
+    let nodeType: ts.Type;
+    try {
+        nodeType = typeChecker.getTypeAtLocation(node);
+    } catch (_error) {
+        return false;
+    }
     const nodeSymbol = nodeType.getSymbol();
     const symbolFlags = nodeSymbol && nodeSymbol.getFlags();
     return !!symbolFlags && (symbolFlags & ts.SymbolFlags.Function || symbolFlags & ts.SymbolFlags.Method);
